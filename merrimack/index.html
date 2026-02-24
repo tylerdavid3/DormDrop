@@ -182,6 +182,106 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 .btn-sm { font-family:'Outfit',sans-serif; font-size:13px; font-weight:600; background:var(--ink); color:var(--white); border:none; padding:8px 18px; border-radius:7px; cursor:pointer; }
 .btn-sm:hover { background:var(--teal); }
 
+/* ROYAL CREST PROPERTY CARD */
+.property-card { background:var(--white); border:1px solid var(--rule); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--sh-md); margin-bottom:40px; }
+.property-header { padding:32px; border-bottom:2px solid var(--rule); }
+.property-badge { display:inline-block; background:linear-gradient(135deg, #ff6b6b, #ff8e53); color:white; padding:6px 16px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:20px; }
+.property-main { display:flex; gap:28px; align-items:flex-start; }
+.property-image { flex-shrink:0; width:180px; height:130px; border-radius:var(--r); overflow:hidden; background:linear-gradient(160deg,#B8CFC9,#DDE9E6); display:flex; align-items:center; justify-content:center; font-size:48px; opacity:.5; }
+.property-info { flex-grow:1; }
+.property-info h3 { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--ink); margin:0 0 8px 0; letter-spacing:-.5px; }
+.property-address { font-size:14px; color:var(--ink-3); margin:4px 0; }
+.property-quick-stats { display:flex; gap:32px; margin:16px 0; }
+.stat { display:flex; flex-direction:column; }
+.stat-value { font-size:18px; font-weight:700; color:var(--ink); }
+.stat-label { font-size:11px; color:var(--ink-4); text-transform:uppercase; letter-spacing:0.5px; }
+.property-savings-banner { background:var(--teal-lt); color:var(--teal); padding:14px 18px; border-radius:10px; font-size:15px; margin:16px 0; border-left:4px solid var(--teal); font-weight:600; }
+.property-amenities-preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.property-amenities-preview span { font-size:12px; color:var(--ink-2); background:var(--linen); padding:6px 12px; border-radius:16px; }
+.expand-units-btn { width:100%; padding:18px 28px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; border:none; font-size:15px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:all 0.3s ease; }
+.expand-units-btn:hover { background:linear-gradient(135deg, #5568d3, #653a8b); }
+.expand-icon { transition:transform 0.3s ease; }
+.expand-units-btn.expanded .expand-icon { transform:rotate(180deg); }
+.units-list { max-height:0; overflow:hidden; transition:max-height 0.5s ease; }
+.units-list.expanded { max-height:10000px; }
+.units-category { padding:28px 32px; border-bottom:1px solid var(--rule-2); }
+.category-title { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--ink); margin:0 0 4px 0; }
+.category-subtitle { font-size:13px; color:var(--ink-3); margin:0 0 20px 0; }
+.unit-row { display:grid; grid-template-columns:2.5fr 1.5fr 1.2fr 1fr auto; gap:16px; align-items:center; padding:16px 20px; background:var(--linen); border-radius:10px; margin-bottom:12px; transition:all 0.2s ease; }
+.unit-row:hover { background:var(--rule-2); transform:translateX(4px); }
+.unit-row.best-value { background:#fff3e0; border:2px solid #ff9800; }
+.unit-main-info { display:flex; flex-direction:column; gap:4px; }
+.unit-name { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.unit-model { font-size:15px; font-weight:600; color:var(--ink); }
+.unit-badge { font-size:10px; font-weight:700; color:white; background:#ff6b6b; padding:3px 8px; border-radius:10px; text-transform:uppercase; }
+.unit-specs { font-size:12px; color:var(--ink-3); }
+.unit-pricing { display:flex; flex-direction:column; gap:2px; }
+.price-total { font-size:14px; font-weight:600; color:var(--ink-2); }
+.price-per-person { font-size:16px; font-weight:700; color:var(--teal); }
+.unit-savings { display:flex; flex-direction:column; gap:2px; }
+.savings-amount { font-size:13px; font-weight:600; color:var(--teal); }
+.savings-annual { font-size:11px; color:var(--ink-4); }
+.unit-availability { font-size:12px; color:var(--ink-2); }
+.property-contact-section { padding:28px 32px; background:var(--linen); }
+.contact-info-box { background:#fff3cd; border-left:4px solid #ffc107; padding:16px 20px; border-radius:10px; margin-bottom:20px; }
+.contact-info-box h4 { margin:0 0 8px 0; font-size:14px; color:#856404; font-weight:600; }
+.contact-info-box p { margin:0; font-size:13px; color:#856404; line-height:1.6; }
+.contact-cta { text-align:center; }
+.contact-cta h4 { font-size:18px; margin:0 0 16px 0; color:var(--ink); }
+.btn-contact-primary { display:inline-block; padding:16px 36px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; text-decoration:none; border-radius:10px; font-size:16px; font-weight:700; transition:all 0.3s ease; }
+.btn-contact-primary:hover { background:linear-gradient(135deg, #5568d3, #653a8b); transform:translateY(-2px); box-shadow:0 6px 20px rgba(102, 126, 234, 0.4); }
+.urgency-text { margin-top:12px; font-size:13px; color:#d32f2f; font-weight:600; }
+
+/* ROYAL CREST PROPERTY CARD */
+.property-card { background:var(--white); border:1px solid var(--rule); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--sh-md); margin-bottom:40px; }
+.property-header { padding:32px; border-bottom:2px solid var(--rule); }
+.property-badge { display:inline-block; background:linear-gradient(135deg, #ff6b6b, #ff8e53); color:white; padding:6px 16px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:20px; }
+.property-main { display:flex; gap:28px; align-items:flex-start; }
+.property-image { flex-shrink:0; width:180px; height:130px; border-radius:var(--r); overflow:hidden; background:linear-gradient(160deg,#B8CFC9,#DDE9E6); display:flex; align-items:center; justify-content:center; font-size:48px; opacity:.5; }
+.property-info { flex-grow:1; }
+.property-info h3 { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--ink); margin:0 0 8px 0; letter-spacing:-.5px; }
+.property-address { font-size:14px; color:var(--ink-3); margin:4px 0; }
+.property-quick-stats { display:flex; gap:32px; margin:16px 0; }
+.stat { display:flex; flex-direction:column; }
+.stat-value { font-size:18px; font-weight:700; color:var(--ink); }
+.stat-label { font-size:11px; color:var(--ink-4); text-transform:uppercase; letter-spacing:0.5px; }
+.property-savings-banner { background:var(--teal-lt); color:var(--teal); padding:14px 18px; border-radius:10px; font-size:15px; margin:16px 0; border-left:4px solid var(--teal); font-weight:600; }
+.property-amenities-preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.property-amenities-preview span { font-size:12px; color:var(--ink-2); background:var(--linen); padding:6px 12px; border-radius:16px; }
+.expand-units-btn { width:100%; padding:18px 28px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; border:none; font-size:15px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:all 0.3s ease; }
+.expand-units-btn:hover { background:linear-gradient(135deg, #5568d3, #653a8b); }
+.expand-icon { transition:transform 0.3s ease; }
+.expand-units-btn.expanded .expand-icon { transform:rotate(180deg); }
+.units-list { max-height:0; overflow:hidden; transition:max-height 0.5s ease; }
+.units-list.expanded { max-height:10000px; }
+.units-category { padding:28px 32px; border-bottom:1px solid var(--rule-2); }
+.category-title { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--ink); margin:0 0 4px 0; }
+.category-subtitle { font-size:13px; color:var(--ink-3); margin:0 0 20px 0; }
+.unit-row { display:grid; grid-template-columns:2.5fr 1.5fr 1.2fr 1fr auto; gap:16px; align-items:center; padding:16px 20px; background:var(--linen); border-radius:10px; margin-bottom:12px; transition:all 0.2s ease; }
+.unit-row:hover { background:var(--rule-2); transform:translateX(4px); }
+.unit-row.best-value { background:#fff3e0; border:2px solid #ff9800; }
+.unit-main-info { display:flex; flex-direction:column; gap:4px; }
+.unit-name { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.unit-model { font-size:15px; font-weight:600; color:var(--ink); }
+.unit-badge { font-size:10px; font-weight:700; color:white; background:#ff6b6b; padding:3px 8px; border-radius:10px; text-transform:uppercase; }
+.unit-specs { font-size:12px; color:var(--ink-3); }
+.unit-pricing { display:flex; flex-direction:column; gap:2px; }
+.price-total { font-size:14px; font-weight:600; color:var(--ink-2); }
+.price-per-person { font-size:16px; font-weight:700; color:var(--teal); }
+.unit-savings { display:flex; flex-direction:column; gap:2px; }
+.savings-amount { font-size:13px; font-weight:600; color:var(--teal); }
+.savings-annual { font-size:11px; color:var(--ink-4); }
+.unit-availability { font-size:12px; color:var(--ink-2); }
+.property-contact-section { padding:28px 32px; background:var(--linen); }
+.contact-info-box { background:#fff3cd; border-left:4px solid #ffc107; padding:16px 20px; border-radius:10px; margin-bottom:20px; }
+.contact-info-box h4 { margin:0 0 8px 0; font-size:14px; color:#856404; font-weight:600; }
+.contact-info-box p { margin:0; font-size:13px; color:#856404; line-height:1.6; }
+.contact-cta { text-align:center; }
+.contact-cta h4 { font-size:18px; margin:0 0 16px 0; color:var(--ink); }
+.btn-contact-primary { display:inline-block; padding:16px 36px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; text-decoration:none; border-radius:10px; font-size:16px; font-weight:700; transition:all 0.3s ease; }
+.btn-contact-primary:hover { background:linear-gradient(135deg, #5568d3, #653a8b); transform:translateY(-2px); box-shadow:0 6px 20px rgba(102, 126, 234, 0.4); }
+.urgency-text { margin-top:12px; font-size:13px; color:#d32f2f; font-weight:600; }
+
 /* ROOMMATES */
 .rm-sec { background:var(--linen); border-top:1px solid var(--rule); }
 .rm-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; margin-top:64px; }
@@ -298,6 +398,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
   .list-grid{grid-template-columns:1fr 1fr}
   .rm-grid{grid-template-columns:1fr;gap:40px}
   .ft-grid{grid-template-columns:1fr 1fr}
+  .unit-row{grid-template-columns:1fr;gap:8px}
+  .property-main{flex-direction:column}
+  .property-image{width:100%}
 }
 @media(max-width:768px){
   nav .nav-links{display:none}
@@ -312,6 +415,8 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
   .ft-grid{grid-template-columns:1fr;gap:32px}
   .ft-bot{flex-direction:column;gap:12px;text-align:center}
   .d-stats{grid-template-columns:1fr 1fr}
+  .property-quick-stats{flex-direction:column;gap:12px}
+  .unit-row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -548,6 +653,292 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button class="filter-btn" onclick="filterL(this,'3br')">3+ Bedrooms</button>
       <button class="filter-btn" onclick="filterL(this,'furnished')">Furnished</button>
     </div>
+
+    <!-- ROYAL CREST PROPERTY CARD -->
+    <div class="property-card">
+      <div class="property-header">
+        <div class="property-badge">🔥 BEST VALUE FOR STUDENTS</div>
+        <div class="property-main">
+          <div class="property-image">🏘️</div>
+          <div class="property-info">
+            <h3>Royal Crest Estates North Andover</h3>
+            <p class="property-address">📍 50 Royal Crest Drive, North Andover, MA 01845</p>
+            <p class="property-address">🚗 2.8 miles from Merrimack College (6 min drive)</p>
+            <div class="property-quick-stats">
+              <div class="stat">
+                <span class="stat-value">11</span>
+                <span class="stat-label">Units Available</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">From $1,183/mo</span>
+                <span class="stat-label">Per Person</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">June 2026</span>
+                <span class="stat-label">Move-In</span>
+              </div>
+            </div>
+            <div class="property-savings-banner">
+              💰 <strong>Save up to $7,800/year</strong> vs. Merrimack dorms
+            </div>
+            <div class="property-amenities-preview">
+              <span>🏊 Pool</span>
+              <span>💪 Gym</span>
+              <span>🅿️ Parking</span>
+              <span>🐕 Pets OK</span>
+              <span>🔥 Heat Included</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="expand-units-btn" onclick="toggleRoyalCrest(this)">
+        <span class="expand-text">View All 11 Available Units</span>
+        <span class="expand-icon">▼</span>
+      </button>
+
+      <div id="royal-crest-units" class="units-list">
+        <!-- 3BR UNITS -->
+        <div class="units-category">
+          <h4 class="category-title">🔥 Best Value - 3 Bedroom Apartments</h4>
+          <p class="category-subtitle">Split 3 ways for maximum savings</p>
+
+          <div class="unit-row best-value">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Windsor</span>
+                <span class="unit-badge">MOST POPULAR</span>
+              </div>
+              <div class="unit-specs">3 Bed / 2 Bath • 1,300 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">$3,548/month</div>
+              <div class="price-per-person">$1,183/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $650/mo</span>
+              <span class="savings-annual">= $7,800/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row best-value">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Windsor II</span>
+                <span class="unit-badge">EXTRA SPACE</span>
+              </div>
+              <div class="unit-specs">3 Bed / 2 Bath • 1,450 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">$3,575/month</div>
+              <div class="price-per-person">$1,192/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $641/mo</span>
+              <span class="savings-annual">= $7,692/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+        </div>
+
+        <!-- 2BR BUDGET -->
+        <div class="units-category">
+          <h4 class="category-title">2 Bedroom - Budget Friendly</h4>
+          <p class="category-subtitle">Under $1,400/person</p>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name"><span class="unit-model">Hampton</span></div>
+              <div class="unit-specs">2 Bed / 1 Bath • 885 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">From $2,630/month</div>
+              <div class="price-per-person">$1,315/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $518/mo</span>
+              <span class="savings-annual">= $6,216/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name"><span class="unit-model">Buckingham</span></div>
+              <div class="unit-specs">2 Bed / 1 Bath • 950 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">From $2,660/month</div>
+              <div class="price-per-person">$1,330/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $503/mo</span>
+              <span class="savings-annual">= $6,036/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name"><span class="unit-model">Buckingham II</span></div>
+              <div class="unit-specs">2 Bed / 1 Bath • 975 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">From $2,680/month</div>
+              <div class="price-per-person">$1,340/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $493/mo</span>
+              <span class="savings-annual">= $5,916/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Astor</span>
+                <span class="unit-badge">2 BATHS</span>
+              </div>
+              <div class="unit-specs">2 Bed / 2 Bath • 1,200 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">From $2,745/month</div>
+              <div class="price-per-person">$1,373/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $460/mo</span>
+              <span class="savings-annual">= $5,520/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 16, 2026</strong></div>
+          </div>
+        </div>
+
+        <!-- 2BR UPGRADED -->
+        <div class="units-category">
+          <h4 class="category-title">2 Bedroom - Upgraded</h4>
+          <p class="category-subtitle">$1,400-1,600/person</p>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Hampton II</span>
+                <span class="unit-badge">2 BATHS</span>
+              </div>
+              <div class="unit-specs">2 Bed / 2 Bath • 885 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">From $2,760/month</div>
+              <div class="price-per-person">$1,380/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $453/mo</span>
+              <span class="savings-annual">= $5,436/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Astor II</span>
+                <span class="unit-badge">SPACIOUS</span>
+              </div>
+              <div class="unit-specs">2 Bed / 2 Bath • 1,250 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">From $2,845/month</div>
+              <div class="price-per-person">$1,423/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $410/mo</span>
+              <span class="savings-annual">= $4,920/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Hampton Premier</span>
+                <span class="unit-badge">PREMIER</span>
+              </div>
+              <div class="unit-specs">2 Bed / 1 Bath • 885 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">$3,075/month</div>
+              <div class="price-per-person">$1,538/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $295/mo</span>
+              <span class="savings-annual">= $3,540/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Hampton II Premier</span>
+                <span class="unit-badge">PREMIER + 2 BATHS</span>
+              </div>
+              <div class="unit-specs">2 Bed / 2 Bath • 885 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">$3,120/month</div>
+              <div class="price-per-person">$1,560/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $273/mo</span>
+              <span class="savings-annual">= $3,276/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
+          </div>
+        </div>
+
+        <!-- 2BR PREMIUM -->
+        <div class="units-category">
+          <h4 class="category-title">2 Bedroom - Premium</h4>
+          <p class="category-subtitle">Luxury finishes</p>
+
+          <div class="unit-row">
+            <div class="unit-main-info">
+              <div class="unit-name">
+                <span class="unit-model">Astor Premier</span>
+                <span class="unit-badge">LUXURY</span>
+              </div>
+              <div class="unit-specs">2 Bed / 2 Bath • 1,200 sq ft</div>
+            </div>
+            <div class="unit-pricing">
+              <div class="price-total">$3,305/month</div>
+              <div class="price-per-person">$1,653/person</div>
+            </div>
+            <div class="unit-savings">
+              <span class="savings-amount">Save $180/mo</span>
+              <span class="savings-annual">= $2,160/year</span>
+            </div>
+            <div class="unit-availability">Available: <strong>Jul 27, 2026</strong></div>
+          </div>
+        </div>
+
+        <!-- CONTACT SECTION -->
+        <div class="property-contact-section">
+          <div class="contact-info-box">
+            <h4>⚠️ About June Move-In Dates</h4>
+            <p>Royal Crest offers 12-month leases starting in June. <strong>Even paying 3 months of "empty" rent, you still save $4,000+/year vs. dorms.</strong> Many students sublet summer months or stay for internships.</p>
+          </div>
+          <div class="contact-cta">
+            <h4>Ready to tour Royal Crest?</h4>
+            <a href="https://www.royalcrestnorthandover.com" class="btn-contact-primary" target="_blank">
+              🏠 Contact Royal Crest →
+            </a>
+            <p class="urgency-text">⚡ Units filling fast! Feb-March is peak leasing season.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="list-grid" id="listGrid"></div>
   </div>
 </section>
@@ -773,11 +1164,44 @@ function calc(){
   document.getElementById('bkUtils').textContent='$'+utils+' / mo';
   document.getElementById('bkTotal').textContent='$'+offMo+' / mo';
   document.getElementById('fourYr').textContent=f(fy);
-  // keep the note below total accurate
   const saveNote = save > 0
     ? `over 4 years of college — that's ${f(fy)} back in your pocket`
     : `on-campus is cheaper with these parameters`;
   document.getElementById('fyNote').textContent=saveNote;
+}
+
+// Royal Crest expand/collapse
+function toggleRoyalCrest(btn) {
+  const unitsList = document.getElementById('royal-crest-units');
+  const icon = btn.querySelector('.expand-icon');
+  const text = btn.querySelector('.expand-text');
+  
+  if (unitsList.classList.contains('expanded')) {
+    unitsList.classList.remove('expanded');
+    btn.classList.remove('expanded');
+    text.textContent = 'View All 11 Available Units';
+  } else {
+    unitsList.classList.add('expanded');
+    btn.classList.add('expanded');
+    text.textContent = 'Hide Units';
+  }
+}
+
+// Royal Crest expand/collapse
+function toggleRoyalCrest(btn) {
+  const unitsList = document.getElementById('royal-crest-units');
+  const icon = btn.querySelector('.expand-icon');
+  const text = btn.querySelector('.expand-text');
+  
+  if (unitsList.classList.contains('expanded')) {
+    unitsList.classList.remove('expanded');
+    btn.classList.remove('expanded');
+    text.textContent = 'View All 11 Available Units';
+  } else {
+    unitsList.classList.add('expanded');
+    btn.classList.add('expanded');
+    text.textContent = 'Hide Units';
+  }
 }
 
 function openModal(t){ document.getElementById(t==='signup'?'signupModal':'listModal').classList.add('open'); }
