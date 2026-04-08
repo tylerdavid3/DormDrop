@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "DormDrop Listing Copier",
+  "version": "1.0",
+  "description": "Copy Zillow listings into DormDrop format with one click.",
+  "content_scripts": [
+    {
+      "matches": ["*://www.zillow.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["clipboardWrite"]
+}
