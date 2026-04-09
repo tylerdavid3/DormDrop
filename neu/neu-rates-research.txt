@@ -1,0 +1,63 @@
+NEU Housing & Dining Rates Research
+====================================
+Source: housing.northeastern.edu, dining.northeastern.edu, research via third-party aggregators
+Academic Year: 2025–26 (2026–27 rates not yet published as of April 2026)
+
+ROOM RATES (per year = 2x semester)
+-------------------------------------
+Economy Double/Triple (Stetson, Willis, Speare):        $10,270/yr  ($5,135/semester)
+Standard Double (International Village / East Village): $11,360/yr  (~$5,680/semester)
+Standard Triple (International Village):                $10,900/yr  (~$5,450/semester)
+Suite room — multi-occupancy (West Village):            $12,580/yr  ($6,290/semester)
+Standard Single:                                        $14,200/yr  (~$7,100/semester)
+Suite room — single occupancy (West Village):           $15,000/yr  (~$7,500/semester)
+Apartment shared room (no dining req.):                 ~$12,000/yr
+Apartment single bedroom (no dining req.):              ~$15,000/yr
+
+Average annual room charge (reported):                  ~$11,360/yr
+
+MEAL PLANS (per year = 2x semester)
+--------------------------------------
+NU-Unlimited (most common freshman plan):   $8,900/yr  ($4,450/semester)  — includes $400 dining dollars + 10 guest passes
+NU-225:                                     $8,900/yr  ($4,450/semester)  — includes $600 dining dollars + 10 guest passes
+NU-180:                                     $7,870/yr  ($3,935/semester)  — includes $300 dining dollars + 10 guest passes
+NU-150:                                     $6,930/yr  ($3,465/semester)  — includes $200 dining dollars + 10 guest passes
+NU-100:                                     $5,600/yr  ($2,800/semester)  — includes $200 dining dollars + 10 guest passes
+Profiler (non-traditional, $500/semester):  $1,000/yr  — does NOT satisfy freshman requirement
+
+MEAL PLAN REQUIREMENTS
+-----------------------
+- All first-year students in university housing MUST enroll in a traditional meal plan
+- First-years in meal-plan-required housing: auto-enrolled in NU-Unlimited (can switch to NU-225 or NU-180)
+- First-years in non-meal-plan-required housing: auto-enrolled in NU-180 (can switch up)
+- Apartment-style residences: no meal plan required
+
+FEES & DEPOSITS
+----------------
+New student enrollment deposit:        $600 (nonrefundable)
+Continuing student housing deposit:    $200/semester
+Residence Student Association fee:     $37/semester ($19 half-semester)
+
+TOTAL ROOM + BOARD ESTIMATES (2025–26)
+-----------------------------------------
+Standard Double + NU-Unlimited:        $11,360 + $8,900 = $20,260/yr
+Economy Double + NU-Unlimited:         $10,270 + $8,900 = $19,170/yr
+Standard Single + NU-Unlimited:        $14,200 + $8,900 = $23,100/yr
+Suite Single + NU-Unlimited:           $15,000 + $8,900 = $23,900/yr
+Reported combined room+board average:  ~$20,260/yr
+
+SAVINGS CALCULATION (used in DormDrop)
+-----------------------------------------
+NEU Standard Double + NU-Unlimited:   $20,260/yr
+Average off-campus (2 roommates,
+  Mission Hill / Roxbury):             ~$9,600/yr ($800/person/mo x 12)
+Max annual savings:                   ~$10,660/yr
+
+NEARBY NEIGHBORHOODS
+---------------------
+Mission Hill       — 0.4–0.8 mi to NEU, T: Roxbury Crossing (Orange Line)
+Fenway/Longwood    — 0.2–0.5 mi to NEU, T: Northeastern (Green E), Fenway (Green E)
+Jamaica Plain      — 1.5–2.5 mi, T: Green St / Stony Brook (Orange Line)
+Roxbury            — 0.3–0.7 mi, T: Ruggles (Orange), Mass Ave (Orange)
+South End          — 0.7–1.2 mi, T: Mass Ave (Orange), Back Bay (Commuter Rail)
+Back Bay           — 0.8–1.5 mi, T: Hynes (Green B/C/D), Copley (Green)
