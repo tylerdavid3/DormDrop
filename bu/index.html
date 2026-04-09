@@ -161,7 +161,8 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 .list-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
 .list-card { background:var(--white); border:1px solid var(--rule); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--sh-sm); cursor:pointer; }
 .list-card:hover { box-shadow:var(--sh-lg); transform:translateY(-3px); border-color:transparent; }
-.li-img { height:196px; position:relative; display:flex; align-items:center; justify-content:center; }
+.li-img { height:196px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:var(--r) var(--r) 0 0; }
+.li-img img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .li-1 { background:linear-gradient(160deg,#C9D6DF,#F2F4F7); }
 .li-2 { background:linear-gradient(160deg,#D4C5B0,#EDE8E0); }
 .li-3 { background:linear-gradient(160deg,#B8CFC9,#DDE9E6); }
@@ -788,7 +789,7 @@ function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
   document.getElementById('listGrid').innerHTML=s.map(l=>`
     <div class="list-card" onclick="openDetail(${l.id})">
-      <div class="li-img ${l.bg}"><div style="font-size:52px;opacity:.45">${l.em}</div><div class="li-badge ${l.bc}">${l.badge}</div></div>
+      <div class="li-img ${l.img?'':l.bg}">${l.img?`<img src="${l.img}" alt="" loading="lazy" onerror="this.parentNode.classList.add('${l.bg}');this.remove()">`:`<div style="font-size:52px;opacity:.45">${l.em}</div>`}<div class="li-badge ${l.bc}">${l.badge}</div></div>
       <div class="li-body">
         <div class="li-price">${l.price}<span> ${l.per}</span></div>
         <div class="li-addr">📍 ${l.addr}</div>
@@ -807,7 +808,7 @@ function openDetail(id){
   const l=listings.find(x=>x.id===id);
   document.getElementById('detailContent').innerHTML=`
     <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
-    <div class="d-img ${l.bg}">${l.em}</div>
+    ${l.img?`<img src="${l.img}" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.insertAdjacentHTML('afterend','<div class=\\'d-img ${l.bg}\\'>${l.em}</div>');this.remove()">`:`<div class="d-img ${l.bg}">${l.em}</div>`}
     <div class="d-price">${l.price} <span style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:400;color:var(--ink-4)">${l.per}</span></div>
     <div class="d-addr">📍 ${l.addr}</div>
     <div class="d-stats">

@@ -141,9 +141,10 @@
     var desc  = (p.description || p.homeDescription || '').trim();
     var homeType  = (p.homeType || '').toLowerCase();
     var furnished = /furnished/i.test(desc);
+    var img = extractPhotoUrl(p);
 
     return { addrStr: addrStr, price: price, beds: beds, baths: baths,
-             sqft: sqft, desc: desc, homeType: homeType, furnished: furnished };
+             sqft: sqft, desc: desc, homeType: homeType, furnished: furnished, img: img };
   }
 
   // Strategy 2 — DOM scraping
@@ -201,8 +202,43 @@
 
     var furnished = /furnished/i.test(desc + bodyText.slice(0, 3000));
 
+    // Grab first visible listing photo from the DOM
+    var img = '';
+    var imgEl = document.querySelector(
+      '[data-testid="hero-image-container"] img, ' +
+      '[class*="media-stream"] img, ' +
+      'picture img[src*="zillowstatic"]'
+    );
+    if (imgEl && imgEl.src && imgEl.src.includes('zillowstatic')) img = imgEl.src;
+
     return { addrStr: addrStr, price: price, beds: beds, baths: baths,
-             sqft: sqft, desc: desc, homeType: '', furnished: furnished };
+             sqft: sqft, desc: desc, homeType: '', furnished: furnished, img: img };
+  }
+
+  // ── Photo URL extraction ───────────────────────────────────────────────────
+  function extractPhotoUrl(p) {
+    // originalPhotos is the richest source — pick the best-quality JPEG under 1200px
+    var photos = p.originalPhotos || p.photos || [];
+    for (var i = 0; i < photos.length; i++) {
+      var photo = photos[i];
+      // mixedSources.jpeg array
+      if (photo.mixedSources && photo.mixedSources.jpeg) {
+        var jpegs = photo.mixedSources.jpeg;
+        var best = { url: '', width: 0 };
+        for (var j = 0; j < jpegs.length; j++) {
+          var jx = jpegs[j];
+          if (jx.width <= 1200 && jx.width > best.width && jx.url) best = jx;
+        }
+        if (best.url) return best.url;
+        // fallback to last in array
+        if (jpegs.length && jpegs[jpegs.length - 1].url) return jpegs[jpegs.length - 1].url;
+      }
+      // flat url property
+      if (photo.url && photo.url.includes('zillow')) return photo.url;
+    }
+    // hdpData.images fallback
+    if (p.images && p.images.length) return p.images[0];
+    return '';
   }
 
   // ── Formatting — output matches DormDrop listing object exactly ────────────
@@ -224,8 +260,9 @@
     var baths    = d.baths    || 0;
     var sqft     = d.sqft     || 0;
     var desc     = d.desc     || '';
-    var homeType = d.homeType || '';
+    var homeType  = d.homeType || '';
     var furnished = !!d.furnished;
+    var img = d.img || '';
 
     // id — use last 4 digits of timestamp so it's unique each paste session
     var id   = Date.now() % 9000 + 1000;
@@ -272,7 +309,7 @@
       "tags:" + JSON.stringify(tags) + "," +
       "saving:'" + esc(saving) + "',savN:" + savN + "," +
       "desc:'" + esc(shortDesc) + "'," +
-      "type:'" + type + "',furnished:" + furnished + "}"
+      "type:'" + type + "',furnished:" + furnished + (img ? ",img:'" + esc(img) + "'" : '') + "}"
     );
   }
 
