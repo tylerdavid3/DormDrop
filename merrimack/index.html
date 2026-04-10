@@ -418,6 +418,27 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
   .property-quick-stats{flex-direction:column;gap:12px}
   .unit-row{grid-template-columns:1fr}
 }
+
+/* ROOMMATE FEATURE — Firebase states */
+@keyframes spin { to { transform:rotate(360deg); } }
+.rm-state-box { grid-column:1/-1; text-align:center; padding:40px 20px; }
+.rm-spinner   { font-size:28px; display:inline-block; animation:spin 1.2s linear infinite; color:var(--ink-4); margin-bottom:10px; }
+.rm-state-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:600; color:var(--ink); margin-bottom:8px; }
+.rm-state-desc  { font-size:14px; color:var(--ink-3); max-width:280px; margin:0 auto 20px; line-height:1.6; }
+.rm-state-btn   { padding:12px 28px; font-size:14px; border:none; cursor:pointer; }
+.conv-row     { cursor:pointer; padding:8px; border-radius:8px; transition:background .15s; }
+.conv-row:hover { background:var(--linen); }
+.conv-preview { font-size:12px; color:var(--ink-4); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px; }
+.conv-empty   { text-align:center; padding:20px 12px; color:var(--ink-4); font-size:13px; }
+.unread-badge { background:var(--teal); color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:100px; }
+.quiz-group        { margin-bottom:18px; }
+.quiz-group-label  { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--ink-4); margin-bottom:8px; }
+.quiz-options      { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.progress-bar      { display:flex; gap:6px; margin-bottom:24px; }
+.prog-step         { flex:1; height:4px; border-radius:100px; background:var(--rule); transition:background .3s; }
+.chat-body    { flex:1; overflow-y:auto; padding:20px; }
+.chat-footer  { padding:14px 16px; border-top:1px solid var(--rule); display:flex; gap:8px; flex-shrink:0; }
+.auth-err     { font-size:13px; color:#DC2626; margin-bottom:14px; display:none; }
 </style>
 </head>
 <body>
@@ -433,8 +454,8 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
     </div>
     <div class="nav-ctas">
-      <button class="btn-ghost" onclick="return false;">Log in</button>
-      <a href="https://forms.gle/NQNp73pe5fxzQ4jH6" target="_blank" class="btn-solid" style="text-decoration:none;display:inline-block;">Get Started</a>
+      <button id="navLoginBtn" class="btn-ghost" onclick="openAuthModal('login')">Log in</button>
+      <button id="navSignupBtn" class="btn-solid" onclick="openAuthModal('signup')">Get Started</button>
     </div>
   </div>
 </nav>
@@ -967,7 +988,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
               <div><div class="m-bubble">Night owl for sure. Also really interested in that spot — want to set up a tour together?</div><div class="m-meta">Just now</div></div>
             </div>
           </div>
-          <div class="msg-compose">
+          <div class="msg-compose" id="inlineCompose">
             <input class="msg-input" id="msgIn" placeholder="Message Jordan…" onkeydown="sendMsg(event)"/>
             <button class="msg-send" onclick="sendMsgBtn()">↑</button>
           </div>
@@ -984,7 +1005,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
           <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">🧹</div><div class="pi-l">Keeps Things Tidy</div></div>
         </div>
-        <a href="#" target="_blank" class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px;font-size:15px;text-decoration:none;">Find My Matches</a>
+        <button onclick="onFindMatches()" class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px;font-size:15px;border:none;cursor:pointer;border-radius:var(--r);">Find My Matches</button>
       </div>
     </div>
   </div>
@@ -999,7 +1020,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <p>Join hundreds of Merrimack students and families who used DormDrop to make a smarter housing decision.</p>
       <div class="cta-row">
         <input class="cta-in" type="email" placeholder="Enter your Merrimack email address…"/>
-        <a href="#" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-block;">Get Started Free</a>
+        <button onclick="openAuthModal('signup')" class="btn-primary" style="display:inline-block;">Get Started Free</button>
       </div>
     </div>
   </div>
@@ -1046,25 +1067,45 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 <div class="overlay" id="signupModal" onclick="closeOverlay(event,'signupModal')">
   <div class="modal">
     <button class="modal-x" onclick="closeModal('signupModal')">✕</button>
-    <div class="m-title">Create your account</div>
-    <p class="m-sub">Free for all Merrimack students. No credit card required.</p>
-    <div class="tab-row">
-      <button class="tab-btn active" onclick="switchTab(this,'stTab')">Student</button>
-      <button class="tab-btn" onclick="switchTab(this,'llTab')">Landlord / Realtor</button>
-    </div>
-    <div id="stTab">
-      <div class="fg"><label>Full Name</label><input type="text" placeholder="Tyler David"/></div>
-      <div class="fg"><label>BU Email</label><input type="email" placeholder="tdavid@bu.edu"/></div>
-      <div class="fg"><label>Password</label><input type="password" placeholder="Create a password"/></div>
-      <div class="fg"><label>Year at Merrimack</label><select><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option><option>Graduate Student</option></select></div>
-      <button class="btn-primary" onclick="alert('Welcome to DormDrop! In the full build, this creates your account.')">Create Account</button>
+    <div id="authModalTitle" class="m-title">Create your account</div>
+    <p id="authModalSub" class="m-sub">Free for all Merrimack students. No credit card required.</p>
+    <p id="authError" class="auth-err"></p>
+
+    <!-- Signup view -->
+    <div id="signupFields">
+      <div class="fg"><label>Full Name</label><input id="authName" type="text" placeholder="Taylor Smith"/></div>
+      <div class="fg"><label>Merrimack Email</label><input id="authEmail" type="email" placeholder="t.smith@merrimack.edu"/></div>
+      <div class="fg"><label>Password</label><input id="authPwd" type="password" placeholder="Create a password (6+ chars)"/></div>
+      <div class="fg"><label>Year at Merrimack</label><select id="authYear"><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option><option>Graduate Student</option></select></div>
+      <button id="signupBtn" data-label="Create Account" class="btn-primary" onclick="doSignup()" style="width:100%;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Create Account</button>
       <div class="or-div">or</div>
-      <button class="btn-outline" style="width:100%;text-align:center;display:block;padding:14px" onclick="alert('Login coming soon!')">Log In to Existing Account</button>
+      <button class="btn-outline" onclick="showAuthView('loginFields')" style="width:100%;text-align:center;display:block;padding:14px">Log In to Existing Account</button>
     </div>
+
+    <!-- Login view -->
+    <div id="loginFields" style="display:none">
+      <div class="fg"><label>Merrimack Email</label><input id="loginEmail" type="email" placeholder="t.smith@merrimack.edu"/></div>
+      <div class="fg"><label>Password</label><input id="loginPwd" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button id="loginBtn" data-label="Log In" class="btn-primary" onclick="doLogin()" style="width:100%;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Log In</button>
+      <div class="or-div">or</div>
+      <button class="btn-ghost" onclick="showAuthView('forgotFields')" style="width:100%;text-align:center;display:block;padding:12px;margin-bottom:6px">Forgot Password?</button>
+      <button class="btn-ghost" onclick="showAuthView('signupFields')" style="width:100%;text-align:center;display:block;padding:12px">Create New Account</button>
+    </div>
+
+    <!-- Forgot password view -->
+    <div id="forgotFields" style="display:none">
+      <div class="fg"><label>Merrimack Email</label><input id="forgotEmail" type="email" placeholder="t.smith@merrimack.edu"/></div>
+      <button class="btn-primary" onclick="doResetPassword()" style="width:100%;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Send Reset Email</button>
+      <div class="or-div">or</div>
+      <button class="btn-ghost" onclick="showAuthView('loginFields')" style="width:100%;text-align:center;display:block;padding:12px">&#8592; Back to Login</button>
+    </div>
+
+    <!-- Landlord view -->
+    <div id="stTab" style="display:none"></div>
     <div id="llTab" style="display:none">
       <div class="fg"><label>Name / Company</label><input type="text" placeholder="Smith Properties LLC"/></div>
       <div class="fg"><label>Email</label><input type="email" placeholder="contact@smithproperties.com"/></div>
-      <div class="fg"><label>Phone</label><input type="tel" placeholder="(617) 555-0100"/></div>
+      <div class="fg"><label>Phone</label><input type="tel" placeholder="(978) 555-0100"/></div>
       <div class="fg"><label>License # (optional)</label><input type="text" placeholder="MA Real Estate License"/></div>
       <button class="btn-primary" onclick="alert('Account request submitted. Our team will follow up within 24 hours.')">Request Landlord Access</button>
     </div>
@@ -1095,10 +1136,10 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 const listings=[];
 
 const profiles=[
-  {av:'J',ac:'pa-1',name:'Jordan K.',info:'CAS · Junior · Allston',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
-  {av:'M',ac:'pa-2',name:'Maya R.',info:'Questrom · Sophomore · Fenway',match:87,traits:['Social','Pet-friendly'],matched:false},
-  {av:'S',ac:'pa-3',name:'Sam T.',info:'ENG · Senior · Brighton',match:82,traits:['Studies at home','Early riser'],matched:false},
-  {av:'A',ac:'pa-4',name:'Alex P.',info:'COM · Junior · Coolidge',match:79,traits:['Tidy','Night owl','Cook'],matched:false}
+  {av:'J',ac:'pa-1',name:'Jordan K.',info:'Business · Junior · North Andover',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
+  {av:'M',ac:'pa-2',name:'Maya R.',info:'Health Sciences · Sophomore · Lawrence',match:87,traits:['Social','Pet-friendly'],matched:false},
+  {av:'S',ac:'pa-3',name:'Sam T.',info:'Engineering · Senior · Andover',match:82,traits:['Studies at home','Early riser'],matched:false},
+  {av:'A',ac:'pa-4',name:'Alex P.',info:'Liberal Arts · Junior · Methuen',match:79,traits:['Tidy','Night owl','Cook'],matched:false}
 ];
 
 function renderListings(f){
@@ -1235,5 +1276,97 @@ function sendMsgBtn(){
 
 renderListings('all');renderProfiles();calc();
 </script>
+
+<!-- ── PROFILE SETUP MODAL ─────────────────────────────────────── -->
+<div class="overlay" id="profileModal" onclick="closeOverlay(event,'profileModal')">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-x" onclick="closeModal('profileModal')">✕</button>
+    <div class="m-title">Set up your profile</div>
+    <p class="m-sub">Tell us about yourself so we can find your best matches.</p>
+    <div class="progress-bar">
+      <div class="prog-step" id="profProg1" style="background:var(--teal)"></div>
+      <div class="prog-step" id="profProg2"></div>
+    </div>
+    <div id="profStep1">
+      <div class="fg"><label>Your Name</label><input id="profName" type="text" placeholder="Taylor Smith"/></div>
+      <div class="fg"><label>Year at Merrimack</label>
+        <select id="profYear"><option value="Freshman">Freshman</option><option value="Sophomore">Sophomore</option><option value="Junior">Junior</option><option value="Senior">Senior</option><option value="Graduate Student">Graduate Student</option></select>
+      </div>
+      <div class="fg"><label>Gender <span style="font-weight:400;color:var(--ink-4)">(optional)</span></label>
+        <select id="profGender"><option value="">Prefer not to say</option><option value="Male">Male</option><option value="Female">Female</option><option value="Non-binary">Non-binary</option><option value="Other">Other</option></select>
+      </div>
+      <div class="fg"><label>Monthly Budget</label>
+        <select id="profBudget"><option value="under-700">Under $700/mo</option><option value="700-900" selected>$700–$900/mo</option><option value="900-1100">$900–$1,100/mo</option><option value="1100-1400">$1,100–$1,400/mo</option><option value="over-1400">$1,400+/mo</option></select>
+      </div>
+      <div class="fg"><label>Preferred Move-in Date</label><input id="profMoveIn" type="date"/></div>
+      <div class="fg"><label>Bio <span style="font-weight:400;color:var(--ink-4)">(optional, 500 chars)</span></label>
+        <textarea id="profBio" maxlength="500" style="width:100%;background:var(--linen);border:1px solid var(--rule);border-radius:9px;padding:12px 15px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:80px;color:var(--ink)" placeholder="Tell potential roommates a bit about yourself…"></textarea>
+      </div>
+    </div>
+    <div id="profStep2" style="display:none">
+      <p style="font-size:14px;color:var(--ink-3);margin-bottom:20px">Answer these 6 questions to find your most compatible matches.</p>
+      <div class="quiz-group"><div class="quiz-group-label">Sleep Schedule</div><div class="quiz-options">
+        <div class="pref-item" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-e">🌙</div><div class="pi-l">Night Owl</div></div>
+        <div class="pref-item" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-e">☀️</div><div class="pi-l">Early Riser</div></div>
+      </div></div>
+      <div class="quiz-group"><div class="quiz-group-label">Study Habits</div><div class="quiz-options">
+        <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-e">🏠</div><div class="pi-l">Study at Home</div></div>
+        <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-e">🎓</div><div class="pi-l">Study on Campus</div></div>
+      </div></div>
+      <div class="quiz-group"><div class="quiz-group-label">Social Style</div><div class="quiz-options">
+        <div class="pref-item" onclick="selectQuiz('socialPreferences','outgoing',this)"><div class="pi-e">🎉</div><div class="pi-l">Outgoing</div></div>
+        <div class="pref-item" onclick="selectQuiz('socialPreferences','quiet',this)"><div class="pi-e">🤫</div><div class="pi-l">Introverted</div></div>
+      </div></div>
+      <div class="quiz-group"><div class="quiz-group-label">Cleanliness</div><div class="quiz-options">
+        <div class="pref-item" onclick="selectQuiz('cleanliness','tidy',this)"><div class="pi-e">✨</div><div class="pi-l">Very Tidy</div></div>
+        <div class="pref-item" onclick="selectQuiz('cleanliness','organized-chaos',this)"><div class="pi-e">🗂️</div><div class="pi-l">Organized Chaos</div></div>
+      </div></div>
+      <div class="quiz-group"><div class="quiz-group-label">Pets</div><div class="quiz-options">
+        <div class="pref-item" onclick="selectQuiz('pets','pet-friendly',this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
+        <div class="pref-item" onclick="selectQuiz('pets','no-pets',this)"><div class="pi-e">🚫</div><div class="pi-l">No Pets</div></div>
+      </div></div>
+      <div class="quiz-group"><div class="quiz-group-label">Guests &amp; Parties</div><div class="quiz-options">
+        <div class="pref-item" onclick="selectQuiz('guestsParties','fine-with-guests',this)"><div class="pi-e">🥳</div><div class="pi-l">Guests are Fine</div></div>
+        <div class="pref-item" onclick="selectQuiz('guestsParties','prefer-quiet',this)"><div class="pi-e">🔇</div><div class="pi-l">Prefer Quiet</div></div>
+      </div></div>
+    </div>
+    <p id="profError" style="font-size:13px;color:#DC2626;margin-bottom:12px;display:none"></p>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="profBackBtn" class="btn-ghost" onclick="profileBack()" style="display:none">&#8592; Back</button>
+      <button id="profNextBtn" class="btn-primary" onclick="profileNext()" style="flex:1;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Continue &#8594;</button>
+      <button id="profSaveBtn" class="btn-primary" onclick="saveProfile()" style="flex:1;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px;display:none">Find My Matches &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MATCH DETAIL MODAL ──────────────────────────────────────── -->
+<div class="overlay" id="matchDetailModal" onclick="closeOverlay(event,'matchDetailModal')">
+  <div class="modal" id="matchDetailContent"></div>
+</div>
+
+<!-- ── CHAT MODAL ──────────────────────────────────────────────── -->
+<div class="overlay" id="chatModal" onclick="closeOverlay(event,'chatModal')">
+  <div class="modal" style="max-width:480px;height:80vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
+    <div class="chat-header" style="padding:20px 24px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600" id="chatModalTitle">Chat</div>
+        <div style="font-size:12px;color:var(--ink-4)">Merrimack College · DormDrop</div>
+      </div>
+      <button class="modal-x" style="position:static;margin:0" onclick="closeModal('chatModal')">✕</button>
+    </div>
+    <div class="chat-body" id="chatMessages"></div>
+    <div class="chat-footer">
+      <input class="msg-input" id="chatInput" placeholder="Type a message…" style="flex:1" onkeydown="if(event.key==='Enter')sendChatMessage()"/>
+      <button class="msg-send" onclick="sendChatMessage()">&#8593;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FIREBASE SDK + APP SCRIPTS ─────────────────────────────── -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="roommates.js"></script>
 </body>
 </html>
