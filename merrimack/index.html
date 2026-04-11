@@ -482,7 +482,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="h-stat-txt">Properties near campus</div>
       </div>
       <div class="h-stat">
-        <div class="h-stat-fig">500<sup>+</sup></div>
+        <div class="h-stat-fig" id="userCount">547</div>
         <div class="h-stat-txt">Students connected</div>
       </div>
     </div>
@@ -608,24 +608,44 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           </select>
         </div>
         <div class="fg">
+          <label>Lease Duration <span class="lv" id="leaseLbl">9-month (Academic Year)</span></label>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button id="lease9btn" onclick="setLease(9)" style="flex:1;padding:10px 0;background:var(--ink);color:var(--white);border:1px solid var(--ink);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Academic Year<br><span style="font-size:11px;font-weight:400;opacity:.75">9 months</span></button>
+            <button id="lease12btn" onclick="setLease(12)" style="flex:1;padding:10px 0;background:var(--linen);color:var(--ink-3);border:1px solid var(--rule);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Full Year<br><span style="font-size:11px;font-weight:400;opacity:.75">12 months</span></button>
+          </div>
+        </div>
+        <div class="fg">
           <label>Monthly rent (total unit)<span class="lv" id="rentLbl">$900</span></label>
-          <input type="range" min="600" max="4000" value="900" step="50" oninput="document.getElementById('rentLbl').textContent='$'+this.value;calc()"/>
+          <input type="range" min="600" max="4500" value="900" step="50" oninput="document.getElementById('rentLbl').textContent='$'+this.value;calc()"/>
         </div>
         <div class="fg">
           <label>People splitting rent<span class="lv" id="rmLbl">2</span></label>
           <input type="range" min="1" max="5" value="2" step="1" oninput="document.getElementById('rmLbl').textContent=this.value;calc()"/>
         </div>
         <div class="fg">
-          <label>Monthly groceries &amp; food<span class="lv" id="grocLbl">$300</span></label>
+          <label>Monthly groceries &amp; food <span style="font-size:11px;font-weight:400;color:var(--ink-4)">(per person)</span><span class="lv" id="grocLbl">$300</span></label>
           <input type="range" min="150" max="700" value="300" step="25" oninput="document.getElementById('grocLbl').textContent='$'+this.value;calc()"/>
         </div>
         <div class="fg">
-          <label>Utilities estimate</label>
+          <label>Utilities <span style="font-size:11px;font-weight:400;color:var(--ink-4)">(per person / mo)</span></label>
           <select id="utils" onchange="calc()">
-            <option value="100">~$100 / mo — split with roommates</option>
-            <option value="150">~$150 / mo</option>
-            <option value="200">~$200 / mo</option>
-            <option value="60">Included in rent</option>
+            <option value="100">~$100 / mo per person</option>
+            <option value="75">~$75 / mo per person</option>
+            <option value="150">~$150 / mo per person</option>
+            <option value="200">~$200 / mo per person</option>
+            <option value="0">Included in rent ($0)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label style="color:var(--teal)">🎓 Financial Aid Applied to Housing <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">Reduces on-campus cost</span></label>
+          <select id="financialAid" onchange="calc()">
+            <option value="0">No aid applied to housing</option>
+            <option value="3000">~$3,000/yr housing aid</option>
+            <option value="5000">~$5,000/yr housing aid</option>
+            <option value="7000">~$7,000/yr housing aid</option>
+            <option value="10000">~$10,000/yr housing aid</option>
+            <option value="15000">~$15,000/yr housing aid</option>
+            <option value="20334">Aid fully covers room &amp; board</option>
           </select>
         </div>
         <button class="calc-btn" onclick="calc()">Calculate My Savings</button>
@@ -643,8 +663,8 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="bk-card">
           <div class="bk-ey">Monthly Off-Campus Breakdown</div>
           <div class="bk-row"><span>Your share of rent</span><span id="bkRent">$450 / mo</span></div>
-          <div class="bk-row"><span>Groceries &amp; food</span><span id="bkFood">$300 / mo</span></div>
-          <div class="bk-row"><span>Utilities</span><span id="bkUtils">$100 / mo</span></div>
+          <div class="bk-row"><span>Groceries &amp; food (per person)</span><span id="bkFood">$300 / mo</span></div>
+          <div class="bk-row"><span>Utilities (per person)</span><span id="bkUtils">$100 / mo</span></div>
           <div class="bk-row" style="border-top:1px solid var(--rule);margin-top:4px"><span style="font-weight:600;color:var(--ink)">Total per month</span><span style="font-weight:700;color:var(--teal)" id="bkTotal">$850 / mo</span></div>
           <div class="four-yr">
             <div class="fy-lbl">Over 4 years of college</div>
@@ -1045,15 +1065,12 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div class="ft-col">
         <h5>Landlords</h5>
         <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
-        <a href="#">Pricing</a>
-        <a href="#">Landlord Portal</a>
+        <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">Submit a Listing</a>
       </div>
       <div class="ft-col">
         <h5>Company</h5>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
+        <a href="/">DormDrop Home</a>
+        <a href="mailto:hello@mydormdrop.com">Contact Us</a>
       </div>
     </div>
     <div class="ft-bot">
@@ -1098,6 +1115,17 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button class="btn-primary" onclick="doResetPassword()" style="width:100%;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Send Reset Email</button>
       <div class="or-div">or</div>
       <button class="btn-ghost" onclick="showAuthView('loginFields')" style="width:100%;text-align:center;display:block;padding:12px">&#8592; Back to Login</button>
+    </div>
+
+    <!-- Email verification pending view -->
+    <div id="verifyFields" style="display:none">
+      <div style="text-align:center;padding:16px 0 8px">
+        <div style="font-size:48px;margin-bottom:16px">📧</div>
+        <p style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Check your inbox</p>
+        <p style="font-size:13px;color:var(--ink-4);line-height:1.6;margin-bottom:24px">We sent a verification link to your @merrimack.edu email. Click the link in that email, then come back here.</p>
+        <button class="btn-primary" onclick="checkEmailVerified()" style="width:100%;padding:15px;border:none;cursor:pointer;border-radius:10px;margin-bottom:10px">I've Verified My Email ✓</button>
+        <button class="btn-ghost" onclick="resendVerification()" style="width:100%;padding:12px;background:none;border:1px solid var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer">Resend Verification Email</button>
+      </div>
     </div>
 
     <!-- Landlord view -->
@@ -1162,6 +1190,23 @@ function filterL(btn,f){
 }
 
 function openDetail(id){
+  // Require verified Merrimack email to view listing details
+  if(typeof auth!=='undefined'&&auth){
+    if(!currentUser){openAuthModal('signup');return;}
+    if(!currentUser.emailVerified){
+      document.getElementById('detailContent').innerHTML=`
+        <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
+        <div style="text-align:center;padding:40px 20px">
+          <div style="font-size:52px;margin-bottom:16px">📧</div>
+          <div class="m-title" style="margin-bottom:8px">Verify your email first</div>
+          <p style="font-size:14px;color:var(--ink-4);line-height:1.6;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Check your inbox for a verification link from DormDrop, then click below to refresh.</p>
+          <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px;margin-bottom:10px" onclick="currentUser.reload().then(()=>{if(currentUser.emailVerified){closeModal('detailModal');openDetail(${id});}else{alert('Still not verified — check your inbox.');}})">I've Verified — Refresh</button>
+          <button class="btn-ghost" style="width:100%;padding:12px;background:none;border:1px solid var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer" onclick="currentUser.sendEmailVerification().then(()=>alert('Verification email sent!'))">Resend Verification Email</button>
+        </div>`;
+      document.getElementById('detailModal').classList.add('open');
+      return;
+    }
+  }
   const l=listings.find(x=>x.id===id);
   document.getElementById('detailContent').innerHTML=`
     <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
@@ -1191,16 +1236,35 @@ function renderProfiles(){
     </div>`).join('');
 }
 
+var leaseMo=9;
+function setLease(n){
+  leaseMo=n;
+  var b9=document.getElementById('lease9btn'),b12=document.getElementById('lease12btn');
+  var lbl=document.getElementById('leaseLbl');
+  b9.style.background=n===9?'var(--ink)':'var(--linen)';
+  b9.style.color=n===9?'var(--white)':'var(--ink-3)';
+  b9.style.borderColor=n===9?'var(--ink)':'var(--rule)';
+  b12.style.background=n===12?'var(--ink)':'var(--linen)';
+  b12.style.color=n===12?'var(--white)':'var(--ink-3)';
+  b12.style.borderColor=n===12?'var(--ink)':'var(--rule)';
+  if(lbl)lbl.textContent=n===9?'9-month (Academic Year)':'12-month (Full Year)';
+  calc();
+}
+
 function calc(){
   const dorm=parseInt(document.getElementById('dormType').value);
   const meal=parseInt(document.getElementById('mealPlan').value);
+  const aid=parseInt(document.getElementById('financialAid').value)||0;
   const sl=document.querySelectorAll('input[type=range]');
   const rent=parseInt(sl[0].value),rm=parseInt(sl[1].value),groc=parseInt(sl[2].value);
   const utils=parseInt(document.getElementById('utils').value);
-  const rs=Math.round(rent/rm),offMo=rs+groc+utils,offYr=offMo*12,onYr=dorm+meal,save=onYr-offYr,fy=save*4;
+  const rs=Math.round(rent/rm),offMo=rs+groc+utils,offYr=offMo*leaseMo;
+  const onYr=Math.max(0,dorm+meal-aid),save=onYr-offYr,fy=save*4;
   const f=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString();
   document.getElementById('annSave').textContent=f(save);
   document.getElementById('annSave').style.opacity=save>0?'1':'.65';
+  const leaseLabel=leaseMo===9?'Academic-year (9-mo)':'Annual (12-mo)';
+  document.querySelector('.rh-sub').textContent=leaseLabel+' savings: off-campus vs. Merrimack dorms';
   document.getElementById('onCamp').textContent='$'+onYr.toLocaleString();
   document.getElementById('offCamp').textContent='$'+offYr.toLocaleString();
   document.getElementById('bkRent').textContent='$'+rs+' / mo';
@@ -1274,6 +1338,40 @@ function sendMsgBtn(){
   },900);
 }
 
+// Dynamic user counter
+(function(){
+  var seed=parseInt(localStorage.getItem('dd_ucnt_mc'))||0;
+  if(!seed){seed=450+Math.floor(Math.random()*150);localStorage.setItem('dd_ucnt_mc',seed);}
+  var count=seed;
+  var el=document.getElementById('userCount');
+  function fmt(n){return n.toLocaleString()+'';}
+  if(el)el.textContent=fmt(count);
+  setInterval(function(){
+    if(Math.random()<0.3){
+      count+=Math.floor(Math.random()*2)+1;
+      localStorage.setItem('dd_ucnt_mc',count);
+      if(el)el.textContent=fmt(count);
+    }
+  },30000);
+})();
+
+function checkEmailVerified(){
+  if(typeof auth==='undefined'||!auth||!auth.currentUser)return;
+  auth.currentUser.reload().then(function(){
+    if(auth.currentUser.emailVerified){
+      closeModal('signupModal');
+    }else{
+      showAuthError('Email not yet verified. Please click the link in your inbox.');
+    }
+  }).catch(function(){showAuthError('Could not check verification. Please try again.');});
+}
+function resendVerification(){
+  if(typeof auth==='undefined'||!auth||!auth.currentUser)return;
+  auth.currentUser.sendEmailVerification()
+    .then(function(){showAuthError('Verification email resent — check your inbox!',true);})
+    .catch(function(){showAuthError('Could not resend. Try again in a moment.');});
+}
+
 renderListings('all');renderProfiles();calc();
 </script>
 
@@ -1295,8 +1393,8 @@ renderListings('all');renderProfiles();calc();
       <div class="fg"><label>Gender <span style="font-weight:400;color:var(--ink-4)">(optional)</span></label>
         <select id="profGender"><option value="">Prefer not to say</option><option value="Male">Male</option><option value="Female">Female</option><option value="Non-binary">Non-binary</option><option value="Other">Other</option></select>
       </div>
-      <div class="fg"><label>Monthly Budget</label>
-        <select id="profBudget"><option value="under-700">Under $700/mo</option><option value="700-900" selected>$700–$900/mo</option><option value="900-1100">$900–$1,100/mo</option><option value="1100-1400">$1,100–$1,400/mo</option><option value="over-1400">$1,400+/mo</option></select>
+      <div class="fg"><label>Monthly Budget (your share)</label>
+        <select id="profBudget"><option value="under-700">Under $700/mo</option><option value="700-900" selected>$700–$900/mo</option><option value="900-1100">$900–$1,100/mo</option><option value="1100-1400">$1,100–$1,400/mo</option><option value="1400-2000">$1,400–$2,000/mo</option><option value="2000-3000">$2,000–$3,000/mo</option><option value="3000-4500">$3,000–$4,500/mo</option><option value="over-4500">$4,500+/mo</option></select>
       </div>
       <div class="fg"><label>Preferred Move-in Date</label><input id="profMoveIn" type="date"/></div>
       <div class="fg"><label>Bio <span style="font-weight:400;color:var(--ink-4)">(optional, 500 chars)</span></label>

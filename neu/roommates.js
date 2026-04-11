@@ -102,14 +102,15 @@ function openAuthModal(mode) {
 }
 
 function showAuthView(viewId) {
-  ['signupFields', 'loginFields', 'forgotFields'].forEach(function (id) {
+  ['signupFields', 'loginFields', 'forgotFields', 'verifyFields'].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.style.display = id === viewId ? '' : 'none';
   });
   var titles = {
     signupFields: { t: 'Create your account',  s: 'Free for all NEU students. No credit card required.' },
     loginFields:  { t: 'Welcome back',          s: 'Sign in to your DormDrop account.' },
-    forgotFields: { t: 'Reset password',        s: 'We\'ll send a reset link to your NEU email.' }
+    forgotFields: { t: 'Reset password',        s: 'We\'ll send a reset link to your NEU email.' },
+    verifyFields: { t: 'Verify your email',     s: 'One last step — check your inbox.' }
   };
   var info = titles[viewId];
   if (info) {
@@ -132,11 +133,12 @@ function doSignup() {
   setAuthBtnLoading(true, 'signupBtn', 'Creating account\u2026');
   auth.createUserWithEmailAndPassword(email, pwd)
     .then(function (cred) {
-      return cred.user.updateProfile({ displayName: name });
+      return cred.user.updateProfile({ displayName: name }).then(function () {
+        return cred.user.sendEmailVerification();
+      });
     })
     .then(function () {
-      closeModal('signupModal');
-      // auth state change will trigger renderNeedsProfileState
+      showAuthView('verifyFields');
     })
     .catch(function (e) { showAuthError(friendlyAuthError(e.code)); })
     .finally(function () { setAuthBtnLoading(false, 'signupBtn', 'Create Account'); });
@@ -521,6 +523,28 @@ function openProfileModal() {
   if (currentUser) {
     var nameEl = document.getElementById('profName');
     if (nameEl && currentUser.displayName) nameEl.value = currentUser.displayName;
+  }
+  // Pre-populate from saved profile (editing flow / year dropdown bug fix)
+  if (myProfile) {
+    var map = { profName: 'name', profYear: 'year', profGender: 'gender', profBudget: 'budget', profMoveIn: 'moveIn', profBio: 'bio' };
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && myProfile[map[id]]) el.value = myProfile[map[id]];
+    });
+    Object.keys(TRAIT_MAP).forEach(function (key) {
+      if (myProfile[key]) {
+        quizAnswers[key] = myProfile[key];
+        var group = document.querySelector('[onclick*="selectQuiz(\'' + key + '\'"]');
+        if (group) {
+          var parent = group.closest ? group.closest('.quiz-group') : null;
+          if (parent) {
+            parent.querySelectorAll('.pref-item').forEach(function (el) { el.classList.remove('active'); });
+            var target = parent.querySelector('[onclick*="' + myProfile[key] + '"]');
+            if (target) target.classList.add('active');
+          }
+        }
+      }
+    });
   }
   document.getElementById('profileModal').classList.add('open');
 }
