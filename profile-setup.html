@@ -4,11 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Complete Your Profile — DormDrop</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--ink:#111827;--ink-3:#6B7280;--ink-4:#9CA3AF;--linen:#F9F7F4;--white:#FFFFFF;--rule:#E5E0D8;--teal:#0E6E6E;--teal-lt:#E6F4F4;--r:12px;--r-lg:20px;--sh-md:0 4px 16px rgba(0,0,0,.07)}
+:root{--ink:#111827;--ink-3:#6B7280;--ink-4:#9CA3AF;--linen:#F9F7F4;--white:#FFFFFF;--rule:#E5E0D8;--teal:#0E6E6E;--teal-lt:#E6F4F4;--r:12px}
 body{background:var(--linen);color:var(--ink);font-family:'Outfit',sans-serif;padding:88px 24px 48px;min-height:100vh}
 .container{max-width:560px;margin:0 auto}
 .sec-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:8px}
@@ -17,42 +21,74 @@ body{background:var(--linen);color:var(--ink);font-family:'Outfit',sans-serif;pa
 #progress{height:100%;background:var(--teal);width:33%;transition:width .3s}
 .fg{margin-bottom:18px}
 .fg label{display:block;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-4);margin-bottom:8px}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--white);border:1px solid var(--rule);border-radius:9px;padding:12px 14px;font-family:'Outfit',sans-serif;font-size:15px}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--white);border:1px solid var(--rule);border-radius:9px;padding:12px 14px;font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--teal)}
 .fg textarea{min-height:90px;resize:vertical}
-.btn-primary{font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--white);background:var(--teal);border:none;padding:14px 28px;border-radius:var(--r);cursor:pointer;width:100%}
-.btn-ghost{background:var(--white);border:1px solid var(--rule);color:var(--ink);padding:12px 20px;border-radius:var(--r);cursor:pointer;font-family:'Outfit',sans-serif}
+.fg input[type="range"]{padding:4px 0;border:none;background:none;accent-color:var(--teal)}
+.fg input[type="file"]{padding:8px;cursor:pointer}
+.btn-primary{font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--white);background:var(--teal);border:none;padding:14px 28px;border-radius:var(--r);cursor:pointer;width:100%;transition:opacity .2s}
+.btn-primary:hover{opacity:.9}
+.btn-primary:disabled{opacity:.6;cursor:default}
+.btn-ghost{background:var(--white);border:1px solid var(--rule);color:var(--ink);padding:12px 20px;border-radius:var(--r);cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px}
 .step{display:none}
 #step-1{display:block}
 .nav-mini{position:fixed;top:0;left:0;right:0;background:rgba(249,247,244,.95);border-bottom:1px solid var(--rule);padding:16px 24px;z-index:10}
 .nav-mini a{color:var(--teal);text-decoration:none;font-weight:600;font-size:14px}
+.photo-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--rule);margin-bottom:8px;display:none}
+.hood-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hood-chip{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;cursor:pointer;font-size:14px}
+.hood-chip input[type=checkbox]{accent-color:var(--teal)}
+.budget-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);margin-top:4px}
+.saving-msg{background:var(--teal-lt);color:var(--teal);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;display:none}
 </style>
 </head>
 <body>
 <div class="nav-mini"><a href="/">← DormDrop home</a></div>
 <div class="container">
   <div class="progress-wrap"><div id="progress"></div></div>
+  <div id="saving-msg" class="saving-msg">Saving your profile…</div>
 
   <div id="step-1" class="step">
     <h1 class="sec-title">Tell us about yourself</h1>
     <p class="sec-sub">Step 1 of 3 — academics &amp; photo</p>
     <form id="basic-info-form">
+      <div class="fg">
+        <label>Profile photo <span style="text-transform:none;font-weight:400;color:var(--ink-4)">(optional)</span></label>
+        <img id="photo-preview" class="photo-preview" alt="Preview"/>
+        <input id="profile-photo" type="file" accept="image/*"/>
+      </div>
+      <div class="fg"><label for="year">Year</label>
+        <select id="year" required>
+          <option value="">Select year…</option>
+          <option value="freshman">Freshman</option>
+          <option value="sophomore">Sophomore</option>
+          <option value="junior">Junior</option>
+          <option value="senior">Senior</option>
+          <option value="graduate">Graduate</option>
+        </select>
+      </div>
       <div class="fg"><label for="major">Major</label><input id="major" type="text" placeholder="e.g. Economics" required/></div>
-      <div class="fg"><label for="bio">Bio</label><textarea id="bio" maxlength="500" placeholder="Short intro for roommates (optional)"></textarea></div>
-      <div class="fg"><label for="profile-photo">Profile photo</label><input id="profile-photo" type="file" accept="image/*"/></div>
+      <div class="fg"><label for="bio">Bio <span style="text-transform:none;font-weight:400;color:var(--ink-4)">(optional)</span></label>
+        <textarea id="bio" maxlength="300" placeholder="Short intro for potential roommates…"></textarea>
+      </div>
       <button type="submit" class="btn-primary">Next →</button>
     </form>
   </div>
 
   <div id="step-2" class="step">
     <h1 class="sec-title">Housing preferences</h1>
-    <p class="sec-sub">Step 2 of 3</p>
+    <p class="sec-sub">Step 2 of 3 — budget &amp; location</p>
     <form id="housing-prefs-form">
       <div class="fg">
-        <label>Monthly budget (your share): <span id="budget-amount">1000</span>/month</label>
+        <label>Monthly budget (your share): <strong id="budget-amount" style="color:var(--teal)">$1,000</strong>/mo</label>
         <input id="budget" type="range" min="400" max="4000" value="1000" step="50"/>
+        <div class="budget-row"><span>$400</span><span>$4,000</span></div>
       </div>
-      <div class="fg"><label for="move-in-date">Preferred move-in</label><input id="move-in-date" type="date"/></div>
-      <div class="fg"><label>Preferred neighborhoods</label><div id="neighborhoods-checkboxes"></div></div>
+      <div class="fg"><label for="move-in-date">Preferred move-in date</label><input id="move-in-date" type="date"/></div>
+      <div class="fg">
+        <label>Preferred neighborhoods</label>
+        <div class="hood-grid" id="neighborhoods-checkboxes"></div>
+      </div>
       <div style="display:flex;gap:10px;margin-top:8px">
         <button type="button" class="btn-ghost" onclick="prevStep()">← Back</button>
         <button type="submit" class="btn-primary" style="flex:1">Next →</button>
@@ -67,8 +103,8 @@ body{background:var(--linen);color:var(--ink);font-family:'Outfit',sans-serif;pa
       <div class="fg"><label for="sleep-schedule">Sleep schedule</label>
         <select id="sleep-schedule" required>
           <option value="">Select…</option>
-          <option value="night-owl">Night owl</option>
-          <option value="early-riser">Early riser</option>
+          <option value="night-owl">Night owl (past midnight)</option>
+          <option value="early-riser">Early riser (before 10 pm)</option>
           <option value="flexible">Flexible</option>
         </select>
       </div>
@@ -76,25 +112,25 @@ body{background:var(--linen);color:var(--ink);font-family:'Outfit',sans-serif;pa
         <select id="study-habits" required>
           <option value="">Select…</option>
           <option value="at-home">Mostly at home</option>
-          <option value="on-campus">Mostly on campus</option>
+          <option value="on-campus">Mostly on campus / library</option>
           <option value="flexible">Flexible</option>
         </select>
       </div>
       <div class="fg"><label for="social-style">Social style</label>
         <select id="social-style" required>
           <option value="">Select…</option>
-          <option value="very-social">Very social</option>
+          <option value="very-social">Very social — love having people over</option>
           <option value="somewhat-social">Somewhat social</option>
-          <option value="introverted">Introverted</option>
+          <option value="introverted">Introverted — prefer quiet</option>
           <option value="flexible">Flexible</option>
         </select>
       </div>
       <div class="fg"><label for="cleanliness">Cleanliness</label>
         <select id="cleanliness" required>
           <option value="">Select…</option>
-          <option value="very-clean">Very clean</option>
-          <option value="organized">Organized</option>
-          <option value="relaxed">Relaxed</option>
+          <option value="very-clean">Very clean — tidy daily</option>
+          <option value="organized">Organized — weekly tidy</option>
+          <option value="relaxed">Relaxed — clean when needed</option>
           <option value="flexible">Flexible</option>
         </select>
       </div>
@@ -103,38 +139,209 @@ body{background:var(--linen);color:var(--ink);font-family:'Outfit',sans-serif;pa
           <option value="">Select…</option>
           <option value="love-pets">Love pets</option>
           <option value="ok-with-pets">OK with pets</option>
-          <option value="no-pets">No pets</option>
+          <option value="no-pets">No pets please</option>
         </select>
       </div>
-      <div class="fg"><label for="guests">Guests</label>
+      <div class="fg"><label for="guests">Overnight guests</label>
         <select id="guests" required>
           <option value="">Select…</option>
-          <option value="often">Often</option>
-          <option value="sometimes">Sometimes</option>
-          <option value="prefer-quiet">Prefer quiet</option>
+          <option value="often">Often (weekly)</option>
+          <option value="sometimes">Sometimes (monthly)</option>
+          <option value="prefer-quiet">Rarely / prefer quiet</option>
         </select>
       </div>
       <div class="fg"><label for="smoking">Smoking</label>
-        <select id="smoking" required>
+        <select id="smoking">
           <option value="non-smoker">Non-smoker</option>
           <option value="smoker">Smoker</option>
           <option value="no-preference">No preference</option>
         </select>
       </div>
       <div class="fg"><label for="drinking">Drinking</label>
-        <select id="drinking" required>
-          <option value="no-preference">No preference</option>
-          <option value="social">Social</option>
+        <select id="drinking">
+          <option value="social">Social drinker</option>
           <option value="non-drinker">Non-drinker</option>
+          <option value="no-preference">No preference</option>
         </select>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
         <button type="button" class="btn-ghost" onclick="prevStep()">← Back</button>
-        <button type="submit" class="btn-primary" style="flex:1">Complete profile</button>
+        <button type="submit" id="finish-btn" class="btn-primary" style="flex:1">Complete profile</button>
       </div>
     </form>
   </div>
 </div>
-<script type="module" src="/src/profile-setup.js"></script>
+
+<script>
+var FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyB8XICHo3JH_4rPB6AKMoenc6GcQUTEbyc',
+  authDomain: 'dormdrop-98dd3.firebaseapp.com',
+  projectId: 'dormdrop-98dd3',
+  storageBucket: 'dormdrop-98dd3.firebasestorage.app',
+  messagingSenderId: '446119671926',
+  appId: '1:446119671926:web:4927b8a290f1730f598757'
+};
+
+var NEIGHBORHOODS = {
+  bu: ['Allston', 'Brighton', 'Brookline', 'Fenway', 'Back Bay', 'South End', 'Kenmore'],
+  neu: ['Fenway', 'Mission Hill', 'Roxbury', 'South End', 'Back Bay', 'Jamaica Plain', 'South Boston'],
+  merrimack: ['North Andover', 'Andover', 'Lawrence', 'Methuen', 'Haverhill', 'Lowell']
+};
+
+var db, auth, storage;
+var currentUser = null;
+var userSchool = 'bu';
+var currentStep = 1;
+var photoFile = null;
+
+if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+db = firebase.firestore();
+auth = firebase.auth();
+storage = firebase.storage();
+
+auth.onAuthStateChanged(function(user) {
+  if (!user) { window.location.href = '/'; return; }
+  currentUser = user;
+  db.collection('users').doc(user.uid).get().then(function(snap) {
+    var data = snap.data() || {};
+    userSchool = data.school || 'bu';
+    var p = data.profile || {};
+    if (p.year) document.getElementById('year').value = p.year;
+    if (p.major) document.getElementById('major').value = p.major;
+    if (p.bio) document.getElementById('bio').value = p.bio;
+    if (p.budget) {
+      document.getElementById('budget').value = p.budget;
+      document.getElementById('budget-amount').textContent = '$' + Number(p.budget).toLocaleString();
+    }
+    if (p.moveInDate) document.getElementById('move-in-date').value = p.moveInDate;
+    if (p.sleepSchedule) document.getElementById('sleep-schedule').value = p.sleepSchedule;
+    if (p.studyHabits) document.getElementById('study-habits').value = p.studyHabits;
+    if (p.socialStyle) document.getElementById('social-style').value = p.socialStyle;
+    if (p.cleanliness) document.getElementById('cleanliness').value = p.cleanliness;
+    if (p.pets) document.getElementById('pets').value = p.pets;
+    if (p.guests) document.getElementById('guests').value = p.guests;
+    if (p.smoking) document.getElementById('smoking').value = p.smoking;
+    if (p.drinking) document.getElementById('drinking').value = p.drinking;
+    buildNeighborhoodCheckboxes(p.neighborhoods || []);
+    if (user.emailVerified && !data.emailVerified) {
+      db.collection('users').doc(user.uid).update({ emailVerified: true }).catch(function(){});
+    }
+  });
+});
+
+function buildNeighborhoodCheckboxes(selected) {
+  var container = document.getElementById('neighborhoods-checkboxes');
+  var hoods = NEIGHBORHOODS[userSchool] || NEIGHBORHOODS.bu;
+  container.innerHTML = '';
+  hoods.forEach(function(hood) {
+    var label = document.createElement('label');
+    label.className = 'hood-chip';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.name = 'neighborhood';
+    cb.value = hood;
+    if (selected.indexOf(hood) !== -1) cb.checked = true;
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(hood));
+    container.appendChild(label);
+  });
+}
+
+document.getElementById('budget').addEventListener('input', function() {
+  document.getElementById('budget-amount').textContent = '$' + Number(this.value).toLocaleString();
+});
+
+document.getElementById('profile-photo').addEventListener('change', function(e) {
+  photoFile = e.target.files[0] || null;
+  if (photoFile) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = document.getElementById('photo-preview');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(photoFile);
+  }
+});
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(function(s) { s.style.display = 'none'; });
+  document.getElementById('step-' + n).style.display = 'block';
+  document.getElementById('progress').style.width = (n * 33.3) + '%';
+  currentStep = n;
+  window.scrollTo(0, 0);
+}
+
+function prevStep() { showStep(currentStep - 1); }
+
+document.getElementById('basic-info-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!document.getElementById('major').value.trim()) { alert('Please enter your major.'); return; }
+  showStep(2);
+});
+
+document.getElementById('housing-prefs-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  showStep(3);
+});
+
+document.getElementById('lifestyle-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  finishSetup();
+});
+
+function finishSetup() {
+  var btn = document.getElementById('finish-btn');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+  document.getElementById('saving-msg').style.display = 'block';
+
+  var profileData = {
+    year: document.getElementById('year').value,
+    major: document.getElementById('major').value.trim(),
+    bio: document.getElementById('bio').value.trim(),
+    budget: parseInt(document.getElementById('budget').value, 10),
+    moveInDate: document.getElementById('move-in-date').value,
+    neighborhoods: Array.from(document.querySelectorAll('input[name="neighborhood"]:checked')).map(function(c) { return c.value; }),
+    sleepSchedule: document.getElementById('sleep-schedule').value,
+    studyHabits: document.getElementById('study-habits').value,
+    socialStyle: document.getElementById('social-style').value,
+    cleanliness: document.getElementById('cleanliness').value,
+    pets: document.getElementById('pets').value,
+    guests: document.getElementById('guests').value,
+    smoking: document.getElementById('smoking').value,
+    drinking: document.getElementById('drinking').value
+  };
+
+  function saveProfile(photoURL) {
+    if (photoURL) profileData.photoURL = photoURL;
+    db.collection('users').doc(currentUser.uid).update({
+      profile: profileData,
+      profileComplete: true,
+      emailVerified: currentUser.emailVerified || false,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function() {
+      window.location.href = '/discover.html';
+    }).catch(function(err) {
+      console.error(err);
+      btn.textContent = 'Complete profile';
+      btn.disabled = false;
+      document.getElementById('saving-msg').style.display = 'none';
+      alert('Error saving profile. Please try again.');
+    });
+  }
+
+  if (photoFile) {
+    var ref = storage.ref('profile-photos/' + currentUser.uid + '/photo');
+    ref.put(photoFile).then(function(snap) {
+      return snap.ref.getDownloadURL();
+    }).then(function(url) {
+      saveProfile(url);
+    }).catch(function() { saveProfile(null); });
+  } else {
+    saveProfile(null);
+  }
+}
+</script>
 </body>
 </html>

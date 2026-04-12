@@ -4,39 +4,278 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Messages — DormDrop</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
 <style>
-body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;padding:24px;min-height:100vh}
-.wrap{max-width:720px;margin:0 auto}
-h1{font-size:26px;margin-bottom:16px}
-.row{display:grid;grid-template-columns:1fr 1.2fr;gap:16px}
-@media(max-width:700px){.row{grid-template-columns:1fr}}
-.panel{background:#fff;border:1px solid #E5E0D8;border-radius:12px;padding:16px;min-height:280px}
-.conv{padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px}
-.conv:hover,.conv.active{background:#E6F4F4}
-.msg{max-height:360px;overflow:auto;margin-bottom:12px}
-.item{margin-bottom:10px;font-size:14px}
-.item.me{text-align:right;color:#0E6E6E}
-a{color:#0E6E6E}
-input,button{font-family:inherit;padding:10px;border-radius:8px;border:1px solid #E5E0D8}
-button{background:#0E6E6E;color:#fff;border:none;cursor:pointer}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#111827;--ink-3:#6B7280;--linen:#F9F7F4;--white:#fff;--rule:#E5E0D8;--teal:#0E6E6E;--teal-lt:#E6F4F4;--r:12px}
+body{background:var(--linen);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.nav{background:var(--white);border-bottom:1px solid var(--rule);padding:14px 24px;display:flex;align-items:center;gap:16px}
+.nav a{color:var(--teal);text-decoration:none;font-weight:600;font-size:14px}
+.nav-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink)}
+.layout{flex:1;display:grid;grid-template-columns:280px 1fr;min-height:0;max-width:900px;margin:24px auto;width:100%;gap:16px;padding:0 20px 40px}
+@media(max-width:700px){.layout{grid-template-columns:1fr;padding:0 12px 40px}}
+.panel{background:var(--white);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.panel-header{padding:16px 18px;border-bottom:1px solid var(--rule);font-weight:600;font-size:14px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.5px}
+.conv-list{flex:1;overflow-y:auto}
+.conv-item{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;border-bottom:1px solid var(--rule);transition:background .15s}
+.conv-item:hover{background:var(--linen)}
+.conv-item.active{background:var(--teal-lt)}
+.conv-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--teal-lt),#c8e6e6);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;object-fit:cover}
+.conv-avatar img{width:42px;height:42px;border-radius:50%;object-fit:cover}
+.conv-info{min-width:0;flex:1}
+.conv-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-preview{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-compat{font-size:11px;color:var(--teal);font-weight:600;margin-top:2px}
+.unread-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.chat-panel{flex:1;overflow:hidden}
+.chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--ink-3);text-align:center;padding:24px}
+.chat-empty .icon{font-size:48px;margin-bottom:12px}
+.messages-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg-bubble{max-width:70%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;word-break:break-word}
+.msg-me{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg-them{background:var(--linen);border:1px solid var(--rule);color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px}
+.msg-time{font-size:11px;opacity:.65;margin-top:4px}
+.msg-input-row{padding:12px 16px;border-top:1px solid var(--rule);display:flex;gap:8px;background:var(--white)}
+.msg-input{flex:1;border:1px solid var(--rule);border-radius:24px;padding:10px 16px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+.msg-input:focus{border-color:var(--teal)}
+.send-btn{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+.send-btn:hover{opacity:.88}
+.send-btn:disabled{opacity:.5;cursor:default}
+.loading-text{padding:24px;color:var(--ink-3);text-align:center;font-size:14px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <p><a href="/dashboard.html">← Dashboard</a></p>
-  <h1>Messages</h1>
-  <div class="row">
-    <div class="panel" id="conv-list"><p style="color:#6B7280">Loading…</p></div>
-    <div class="panel">
-      <div id="thread" class="msg"></div>
-      <div style="display:flex;gap:8px">
-        <input id="msgIn" type="text" placeholder="Type a message…" style="flex:1"/>
-        <button type="button" id="sendBtn">Send</button>
+<div class="nav">
+  <a href="/dashboard.html">← Dashboard</a>
+  <div class="nav-title">Messages</div>
+</div>
+<div class="layout">
+  <!-- Conversation list -->
+  <div class="panel">
+    <div class="panel-header">Conversations</div>
+    <div class="conv-list" id="conv-list">
+      <div class="loading-text">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Chat thread -->
+  <div class="panel chat-panel" id="chat-panel">
+    <div class="chat-empty" id="chat-empty">
+      <div class="icon">💬</div>
+      <div style="font-weight:600;margin-bottom:8px">Select a conversation</div>
+      <div style="font-size:13px">Choose a match from the left to start chatting.</div>
+    </div>
+    <div id="thread-wrap" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div class="messages-area" id="thread"></div>
+      <div class="msg-input-row">
+        <input id="msg-input" class="msg-input" type="text" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMessage()"/>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">→</button>
       </div>
     </div>
   </div>
 </div>
-<script type="module" src="/src/messages-page.js"></script>
+
+<script>
+var FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyB8XICHo3JH_4rPB6AKMoenc6GcQUTEbyc',
+  authDomain: 'dormdrop-98dd3.firebaseapp.com',
+  projectId: 'dormdrop-98dd3',
+  storageBucket: 'dormdrop-98dd3.firebasestorage.app',
+  messagingSenderId: '446119671926',
+  appId: '1:446119671926:web:4927b8a290f1730f598757'
+};
+
+var db, auth;
+var currentUser = null;
+var activeMatchId = null;
+var msgUnsub = null;
+var matchCache = {};
+
+if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+db = firebase.firestore();
+auth = firebase.auth();
+
+auth.onAuthStateChanged(function(user) {
+  if (!user) { window.location.href = '/'; return; }
+  currentUser = user;
+  loadConversations();
+});
+
+function loadConversations() {
+  db.collection('matches')
+    .where('users', 'array-contains', currentUser.uid)
+    .orderBy('lastMessageTime', 'desc')
+    .onSnapshot(function(snap) {
+      if (snap.empty) {
+        document.getElementById('conv-list').innerHTML =
+          '<div class="loading-text">No matches yet.<br/><a href="/discover.html" style="color:var(--teal)">Discover roommates →</a></div>';
+        return;
+      }
+      var promises = snap.docs.map(function(d) {
+        var match = d.data();
+        var otherId = match.users.find(function(u) { return u !== currentUser.uid; });
+        return db.collection('users').doc(otherId).get().then(function(userSnap) {
+          var otherData = userSnap.data() || {};
+          matchCache[d.id] = { match: match, otherId: otherId, otherData: otherData };
+          return { matchId: d.id, match: match, otherId: otherId, otherData: otherData };
+        });
+      });
+      Promise.all(promises).then(function(items) {
+        renderConvList(items);
+      });
+    }, function(err) {
+      // Fallback without orderBy if index not built yet
+      db.collection('matches').where('users', 'array-contains', currentUser.uid).get().then(function(snap) {
+        if (snap.empty) {
+          document.getElementById('conv-list').innerHTML =
+            '<div class="loading-text">No matches yet.<br/><a href="/discover.html" style="color:var(--teal)">Discover roommates →</a></div>';
+          return;
+        }
+        var promises = snap.docs.map(function(d) {
+          var match = d.data();
+          var otherId = (match.users || []).find(function(u) { return u !== currentUser.uid; });
+          if (!otherId) return Promise.resolve(null);
+          return db.collection('users').doc(otherId).get().then(function(usnap) {
+            var od = usnap.data() || {};
+            matchCache[d.id] = { match: match, otherId: otherId, otherData: od };
+            return { matchId: d.id, match: match, otherId: otherId, otherData: od };
+          });
+        });
+        Promise.all(promises).then(function(items) { renderConvList(items.filter(Boolean)); });
+      });
+    });
+}
+
+function renderConvList(items) {
+  var list = document.getElementById('conv-list');
+  if (items.length === 0) {
+    list.innerHTML = '<div class="loading-text">No matches yet.<br/><a href="/discover.html" style="color:var(--teal)">Discover roommates →</a></div>';
+    return;
+  }
+  list.innerHTML = '';
+  items.forEach(function(item) {
+    var od = item.otherData;
+    var p = od.profile || {};
+    var name = od.displayName || (od.email ? od.email.split('@')[0] : 'Match');
+    var preview = item.match.lastMessage || 'Say hello!';
+    var compat = item.match.compatibility || 0;
+    var uc = (item.match.unreadCount || {})[currentUser.uid] || 0;
+
+    var div = document.createElement('div');
+    div.className = 'conv-item' + (item.matchId === activeMatchId ? ' active' : '');
+    div.onclick = function() { openChat(item.matchId); };
+
+    var avatarHTML = p.photoURL
+      ? '<img src="' + esc(p.photoURL) + '" alt="" class="conv-avatar" style="width:42px;height:42px;border-radius:50%;object-fit:cover"/>'
+      : '<div class="conv-avatar">🎓</div>';
+
+    div.innerHTML = avatarHTML +
+      '<div class="conv-info">' +
+      '<div class="conv-name">' + esc(name) + (uc > 0 ? ' <span style="background:var(--teal);color:#fff;border-radius:100px;font-size:11px;padding:1px 6px">' + uc + '</span>' : '') + '</div>' +
+      '<div class="conv-preview">' + esc(preview) + '</div>' +
+      '<div class="conv-compat">' + compat + '% compatible</div>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function openChat(matchId) {
+  activeMatchId = matchId;
+  document.querySelectorAll('.conv-item').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.conv-item').forEach(function(el) {
+    if (el.onclick && el.onclick.toString().indexOf(matchId) !== -1) el.classList.add('active');
+  });
+
+  document.getElementById('chat-empty').style.display = 'none';
+  var tw = document.getElementById('thread-wrap');
+  tw.style.display = 'flex';
+
+  if (msgUnsub) msgUnsub();
+  document.getElementById('thread').innerHTML = '<div style="color:var(--ink-3);font-size:13px;text-align:center;padding:16px">Loading…</div>';
+
+  msgUnsub = db.collection('matches').doc(matchId).collection('messages')
+    .orderBy('createdAt', 'asc')
+    .onSnapshot(function(snap) {
+      var thread = document.getElementById('thread');
+      thread.innerHTML = '';
+      if (snap.empty) {
+        thread.innerHTML = '<div style="color:var(--ink-3);font-size:13px;text-align:center;padding:24px">No messages yet. Say hi!</div>';
+      } else {
+        snap.forEach(function(d) {
+          var msg = d.data();
+          var isMe = msg.senderId === currentUser.uid;
+          var bubble = document.createElement('div');
+          bubble.style.display = 'flex';
+          bubble.style.flexDirection = 'column';
+          bubble.style.alignItems = isMe ? 'flex-end' : 'flex-start';
+          var time = msg.createdAt ? formatTime(msg.createdAt.toDate()) : '';
+          bubble.innerHTML =
+            '<div class="msg-bubble ' + (isMe ? 'msg-me' : 'msg-them') + '">' + esc(msg.text) + '</div>' +
+            '<div class="msg-time" style="text-align:' + (isMe ? 'right' : 'left') + '">' + time + '</div>';
+          thread.appendChild(bubble);
+        });
+        thread.scrollTop = thread.scrollHeight;
+      }
+
+      // Mark as read
+      var unreadUpdate = {};
+      unreadUpdate['unreadCount.' + currentUser.uid] = 0;
+      db.collection('matches').doc(matchId).update(unreadUpdate).catch(function(){});
+    }, function(err) {
+      console.error('Messages listener:', err);
+      document.getElementById('thread').innerHTML = '<div style="color:red;padding:16px;font-size:13px">Error loading messages.</div>';
+    });
+}
+
+function sendMessage() {
+  if (!activeMatchId) return;
+  var input = document.getElementById('msg-input');
+  var text = input.value.trim();
+  if (!text) return;
+  var btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  input.value = '';
+
+  var matchRef = db.collection('matches').doc(activeMatchId);
+  var msgRef = matchRef.collection('messages').doc();
+
+  var cached = matchCache[activeMatchId];
+  var otherId = cached ? cached.otherId : null;
+
+  msgRef.set({
+    text: text,
+    senderId: currentUser.uid,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function() {
+    var updateData = {
+      lastMessage: text,
+      lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if (otherId) updateData['unreadCount.' + otherId] = firebase.firestore.FieldValue.increment(1);
+    return matchRef.update(updateData);
+  }).catch(function(err) {
+    console.error(err);
+    input.value = text;
+  }).finally(function() {
+    btn.disabled = false;
+    input.focus();
+  });
+}
+
+function formatTime(date) {
+  if (!date) return '';
+  var now = new Date();
+  var isToday = date.toDateString() === now.toDateString();
+  if (isToday) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
 </body>
 </html>

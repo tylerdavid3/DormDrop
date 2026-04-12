@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const puppeteer = require('puppeteer');
+const fetch = require('node-fetch');
 const sgMail = require('@sendgrid/mail');
 
 admin.initializeApp();
@@ -12,135 +12,344 @@ if (SENDGRID_KEY) {
   sgMail.setApiKey(SENDGRID_KEY);
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Zillow internal JSON search API
+// Fetches structured listing data including photos, beds, baths, sqft
+// ─────────────────────────────────────────────────────────────────
+
+const SCHOOLS = {
+  bu: {
+    school: 'bu',
+    lat: 42.3505,
+    lng: -71.1054,
+    radiusDeg: 0.03,
+    city: 'Boston',
+    state: 'MA'
+  },
+  neu: {
+    school: 'neu',
+    lat: 42.3398,
+    lng: -71.0892,
+    radiusDeg: 0.03,
+    city: 'Boston',
+    state: 'MA'
+  },
+  merrimack: {
+    school: 'merrimack',
+    lat: 42.8334,
+    lng: -71.0495,
+    radiusDeg: 0.04,
+    city: 'North Andover',
+    state: 'MA'
+  }
+};
+
 /**
- * Scheduled Zillow scrape near a school (coordinates + radius).
- * Writes to `listings` with source: zillow-scraped.
+ * Build the Zillow search query URL for rentals in a bounding box.
+ */
+function buildZillowUrl(cfg) {
+  const searchQueryState = {
+    pagination: {},
+    isMapVisible: true,
+    isListVisible: true,
+    mapBounds: {
+      north: cfg.lat + cfg.radiusDeg,
+      south: cfg.lat - cfg.radiusDeg,
+      east: cfg.lng + cfg.radiusDeg,
+      west: cfg.lng - cfg.radiusDeg
+    },
+    filterState: {
+      isForRent: { value: true },
+      isForSaleByAgent: { value: false },
+      isForSaleByOwner: { value: false },
+      isNewConstruction: { value: false },
+      isComingSoon: { value: false },
+      isAuction: { value: false },
+      isForSaleForclosure: { value: false }
+    }
+  };
+  return 'https://www.zillow.com/search/GetSearchPageState.htm?searchQueryState=' +
+    encodeURIComponent(JSON.stringify(searchQueryState)) +
+    '&wants={"cat1":["listResults","mapResults"]}&requestId=1';
+}
+
+/**
+ * Parse a price string like "$1,500/mo" → integer 1500.
+ */
+function parseRent(priceStr) {
+  if (!priceStr) return 0;
+  return parseInt(String(priceStr).replace(/[^0-9]/g, ''), 10) || 0;
+}
+
+/**
+ * Best-effort neighborhood from address, e.g.
+ * "123 Main St, Allston, Boston, MA 02134" → "Allston"
+ */
+function extractNeighborhood(addr) {
+  if (!addr) return '';
+  const parts = addr.split(',');
+  return parts.length >= 2 ? parts[1].trim() : '';
+}
+
+/**
+ * Fetch Zillow listings for one school using the internal JSON API.
+ */
+async function fetchZillowListings(cfg) {
+  const url = buildZillowUrl(cfg);
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Referer': 'https://www.zillow.com/',
+    'Cache-Control': 'no-cache'
+  };
+
+  const res = await fetch(url, { headers, timeout: 30000 });
+  if (!res.ok) {
+    console.warn('Zillow returned', res.status, 'for', cfg.school);
+    return [];
+  }
+
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    console.warn('Zillow JSON parse error for', cfg.school, e.message);
+    return [];
+  }
+
+  const listResults = (json.cat1 &&
+    json.cat1.searchResults &&
+    json.cat1.searchResults.listResults) || [];
+  return listResults.slice(0, 20);
+}
+
+/**
+ * Map a Zillow listResult to our Firestore listing schema.
+ * Returns null if rent or address is missing.
+ */
+function mapListing(item, cfg) {
+  const rent = parseRent(item.price || item.unformattedPrice);
+  if (!rent) return null;
+
+  const address = item.address || item.streetAddress || '';
+  if (!address) return null;
+
+  // Photos: imgSrc is thumbnail, carouselPhotos[] are full-size
+  const photos = [];
+  if (item.imgSrc) photos.push(item.imgSrc);
+  if (Array.isArray(item.carouselPhotos)) {
+    item.carouselPhotos.forEach(function(p) {
+      const photoUrl = typeof p === 'string' ? p : (p.url || p.src || '');
+      if (photoUrl && !photos.includes(photoUrl)) photos.push(photoUrl);
+    });
+  }
+
+  const beds = parseInt(item.beds, 10) || parseInt(item.bedrooms, 10) || 1;
+  const baths = parseFloat(item.baths) || parseFloat(item.bathrooms) || 1;
+  const sqft = parseInt(item.area || item.livingArea, 10) || 0;
+
+  return {
+    address: address,
+    city: cfg.city,
+    state: cfg.state,
+    zipCode: item.zipcode || '',
+    neighborhood: extractNeighborhood(address),
+    school: cfg.school,
+    rent: rent,
+    rentPerPerson: rent,
+    securityDeposit: 0,
+    brokerFee: 0,
+    bedrooms: beds,
+    bathrooms: baths,
+    squareFeet: sqft,
+    furnished: false,
+    availableDate: '',
+    leaseLength: 12,
+    photos: photos.slice(0, 10),
+    virtualTour: item.hdpUrl ? 'https://www.zillow.com' + item.hdpUrl : '',
+    amenities: {
+      heatIncluded: false,
+      hotWaterIncluded: false,
+      laundryInUnit: false,
+      laundryInBuilding: false,
+      parking: false,
+      dishwasher: false,
+      ac: false,
+      petsAllowed: false
+    },
+    landlordId: 'system-zillow',
+    landlordName: 'Zillow (imported)',
+    landlordEmail: '',
+    landlordPhone: '',
+    zillowId: String(item.zpid || ''),
+    zillowUrl: item.hdpUrl ? 'https://www.zillow.com' + item.hdpUrl : '',
+    source: 'zillow-scraped',
+    verified: false,
+    active: true,
+    viewCount: 0,
+    savedCount: 0,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    coordinates: { lat: cfg.lat, lng: cfg.lng },
+    distanceToSchool: 0
+  };
+}
+
+/**
+ * Scheduled Zillow scrape — runs every 24 hours.
+ * Uses Zillow's internal JSON API; deduplicates by zpid.
  */
 exports.scrapeZillowNearSchool = functions
-  .runWith({ timeoutSeconds: 300, memory: '1GB' })
+  .runWith({ timeoutSeconds: 300, memory: '512MB' })
   .pubsub.schedule('every 24 hours')
   .onRun(async () => {
-    const schools = {
-      bu: { lat: 42.3505, lng: -71.1054, school: 'bu' },
-      neu: { lat: 42.3398, lng: -71.0892, school: 'neu' },
-      merrimack: { lat: 42.8334, lng: -71.0495, school: 'merrimack' }
-    };
+    const db = admin.firestore();
 
-    let browser;
-    try {
-      browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-      const page = await browser.newPage();
-      await page.setUserAgent(
-        'Mozilla/5.0 (compatible; DormDropBot/1.0; +https://mydormdrop.com)'
-      );
+    for (const key of Object.keys(SCHOOLS)) {
+      const cfg = SCHOOLS[key];
+      console.log('Scraping Zillow for', key);
 
-      for (const key of Object.keys(schools)) {
-        const cfg = schools[key];
-        const url = `https://www.zillow.com/homes/for_rent/?searchQueryState=%7B%22mapBounds%22%3A%7B%22north%22%3A${cfg.lat + 0.05}%2C%22south%22%3A${cfg.lat - 0.05}%2C%22east%22%3A${cfg.lng + 0.05}%2C%22west%22%3A${cfg.lng - 0.05}%7D%7D`;
-
-        await page.goto(url, { waitUntil: 'networkidle2', timeout: 120000 }).catch(() => {});
-
-        const items = await page
-          .evaluate(() => {
-            const out = [];
-            document.querySelectorAll('[data-test="property-card"]').forEach((el, i) => {
-              if (i >= 15) return;
-              const priceEl = el.querySelector('[data-test="property-card-price"]');
-              const addrEl = el.querySelector('[data-test="property-card-addr"]');
-              out.push({
-                priceText: priceEl ? priceEl.textContent.trim() : '',
-                addressText: addrEl ? addrEl.textContent.trim() : ''
-              });
-            });
-            return out;
-          })
-          .catch(() => []);
-
-        const batch = admin.firestore().batch();
-        for (const item of items) {
-          const rent = parseInt(String(item.priceText).replace(/[^0-9]/g, ''), 10) || 0;
-          if (!rent || !item.addressText) continue;
-          const ref = admin.firestore().collection('listings').doc();
-          batch.set(ref, {
-            address: item.addressText,
-            city: '',
-            state: 'MA',
-            zipCode: '',
-            neighborhood: '',
-            school: cfg.school,
-            rent,
-            rentPerPerson: rent,
-            securityDeposit: 0,
-            brokerFee: 0,
-            bedrooms: 1,
-            bathrooms: 1,
-            squareFeet: 0,
-            furnished: false,
-            availableDate: '',
-            leaseLength: 12,
-            photos: [],
-            virtualTour: '',
-            amenities: {
-              heatIncluded: false,
-              hotWaterIncluded: false,
-              laundryInUnit: false,
-              laundryInBuilding: false,
-              parking: false,
-              dishwasher: false,
-              ac: false,
-              petsAllowed: false
-            },
-            landlordId: 'system-zillow',
-            landlordName: 'Zillow (imported)',
-            landlordEmail: '',
-            landlordPhone: '',
-            source: 'zillow-scraped',
-            verified: false,
-            active: true,
-            viewCount: 0,
-            savedCount: 0,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            coordinates: { lat: cfg.lat, lng: cfg.lng },
-            distanceToSchool: 0
-          });
-        }
-        await batch.commit();
+      let items;
+      try {
+        items = await fetchZillowListings(cfg);
+        console.log('Got', items.length, 'results for', key);
+      } catch (e) {
+        console.error('Fetch error for', key, e.message);
+        continue;
       }
-    } catch (e) {
-      console.error('scrapeZillowNearSchool', e);
-    } finally {
-      if (browser) await browser.close();
+
+      if (!items.length) continue;
+
+      const batch = db.batch();
+      let newCount = 0;
+
+      for (const item of items) {
+        const mapped = mapListing(item, cfg);
+        if (!mapped) continue;
+
+        if (mapped.zillowId) {
+          const existing = await db.collection('listings')
+            .where('zillowId', '==', mapped.zillowId)
+            .limit(1)
+            .get();
+          if (!existing.empty) {
+            // Update rent and photos in case they changed
+            batch.update(existing.docs[0].ref, {
+              photos: mapped.photos,
+              rent: mapped.rent,
+              updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+            continue;
+          }
+        }
+
+        const ref = db.collection('listings').doc();
+        batch.set(ref, mapped);
+        newCount++;
+      }
+
+      await batch.commit();
+      console.log('Committed', newCount, 'new listings for', key);
+
+      // Polite delay between school requests
+      await new Promise(r => setTimeout(r, 2000));
     }
+
     return null;
   });
 
 /**
- * SendGrid: notify on new inquiry (triggered when doc created in inquiries).
+ * HTTP trigger to manually run the scraper (for testing / seeding).
+ * GET /scrapeZillowManual?school=bu
+ */
+exports.scrapeZillowManual = functions
+  .runWith({ timeoutSeconds: 120, memory: '512MB' })
+  .https.onRequest(async (req, res) => {
+    const schoolKey = req.query.school || 'bu';
+    const cfg = SCHOOLS[schoolKey];
+    if (!cfg) { res.status(400).json({ error: 'Unknown school key' }); return; }
+
+    const db = admin.firestore();
+    let items;
+    try {
+      items = await fetchZillowListings(cfg);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+      return;
+    }
+
+    const results = [];
+    const batch = db.batch();
+    for (const item of items) {
+      const mapped = mapListing(item, cfg);
+      if (!mapped) continue;
+      const ref = db.collection('listings').doc();
+      batch.set(ref, mapped);
+      results.push({
+        address: mapped.address,
+        rent: mapped.rent,
+        beds: mapped.bedrooms,
+        baths: mapped.bathrooms,
+        sqft: mapped.squareFeet,
+        photos: mapped.photos.length,
+        zillowUrl: mapped.zillowUrl
+      });
+    }
+    await batch.commit();
+    res.json({ school: schoolKey, saved: results.length, listings: results });
+  });
+
+/**
+ * SendGrid: notify landlord on new student interest (interests collection).
+ */
+exports.onNewInterestEmail = functions.firestore
+  .document('interests/{interestId}')
+  .onCreate(async (snap) => {
+    if (!SENDGRID_KEY) { console.info('SendGrid not configured; skipping.'); return null; }
+    const data = snap.data();
+    if (!data.landlordId) return null;
+
+    const userDoc = await admin.firestore().collection('users').doc(data.landlordId).get();
+    const email = userDoc.exists ? userDoc.data().email : null;
+    if (!email) return null;
+
+    await sgMail.send({
+      to: email,
+      from: FROM_EMAIL,
+      subject: 'New interest in your listing — DormDrop',
+      text: [
+        `${data.studentName || 'A student'} is interested in your listing at ${data.listingAddress || data.listingId}.`,
+        '',
+        data.message ? `Message: "${data.message}"` : '',
+        '',
+        `Reply to: ${data.studentEmail || '(not provided)'}`,
+        '',
+        'Log in at mydormdrop.com/landlord to view all inquiries.'
+      ].join('\n')
+    });
+    return null;
+  });
+
+/**
+ * Legacy: also handle inquiries collection.
  */
 exports.onNewInquiryEmail = functions.firestore
   .document('inquiries/{inquiryId}')
   .onCreate(async (snap) => {
-    if (!SENDGRID_KEY) {
-      console.info('SendGrid not configured; skipping email.');
-      return null;
-    }
+    if (!SENDGRID_KEY) { console.info('SendGrid not configured; skipping.'); return null; }
     const data = snap.data();
-    const landlordId = data.landlordId;
-    if (!landlordId) return null;
-    const userDoc = await admin.firestore().collection('users').doc(landlordId).get();
+    if (!data.landlordId) return null;
+
+    const userDoc = await admin.firestore().collection('users').doc(data.landlordId).get();
     const email = userDoc.exists ? userDoc.data().email : null;
     if (!email) return null;
 
-    const msg = {
+    await sgMail.send({
       to: email,
       from: FROM_EMAIL,
       subject: `New DormDrop inquiry: ${data.listingId || 'listing'}`,
       text: `You have a new inquiry from ${data.studentName || 'a student'}.\n\n${data.message || ''}\n\nReply to: ${data.studentEmail || ''}`
-    };
-    await sgMail.send(msg);
+    });
     return null;
   });

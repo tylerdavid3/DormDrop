@@ -4,48 +4,308 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Discover Roommates — DormDrop</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;padding:24px}
-.container{max-width:420px;margin:0 auto}
-h1{font-family:'Playfair Display',serif;font-size:26px;text-align:center;margin-bottom:20px}
-#card-stack{background:#fff;border:1px solid #E5E0D8;border-radius:16px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.06);min-height:320px}
-.actions{display:flex;justify-content:center;gap:16px;margin-top:20px}
-.actions button{width:56px;height:56px;border-radius:50%;border:none;font-size:22px;cursor:pointer}
-#no-more-matches{display:none;text-align:center;padding:40px 20px}
-#match-modal{display:none;position:fixed;inset:0;background:rgba(17,24,39,.5);align-items:center;justify-content:center;z-index:50}
-#match-modal .box{background:#fff;padding:32px;border-radius:16px;max-width:360px;text-align:center}
-.nav{margin-bottom:20px}
-.nav a{color:#0E6E6E;text-decoration:none;font-weight:600}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#111827;--ink-3:#6B7280;--linen:#F9F7F4;--white:#fff;--rule:#E5E0D8;--teal:#0E6E6E;--teal-lt:#E6F4F4;--r:16px}
+body{background:var(--linen);font-family:'Outfit',sans-serif;padding:0;min-height:100vh;display:flex;flex-direction:column}
+.nav{background:var(--white);border-bottom:1px solid var(--rule);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.nav a{color:var(--teal);text-decoration:none;font-weight:600;font-size:14px}
+.nav-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink)}
+.page{flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 20px 48px}
+.card-wrap{width:100%;max-width:400px}
+.card{background:var(--white);border-radius:var(--r);box-shadow:0 4px 20px rgba(0,0,0,.08);overflow:hidden}
+.card-photo{width:100%;height:260px;object-fit:cover;background:#ddd;display:block}
+.card-photo-placeholder{width:100%;height:260px;background:linear-gradient(135deg,#E6F4F4,#c8e6e6);display:flex;align-items:center;justify-content:center;font-size:72px}
+.card-body{padding:20px}
+.card-name{font-size:22px;font-weight:700;margin-bottom:4px}
+.card-sub{font-size:14px;color:var(--ink-3);margin-bottom:12px}
+.compat-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-lt);color:var(--teal);font-weight:700;font-size:13px;padding:6px 12px;border-radius:100px;margin-bottom:12px}
+.card-bio{font-size:14px;color:var(--ink-3);line-height:1.5;margin-bottom:14px}
+.lifestyle-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--linen);border:1px solid var(--rule);border-radius:100px;padding:4px 10px;font-size:12px;color:var(--ink-3)}
+.actions{display:flex;justify-content:center;gap:20px;margin-top:24px}
+.action-btn{width:60px;height:60px;border-radius:50%;border:none;font-size:24px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.1);transition:transform .15s}
+.action-btn:hover{transform:scale(1.08)}
+.action-btn:disabled{opacity:.5;cursor:default;transform:none}
+.btn-pass{background:#FEE2E2}
+.btn-like{background:#D1FAE5}
+.empty-state{text-align:center;padding:60px 20px;max-width:360px}
+.empty-icon{font-size:56px;margin-bottom:16px}
+.empty-state h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px}
+.empty-state p{color:var(--ink-3);font-size:14px;line-height:1.6;margin-bottom:24px}
+.btn-teal{background:var(--teal);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.loading{text-align:center;padding:60px 20px;color:var(--ink-3);font-size:16px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:50;align-items:center;justify-content:center}
+.overlay.active{display:flex}
+.modal-box{background:var(--white);border-radius:20px;padding:36px 28px;max-width:360px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+.modal-icon{font-size:56px;margin-bottom:12px}
+.modal-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:8px}
+.modal-sub{color:var(--ink-3);font-size:15px;margin-bottom:24px}
+.modal-btns{display:flex;flex-direction:column;gap:10px}
+.btn-outline{background:var(--white);border:1px solid var(--rule);color:var(--ink);padding:12px 20px;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500}
 </style>
 </head>
 <body>
-<div class="nav"><a href="/dashboard.html">← Dashboard</a></div>
-<div class="container">
-  <h1>Discover roommates</h1>
-  <div id="card-stack"></div>
-  <div class="actions">
-    <button type="button" style="background:#fee2e2" onclick="passCurrentCard()" title="Pass">❌</button>
-    <button type="button" style="background:#e0f2fe" onclick="alert('Bio details are on the card.')" title="Info">ℹ️</button>
-    <button type="button" style="background:#d1fae5" onclick="likeCurrentCard()" title="Like">💚</button>
+<div class="nav">
+  <a href="/dashboard.html">← Dashboard</a>
+  <div class="nav-title">Discover</div>
+  <a href="/profile-setup.html">Edit profile</a>
+</div>
+<div class="page">
+  <div id="loading" class="loading">Finding your matches…</div>
+  <div id="card-wrap" class="card-wrap" style="display:none">
+    <div id="card-area"></div>
   </div>
-  <div id="no-more-matches">
-    <p style="font-size:18px;margin-bottom:12px">That’s everyone for now.</p>
-    <p style="color:#6B7280;margin-bottom:20px">Check back later for new students.</p>
-    <a href="/dashboard.html" style="display:inline-block;background:#0E6E6E;color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600">Dashboard</a>
+  <div id="actions" class="actions" style="display:none">
+    <button class="action-btn btn-pass" id="btn-pass" title="Pass" onclick="passCard()">✕</button>
+    <button class="action-btn btn-like" id="btn-like" title="Like" onclick="likeCard()">💚</button>
+  </div>
+  <div id="empty-state" class="empty-state" style="display:none">
+    <div class="empty-icon">🏠</div>
+    <h2>All caught up!</h2>
+    <p>You've seen everyone for now. Check back later as more students join.</p>
+    <a href="/dashboard.html" class="btn-teal">Back to dashboard</a>
   </div>
 </div>
-<div id="match-modal">
-  <div class="box">
-    <div style="font-size:48px">🎉</div>
-    <h2 style="font-family:'Playfair Display',serif">It’s a match!</h2>
-    <p>You and <span id="match-name"></span> both liked each other.</p>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap">
-      <button class="btn-primary" style="background:#0E6E6E;color:#fff;border:none;padding:12px 20px;border-radius:10px;cursor:pointer;font-weight:600" onclick="openChat()">Messages</button>
-      <button style="background:#fff;border:1px solid #E5E0D8;padding:12px 20px;border-radius:10px;cursor:pointer" onclick="keepSwiping()">Keep swiping</button>
+
+<div class="overlay" id="match-modal">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title">It's a match!</div>
+    <div class="modal-sub">You and <span id="match-name" style="font-weight:700;color:var(--teal)"></span> both liked each other!</div>
+    <div class="modal-btns">
+      <a href="/messages.html" class="btn-teal" style="display:block">Open Messages</a>
+      <button class="btn-outline" onclick="closeMatchModal()">Keep swiping</button>
     </div>
   </div>
 </div>
-<script type="module" src="/src/discover.js"></script>
+
+<script>
+var FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyB8XICHo3JH_4rPB6AKMoenc6GcQUTEbyc',
+  authDomain: 'dormdrop-98dd3.firebaseapp.com',
+  projectId: 'dormdrop-98dd3',
+  storageBucket: 'dormdrop-98dd3.firebasestorage.app',
+  messagingSenderId: '446119671926',
+  appId: '1:446119671926:web:4927b8a290f1730f598757'
+};
+
+var db, auth;
+var currentUser = null;
+var myData = null;
+var candidates = [];
+var cardIndex = 0;
+
+if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+db = firebase.firestore();
+auth = firebase.auth();
+
+auth.onAuthStateChanged(function(user) {
+  if (!user) { window.location.href = '/'; return; }
+  currentUser = user;
+  db.collection('users').doc(user.uid).get().then(function(snap) {
+    myData = snap.data();
+    if (!myData) { window.location.href = '/'; return; }
+    var p = myData.profile || {};
+    if (!p.major || !p.sleepSchedule || !p.studyHabits) {
+      window.location.href = '/profile-setup.html';
+      return;
+    }
+    loadCandidates();
+  });
+});
+
+function calcCompat(me, other) {
+  var p1 = me.profile || me;
+  var p2 = other.profile || other;
+  var score = 0;
+  if (p1.sleepSchedule && p2.sleepSchedule) {
+    if (p1.sleepSchedule === p2.sleepSchedule) score += 20;
+    else if (p1.sleepSchedule === 'flexible' || p2.sleepSchedule === 'flexible') score += 10;
+  }
+  if (p1.studyHabits && p2.studyHabits) {
+    if (p1.studyHabits === p2.studyHabits) score += 15;
+    else if (p1.studyHabits === 'flexible' || p2.studyHabits === 'flexible') score += 8;
+  }
+  if (p1.socialStyle && p2.socialStyle) {
+    if (p1.socialStyle === p2.socialStyle) score += 15;
+    else if (p1.socialStyle === 'flexible' || p2.socialStyle === 'flexible') score += 8;
+  }
+  if (p1.cleanliness && p2.cleanliness) {
+    if (p1.cleanliness === p2.cleanliness) score += 20;
+    else if (p1.cleanliness === 'flexible' || p2.cleanliness === 'flexible') score += 10;
+  }
+  if (p1.pets && p2.pets) {
+    if (p1.pets === p2.pets) score += 10;
+    else if ((p1.pets === 'ok-with-pets' && p2.pets === 'love-pets') ||
+             (p1.pets === 'love-pets' && p2.pets === 'ok-with-pets')) score += 5;
+  }
+  if (p1.guests && p2.guests && p1.guests === p2.guests) score += 10;
+  var b1 = parseInt(p1.budget, 10) || 0;
+  var b2 = parseInt(p2.budget, 10) || 0;
+  if (b1 && b2) {
+    var diff = Math.abs(b1 - b2);
+    if (diff < 100) score += 10;
+    else if (diff < 300) score += 5;
+  }
+  return Math.min(100, score);
+}
+
+function loadCandidates() {
+  var school = myData.school;
+  var viewed = myData.viewedProfiles || [];
+  db.collection('users')
+    .where('school', '==', school)
+    .where('accountType', '==', 'student')
+    .get()
+    .then(function(snap) {
+      candidates = [];
+      snap.forEach(function(docSnap) {
+        if (docSnap.id === currentUser.uid) return;
+        if (viewed.indexOf(docSnap.id) !== -1) return;
+        var other = docSnap.data();
+        var p = other.profile || {};
+        if (!p.sleepSchedule) return;
+        var compat = calcCompat(myData, other);
+        candidates.push({ id: docSnap.id, data: other, compat: compat });
+      });
+      candidates.sort(function(a, b) { return b.compat - a.compat; });
+      document.getElementById('loading').style.display = 'none';
+      if (candidates.length === 0) {
+        showEmpty();
+      } else {
+        document.getElementById('card-wrap').style.display = 'block';
+        document.getElementById('actions').style.display = 'flex';
+        renderCard();
+      }
+    })
+    .catch(function(err) {
+      console.error(err);
+      document.getElementById('loading').textContent = 'Error loading profiles. Please refresh.';
+    });
+}
+
+function renderCard() {
+  if (cardIndex >= candidates.length) { showEmpty(); return; }
+  var c = candidates[cardIndex];
+  var p = c.data.profile || {};
+  var name = c.data.displayName || (c.data.email ? c.data.email.split('@')[0] : 'Student');
+  var photoHTML = p.photoURL
+    ? '<img class="card-photo" src="' + esc(p.photoURL) + '" alt="' + esc(name) + '" onerror="this.style.display=\'none\'"/>'
+    : '<div class="card-photo-placeholder">🎓</div>';
+  var chips = [];
+  if (p.sleepSchedule) chips.push(sleepLabel(p.sleepSchedule));
+  if (p.studyHabits) chips.push(studyLabel(p.studyHabits));
+  if (p.socialStyle) chips.push(socialLabel(p.socialStyle));
+  if (p.cleanliness) chips.push(cleanLabel(p.cleanliness));
+  if (p.pets && p.pets !== 'no-preference') chips.push(petLabel(p.pets));
+  var yearStr = p.year ? capitalize(p.year) : '';
+  var subParts = [yearStr, p.major].filter(Boolean);
+  document.getElementById('card-area').innerHTML =
+    '<div class="card">' + photoHTML +
+    '<div class="card-body">' +
+    '<div class="card-name">' + esc(name) + '</div>' +
+    '<div class="card-sub">' + esc(subParts.join(' · ')) + '</div>' +
+    '<div class="compat-badge">💚 ' + c.compat + '% compatible</div>' +
+    (p.bio ? '<div class="card-bio">' + esc(p.bio) + '</div>' : '') +
+    '<div class="lifestyle-chips">' + chips.map(function(ch) { return '<span class="chip">' + ch + '</span>'; }).join('') + '</div>' +
+    '</div></div>';
+}
+
+function showEmpty() {
+  document.getElementById('card-wrap').style.display = 'none';
+  document.getElementById('actions').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'block';
+}
+
+function likeCard() {
+  if (cardIndex >= candidates.length) return;
+  var c = candidates[cardIndex];
+  var likedId = c.id;
+  document.getElementById('btn-like').disabled = true;
+  document.getElementById('btn-pass').disabled = true;
+
+  db.collection('users').doc(currentUser.uid).update({
+    likedProfiles: firebase.firestore.FieldValue.arrayUnion(likedId),
+    viewedProfiles: firebase.firestore.FieldValue.arrayUnion(likedId)
+  }).then(function() {
+    return db.collection('users').doc(likedId).get();
+  }).then(function(snap) {
+    var otherData = snap.data() || {};
+    var likedByOther = (otherData.likedProfiles || []).indexOf(currentUser.uid) !== -1;
+    if (likedByOther) {
+      return createMatch(currentUser.uid, likedId, c.compat).then(function() {
+        var name = c.data.displayName || (c.data.email ? c.data.email.split('@')[0] : 'your match');
+        document.getElementById('match-name').textContent = name;
+        document.getElementById('match-modal').classList.add('active');
+      });
+    } else {
+      cardIndex++;
+      document.getElementById('btn-like').disabled = false;
+      document.getElementById('btn-pass').disabled = false;
+      renderCard();
+    }
+  }).catch(function(err) {
+    console.error(err);
+    document.getElementById('btn-like').disabled = false;
+    document.getElementById('btn-pass').disabled = false;
+  });
+}
+
+function passCard() {
+  if (cardIndex >= candidates.length) return;
+  var c = candidates[cardIndex];
+  db.collection('users').doc(currentUser.uid).update({
+    passedProfiles: firebase.firestore.FieldValue.arrayUnion(c.id),
+    viewedProfiles: firebase.firestore.FieldValue.arrayUnion(c.id)
+  }).catch(function(){});
+  cardIndex++;
+  renderCard();
+}
+
+function createMatch(uid1, uid2, compat) {
+  var matchId = [uid1, uid2].sort().join('_');
+  var unreadCount = {};
+  unreadCount[uid1] = 0;
+  unreadCount[uid2] = 0;
+  return db.collection('matches').doc(matchId).set({
+    users: [uid1, uid2],
+    school: myData.school,
+    compatibility: compat,
+    status: 'active',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    lastMessage: null,
+    lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(),
+    unreadCount: unreadCount
+  }, { merge: true }).then(function() {
+    return Promise.all([
+      db.collection('users').doc(uid1).update({ matches: firebase.firestore.FieldValue.arrayUnion(uid2) }),
+      db.collection('users').doc(uid2).update({ matches: firebase.firestore.FieldValue.arrayUnion(uid1) })
+    ]);
+  });
+}
+
+function closeMatchModal() {
+  document.getElementById('match-modal').classList.remove('active');
+  cardIndex++;
+  document.getElementById('btn-like').disabled = false;
+  document.getElementById('btn-pass').disabled = false;
+  renderCard();
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function sleepLabel(v) { return v === 'night-owl' ? '🌙 Night owl' : v === 'early-riser' ? '🌅 Early riser' : '😴 Flexible'; }
+function studyLabel(v) { return v === 'at-home' ? '🏠 Studies at home' : v === 'on-campus' ? '📚 On campus' : '📖 Flexible'; }
+function socialLabel(v) { return v === 'very-social' ? '🎉 Very social' : v === 'somewhat-social' ? '😊 Somewhat social' : v === 'introverted' ? '🤫 Introverted' : '🙂 Flexible'; }
+function cleanLabel(v) { return v === 'very-clean' ? '✨ Very clean' : v === 'organized' ? '🧹 Organized' : v === 'relaxed' ? '😌 Relaxed' : '🏠 Flexible'; }
+function petLabel(v) { return v === 'love-pets' ? '🐾 Loves pets' : '🐶 OK with pets'; }
+</script>
 </body>
 </html>
