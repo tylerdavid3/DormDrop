@@ -443,6 +443,12 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </head>
 <body>
 
+<!-- DEMO BANNER -->
+<div id="demoBanner" style="display:none;position:fixed;top:0;left:0;right:0;background:#0f172a;color:#fff;text-align:center;padding:9px 16px;font-size:13px;font-family:'Outfit',sans-serif;z-index:10000;border-bottom:1px solid #334155">
+  You are in <strong>Demo Preview</strong> mode — viewing the site as a verified student.
+  <button onclick="deactivateDemoMode()" style="margin-left:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif">Exit Demo</button>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
@@ -502,15 +508,15 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     </div>
     <div class="divline"></div>
     <div class="ins-row">
-      <div class="ins-icon ii-t">📋</div>
+      <div class="ins-icon ii-t" style="font-size:12px;font-weight:700;color:var(--teal)">MC</div>
       <div><div class="ins-title">Official 2025–26 Merrimack rates used</div><div class="ins-sub">Source: Merrimack Housing Office</div></div>
     </div>
     <div class="ins-row">
-      <div class="ins-icon ii-t">🏘️</div>
+      <div class="ins-icon ii-t" style="font-size:15px;font-weight:700;color:var(--teal)">5mi</div>
       <div><div class="ins-title">Properties within 5 miles of campus</div><div class="ins-sub">North Andover · Andover · Lawrence · Methuen</div></div>
     </div>
     <div class="ins-row">
-      <div class="ins-icon ii-a">💬</div>
+      <div class="ins-icon ii-a" style="font-size:13px;font-weight:700;color:var(--teal)">Chat</div>
       <div><div class="ins-title">Roommate matching included</div><div class="ins-sub">Lifestyle-based matching with direct messaging</div></div>
     </div>
   </div>
@@ -638,7 +644,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           </select>
         </div>
         <div class="fg">
-          <label style="color:var(--teal)">🎓 Financial Aid Applied to Housing <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">Reduces on-campus cost</span></label>
+          <label style="color:var(--teal)">Financial Aid Applied to Housing <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">Reduces on-campus cost</span></label>
           <select id="financialAid" onchange="calc()">
             <option value="0">No aid applied to housing</option>
             <option value="3000">~$3,000/yr housing aid</option>
@@ -699,13 +705,13 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <!-- ROYAL CREST PROPERTY CARD -->
     <div class="property-card">
       <div class="property-header">
-        <div class="property-badge">🔥 BEST VALUE FOR STUDENTS</div>
+        <div class="property-badge">BEST VALUE FOR STUDENTS</div>
         <div class="property-main">
-          <div class="property-image">🏘️</div>
+          <div class="property-image" style="background:linear-gradient(135deg,#1a2640,#243350);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;letter-spacing:.5px">Royal Crest</div>
           <div class="property-info">
             <h3>Royal Crest Estates North Andover</h3>
-            <p class="property-address">📍 50 Royal Crest Drive, North Andover, MA 01845</p>
-            <p class="property-address">🚗 2.8 miles from Merrimack College (6 min drive)</p>
+            <p class="property-address">50 Royal Crest Drive, North Andover, MA 01845</p>
+            <p class="property-address">2.8 miles from Merrimack College (6 min drive)</p>
             <div class="property-quick-stats">
               <div class="stat">
                 <span class="stat-value">11</span>
@@ -721,14 +727,14 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
               </div>
             </div>
             <div class="property-savings-banner">
-              💰 <strong>Save up to $7,800/year</strong> vs. Merrimack dorms
+              <strong>Save up to $7,800/year</strong> vs. Merrimack dorms
             </div>
             <div class="property-amenities-preview">
-              <span>🏊 Pool</span>
-              <span>💪 Gym</span>
-              <span>🅿️ Parking</span>
-              <span>🐕 Pets OK</span>
-              <span>🔥 Heat Included</span>
+              <span>Pool</span>
+              <span>Gym</span>
+              <span>Parking</span>
+              <span>Pets OK</span>
+              <span>Heat Included</span>
             </div>
           </div>
         </div>
@@ -742,7 +748,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div id="royal-crest-units" class="units-list">
         <!-- 3BR UNITS -->
         <div class="units-category">
-          <h4 class="category-title">🔥 Best Value - 3 Bedroom Apartments</h4>
+          <h4 class="category-title">Best Value — 3 Bedroom Apartments</h4>
           <p class="category-subtitle">Split 3 ways for maximum savings</p>
 
           <div class="unit-row best-value">
@@ -970,15 +976,15 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <!-- CONTACT SECTION -->
         <div class="property-contact-section">
           <div class="contact-info-box">
-            <h4>⚠️ About June Move-In Dates</h4>
+            <h4>About June Move-In Dates</h4>
             <p>Royal Crest offers 12-month leases starting in June. <strong>Even paying 3 months of "empty" rent, you still save $4,000+/year vs. dorms.</strong> Many students sublet summer months or stay for internships.</p>
           </div>
           <div class="contact-cta">
             <h4>Ready to tour Royal Crest?</h4>
             <a href="https://www.royalcrestnorthandover.com" class="btn-contact-primary" target="_blank">
-              🏠 Contact Royal Crest →
+              Contact Royal Crest →
             </a>
-            <p class="urgency-text">⚡ Units filling fast! Feb-March is peak leasing season.</p>
+            <p class="urgency-text">Units filling fast — Feb–March is peak leasing season.</p>
           </div>
         </div>
       </div>
@@ -1019,12 +1025,12 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="pref-title">Your lifestyle,<br>your match.</div>
         <p class="pref-desc">We match on more than proximity. Sleep schedule, study habits, cleanliness, and social preferences all factor into your compatibility score.</p>
         <div class="pref-grid" id="prefGrid">
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">🌙</div><div class="pi-l">Night Owl</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">☀️</div><div class="pi-l">Early Riser</div></div>
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">📚</div><div class="pi-l">Studies at Home</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">🎉</div><div class="pi-l">Social / Outgoing</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">🧹</div><div class="pi-l">Keeps Things Tidy</div></div>
+          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-l">Night Owl</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Early Riser</div></div>
+          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-l">Studies at Home</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Social / Outgoing</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Pet-Friendly</div></div>
+          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-l">Keeps Things Tidy</div></div>
         </div>
         <button onclick="onFindMatches()" class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px;font-size:15px;border:none;cursor:pointer;border-radius:var(--r);">Find My Matches</button>
       </div>
@@ -1054,7 +1060,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div class="ft-brand">
         <a class="logo" href="#">Dorm<em>Drop</em></a>
         <p class="ft-tag">The smarter way for college students and families to evaluate off-campus housing — starting at Merrimack College.</p>
-        <div class="bu-chip" style="margin-top:20px">🔵 Merrimack College</div>
+        <div class="bu-chip" style="margin-top:20px">Merrimack College</div>
       </div>
       <div class="ft-col">
         <h5>Students</h5>
@@ -1093,7 +1099,6 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px" id="submitInterestBtn" onclick="submitInterest()">Send Interest</button>
     </div>
     <div id="interestSuccessMsg" style="display:none;text-align:center;padding:20px 0">
-      <div style="font-size:40px;margin-bottom:12px">🎉</div>
       <div style="font-weight:700;font-size:16px;margin-bottom:8px">Interest Sent!</div>
       <p style="font-size:13px;color:var(--ink-4)">The landlord has been notified. They'll be in touch soon.</p>
     </div>
@@ -1126,7 +1131,8 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button id="loginBtn" data-label="Log In" class="btn-primary" onclick="doLogin()" style="width:100%;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Log In</button>
       <div class="or-div">or</div>
       <button class="btn-ghost" onclick="showAuthView('forgotFields')" style="width:100%;text-align:center;display:block;padding:12px;margin-bottom:6px">Forgot Password?</button>
-      <button class="btn-ghost" onclick="showAuthView('signupFields')" style="width:100%;text-align:center;display:block;padding:12px">Create New Account</button>
+      <button class="btn-ghost" onclick="showAuthView('signupFields')" style="width:100%;text-align:center;display:block;padding:12px;margin-bottom:6px">Create New Account</button>
+      <button onclick="activateDemoMode()" style="width:100%;text-align:center;display:block;padding:12px;background:none;border:1.5px dashed var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--ink-4);cursor:pointer">Preview as Demo User</button>
     </div>
 
     <!-- Forgot password view -->
@@ -1140,7 +1146,6 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <!-- Email verification pending view -->
     <div id="verifyFields" style="display:none">
       <div style="text-align:center;padding:16px 0 8px">
-        <div style="font-size:48px;margin-bottom:16px">📧</div>
         <p style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Check your inbox</p>
         <p style="font-size:13px;color:var(--ink-4);line-height:1.6;margin-bottom:24px">We sent a verification link to your @merrimack.edu email. Click the link in that email, then come back here.</p>
         <button class="btn-primary" onclick="checkEmailVerified()" style="width:100%;padding:15px;border:none;cursor:pointer;border-radius:10px;margin-bottom:10px">I've Verified My Email ✓</button>
@@ -1181,7 +1186,14 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-var listings=[];
+const listings=[
+  {id:1,bg:'li-1',em:'',badge:'New',bc:'b-new',price:'$725',per:'/mo per person',addr:'14 Elm St, North Andover',beds:3,baths:1,sqft:1020,avail:'Sep 1',tags:['3 Bed','Furnished','0.6 mi to MC','Parking Incl.'],saving:'Saves ~$4,800 / yr vs dorm',savN:4800,desc:'Spacious 3-bedroom near Merrimack campus. Fully furnished with in-unit laundry, hardwood floors, and private parking. Split three ways, this is one of the best values near campus.',type:'3br',furnished:true,img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop&auto=format'},
+  {id:2,bg:'li-2',em:'',badge:'Popular',bc:'b-pop',price:'$850',per:'/mo per person',addr:'88 Andover St, North Andover',beds:2,baths:1,sqft:810,avail:'Sep 1',tags:['2 Bed','Utilities Incl.','0.9 mi to MC','Pets OK'],saving:'Saves ~$4,200 / yr vs dorm',savN:4200,desc:'Well-maintained 2-bedroom apartment with utilities included. Updated kitchen, plenty of natural light, and pet-friendly. A quick drive or bike ride to Merrimack.',type:'2br',furnished:false,img:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop&auto=format'},
+  {id:3,bg:'li-3',em:'',badge:'Best Value',bc:'b-new',price:'$650',per:'/mo per person',addr:'7 Osgood St, North Andover',beds:4,baths:2,sqft:1500,avail:'Sep 1',tags:['4 Bed','2 Bath','1.2 mi to MC','Backyard'],saving:'Saves ~$6,600 / yr vs dorm',savN:6600,desc:'Large 4-bedroom house in North Andover with two full bathrooms, a private backyard, and parking. Split four ways this is exceptional value for Merrimack students.',type:'3br',furnished:false,img:'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&h=400&fit=crop&auto=format'},
+  {id:4,bg:'li-4',em:'',badge:'New',bc:'b-new',price:'$1,200',per:'/mo',addr:'22 Main St, Andover',beds:1,baths:1,sqft:540,avail:'Aug 1',tags:['1 Bed','Renovated','In-Unit Laundry','Walk Score 88'],saving:'Saves ~$2,800 / yr vs dorm',savN:2800,desc:'Modern 1-bedroom in downtown Andover. Fully renovated with new appliances, high ceilings, and an in-unit washer/dryer. Perfect for a student who values privacy.',type:'1br',furnished:false,img:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop&auto=format'},
+  {id:5,bg:'li-5',em:'',badge:'Furnished',bc:'b-new',price:'$975',per:'/mo per person',addr:'33 Chickering Rd, North Andover',beds:2,baths:1,sqft:740,avail:'Sep 1',tags:['2 Bed','Fully Furnished','0.8 mi to MC','In-Unit Laundry'],saving:'Saves ~$3,900 / yr vs dorm',savN:3900,desc:'Move-in ready furnished 2-bedroom. Everything included — ideal for students who want a frictionless transition from dorm life. Steps from Merrimack campus.',type:'2br',furnished:true,img:'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&h=400&fit=crop&auto=format'},
+  {id:6,bg:'li-6',em:'',badge:'High Demand',bc:'b-pop',price:'$800',per:'/mo per person',addr:'59 Waverly Rd, North Andover',beds:3,baths:1,sqft:940,avail:'Sep 1',tags:['3 Bed','Backyard','1.0 mi to MC','Quiet Street'],saving:'Saves ~$5,400 / yr vs dorm',savN:5400,desc:'Classic 3-bedroom house on a quiet street in North Andover with a private backyard. One of the most consistently in-demand rentals among Merrimack students.',type:'3br',furnished:false,img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop&auto=format'}
+];
 
 const profiles=[
   {av:'J',ac:'pa-1',name:'Jordan K.',info:'Business · Junior · North Andover',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
@@ -1194,10 +1206,10 @@ function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
   document.getElementById('listGrid').innerHTML=s.map(l=>`
     <div class="list-card" onclick="openDetail('${l.id}')">
-      <div class="li-img ${l.bg}"><div style="font-size:52px;opacity:.45">${l.em}</div><div class="li-badge ${l.bc}">${l.badge}</div></div>
+      <div class="li-img ${l.img?'':l.bg}">${l.img?`<img src="${l.img}" alt="" loading="lazy" onerror="this.parentNode.classList.add('${l.bg}');this.remove()">`:`<div style="font-size:52px;opacity:.45">${l.em}</div>`}<div class="li-badge ${l.bc}">${l.badge}</div></div>
       <div class="li-body">
         <div class="li-price">${l.price}<span> ${l.per}</span></div>
-        <div class="li-addr">📍 ${l.addr}</div>
+        <div class="li-addr">${l.addr}</div>
         <div class="li-tags">${l.tags.map(t=>`<span class="ltag">${t}</span>`).join('')}</div>
         <div class="li-footer"><div class="li-saving">${l.saving}</div><button class="btn-sm">View</button></div>
       </div>
@@ -1211,13 +1223,12 @@ function filterL(btn,f){
 
 function openDetail(id){
   // Require verified Merrimack email to view listing details
-  if(typeof auth!=='undefined'&&auth){
+  if(!window.demoMode && typeof auth!=='undefined'&&auth){
     if(!currentUser){openAuthModal('signup');return;}
     if(!currentUser.emailVerified){
       document.getElementById('detailContent').innerHTML=`
         <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
         <div style="text-align:center;padding:40px 20px">
-          <div style="font-size:52px;margin-bottom:16px">📧</div>
           <div class="m-title" style="margin-bottom:8px">Verify your email first</div>
           <p style="font-size:14px;color:var(--ink-4);line-height:1.6;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Check your inbox for a verification link from DormDrop, then click below to refresh.</p>
           <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px;margin-bottom:10px" onclick="currentUser.reload().then(()=>{if(currentUser.emailVerified){closeModal('detailModal');openDetail(${id});}else{alert('Still not verified — check your inbox.');}})">I've Verified — Refresh</button>
@@ -1230,9 +1241,9 @@ function openDetail(id){
   const l=listings.find(x=>String(x.id)===String(id));
   document.getElementById('detailContent').innerHTML=`
     <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
-    <div class="d-img ${l.bg}">${l.em}</div>
+    ${l.img?`<img src="${l.img}" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.insertAdjacentHTML('afterend','<div class=\\'d-img ${l.bg}\\'></div>');this.remove()">`:`<div class="d-img ${l.bg}"></div>`}
     <div class="d-price">${l.price} <span style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:400;color:var(--ink-4)">${l.per}</span></div>
-    <div class="d-addr">📍 ${l.addr}</div>
+    <div class="d-addr">${l.addr}</div>
     <div class="d-stats">
       <div class="d-stat"><div class="d-val">${l.beds}</div><div class="d-lbl">Beds</div></div>
       <div class="d-stat"><div class="d-val">${l.baths}</div><div class="d-lbl">Baths</div></div>
@@ -1393,6 +1404,25 @@ function resendVerification(){
 }
 
 renderListings('all');renderProfiles();calc();
+
+function activateDemoMode(){
+  window.demoMode=true;
+  window.currentUser={uid:'demo-dormdrop-001',email:'demo@merrimack.edu',displayName:'Demo User',emailVerified:true,reload:()=>Promise.resolve(),sendEmailVerification:()=>Promise.resolve()};
+  closeModal('signupModal');
+  document.getElementById('demoBanner').style.display='block';
+  document.body.style.paddingTop='42px';
+  var lb=document.getElementById('navLoginBtn'),sb=document.getElementById('navSignupBtn');
+  if(lb){lb.textContent='Demo User';lb.style.color='var(--teal)';lb.style.fontWeight='600';lb.onclick=null;}
+  if(sb){sb.textContent='Sign Out';sb.onclick=function(){deactivateDemoMode();};}
+}
+function deactivateDemoMode(){
+  window.demoMode=false;window.currentUser=null;
+  document.getElementById('demoBanner').style.display='none';
+  document.body.style.paddingTop='';
+  var lb=document.getElementById('navLoginBtn'),sb=document.getElementById('navSignupBtn');
+  if(lb){lb.textContent='Log in';lb.style.color='';lb.style.fontWeight='';lb.onclick=function(){openAuthModal('login');};}
+  if(sb){sb.textContent='Get Started';sb.onclick=function(){openAuthModal('signup');};}
+}
 </script>
 
 <!-- ── PROFILE SETUP MODAL ─────────────────────────────────────── -->
@@ -1424,28 +1454,28 @@ renderListings('all');renderProfiles();calc();
     <div id="profStep2" style="display:none">
       <p style="font-size:14px;color:var(--ink-3);margin-bottom:20px">Answer these 6 questions to find your most compatible matches.</p>
       <div class="quiz-group"><div class="quiz-group-label">Sleep Schedule</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-e">🌙</div><div class="pi-l">Night Owl</div></div>
-        <div class="pref-item" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-e">☀️</div><div class="pi-l">Early Riser</div></div>
+        <div class="pref-item" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-l">Night Owl</div></div>
+        <div class="pref-item" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-l">Early Riser</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Study Habits</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-e">🏠</div><div class="pi-l">Study at Home</div></div>
-        <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-e">🎓</div><div class="pi-l">Study on Campus</div></div>
+        <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-l">Study at Home</div></div>
+        <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-l">Study on Campus</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Social Style</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('socialPreferences','outgoing',this)"><div class="pi-e">🎉</div><div class="pi-l">Outgoing</div></div>
-        <div class="pref-item" onclick="selectQuiz('socialPreferences','quiet',this)"><div class="pi-e">🤫</div><div class="pi-l">Introverted</div></div>
+        <div class="pref-item" onclick="selectQuiz('socialPreferences','outgoing',this)"><div class="pi-l">Outgoing</div></div>
+        <div class="pref-item" onclick="selectQuiz('socialPreferences','quiet',this)"><div class="pi-l">Introverted</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Cleanliness</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('cleanliness','tidy',this)"><div class="pi-e">✨</div><div class="pi-l">Very Tidy</div></div>
-        <div class="pref-item" onclick="selectQuiz('cleanliness','organized-chaos',this)"><div class="pi-e">🗂️</div><div class="pi-l">Organized Chaos</div></div>
+        <div class="pref-item" onclick="selectQuiz('cleanliness','tidy',this)"><div class="pi-l">Very Tidy</div></div>
+        <div class="pref-item" onclick="selectQuiz('cleanliness','organized-chaos',this)"><div class="pi-l">Organized Chaos</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Pets</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('pets','pet-friendly',this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
-        <div class="pref-item" onclick="selectQuiz('pets','no-pets',this)"><div class="pi-e">🚫</div><div class="pi-l">No Pets</div></div>
+        <div class="pref-item" onclick="selectQuiz('pets','pet-friendly',this)"><div class="pi-l">Pet-Friendly</div></div>
+        <div class="pref-item" onclick="selectQuiz('pets','no-pets',this)"><div class="pi-l">No Pets</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Guests &amp; Parties</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('guestsParties','fine-with-guests',this)"><div class="pi-e">🥳</div><div class="pi-l">Guests are Fine</div></div>
-        <div class="pref-item" onclick="selectQuiz('guestsParties','prefer-quiet',this)"><div class="pi-e">🔇</div><div class="pi-l">Prefer Quiet</div></div>
+        <div class="pref-item" onclick="selectQuiz('guestsParties','fine-with-guests',this)"><div class="pi-l">Guests are Fine</div></div>
+        <div class="pref-item" onclick="selectQuiz('guestsParties','prefer-quiet',this)"><div class="pi-l">Prefer Quiet</div></div>
       </div></div>
     </div>
     <p id="profError" style="font-size:13px;color:#DC2626;margin-bottom:12px;display:none"></p>
