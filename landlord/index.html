@@ -6,7 +6,6 @@
   <title>DormDrop — Landlord Portal</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🏠</text></svg>" />
   <style>
-    /* ── Reset & Base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --sidebar-bg:    #0C1017;
@@ -27,7 +26,7 @@
     }
     body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
 
-    /* ── Auth Screen ──────────────────────────────────────────── */
+    /* ── Auth Screen ── */
     #authScreen {
       display: flex; align-items: center; justify-content: center;
       min-height: 100vh; width: 100%; background: linear-gradient(135deg, #0C1017 0%, #1a2740 100%);
@@ -41,26 +40,15 @@
     .auth-logo h1 { font-size: 1.6rem; font-weight: 700; color: var(--text); }
     .auth-logo p { font-size: .9rem; color: var(--text-muted); margin-top: 4px; }
     .auth-tabs { display: flex; gap: 4px; background: var(--bg); border-radius: 8px; padding: 4px; margin-bottom: 28px; }
-    .auth-tab {
-      flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer;
-      font-size: .875rem; font-weight: 500; color: var(--text-muted); transition: all .15s;
-      border: none; background: transparent;
-    }
+    .auth-tab { flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer; font-size: .875rem; font-weight: 500; color: var(--text-muted); transition: all .15s; border: none; background: transparent; }
     .auth-tab.active { background: var(--card); color: var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
     .auth-view { display: none; }
     .auth-view.active { display: block; }
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: .825rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px;
-      font-size: .9rem; color: var(--text); background: #fff; transition: border-color .15s;
-      outline: none;
-    }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: .9rem; color: var(--text); background: #fff; transition: border-color .15s; outline: none; }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
-    .btn-primary {
-      width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none;
-      border-radius: 8px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .15s;
-    }
+    .btn-primary { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .15s; }
     .btn-primary:hover { background: var(--accent-dark); }
     .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
     .auth-switch { text-align: center; margin-top: 16px; font-size: .85rem; color: var(--text-muted); }
@@ -69,73 +57,44 @@
     .auth-error { background: #FEF2F2; border: 1px solid #FCA5A5; color: #DC2626; border-radius: 8px; padding: 10px 14px; font-size: .85rem; margin-bottom: 16px; display: none; }
     .auth-success { background: #F0FDF4; border: 1px solid #86EFAC; color: #16A34A; border-radius: 8px; padding: 10px 14px; font-size: .85rem; margin-bottom: 16px; display: none; }
 
-    /* ── App Shell ────────────────────────────────────────────── */
+    /* ── App Shell ── */
     #appShell { display: none; width: 100%; }
 
-    /* ── Sidebar ──────────────────────────────────────────────── */
-    .sidebar {
-      width: var(--sidebar-w); min-height: 100vh; background: var(--sidebar-bg);
-      display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
-    }
-    .sidebar-header {
-      padding: 28px 20px 20px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
+    /* ── Sidebar ── */
+    .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
+    .sidebar-header { padding: 28px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.06); }
     .sidebar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .sidebar-brand .brand-icon { font-size: 1.5rem; }
     .sidebar-brand .brand-text { font-size: 1.1rem; font-weight: 700; color: #fff; line-height: 1.1; }
     .sidebar-brand .brand-sub { font-size: .7rem; color: rgba(255,255,255,.4); letter-spacing: .04em; text-transform: uppercase; }
     .sidebar-nav { flex: 1; padding: 16px 10px; }
     .nav-section { font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.3); padding: 12px 10px 6px; }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
-      cursor: pointer; color: rgba(255,255,255,.55); font-size: .875rem; font-weight: 500; transition: all .15s;
-      margin-bottom: 2px; border: none; background: transparent; width: 100%; text-align: left;
-    }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; color: rgba(255,255,255,.55); font-size: .875rem; font-weight: 500; transition: all .15s; margin-bottom: 2px; border: none; background: transparent; width: 100%; text-align: left; }
     .nav-item:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
     .nav-item.active { background: rgba(20,184,166,.18); color: var(--accent-light); }
     .nav-item .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
-    .nav-badge {
-      margin-left: auto; background: var(--accent); color: #fff; font-size: .7rem;
-      font-weight: 700; border-radius: 20px; padding: 2px 7px; min-width: 20px; text-align: center;
-    }
-    .sidebar-footer {
-      padding: 16px 10px; border-top: 1px solid rgba(255,255,255,.06);
-    }
+    .nav-badge { margin-left: auto; background: var(--accent); color: #fff; font-size: .7rem; font-weight: 700; border-radius: 20px; padding: 2px 7px; min-width: 20px; text-align: center; }
+    .sidebar-footer { padding: 16px 10px; border-top: 1px solid rgba(255,255,255,.06); }
     .user-info { display: flex; align-items: center; gap: 10px; padding: 8px 10px; margin-bottom: 4px; }
     .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: .85rem; flex-shrink: 0; }
     .user-name { font-size: .825rem; font-weight: 600; color: rgba(255,255,255,.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .user-role { font-size: .7rem; color: rgba(255,255,255,.35); }
-    .btn-signout {
-      display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px;
-      background: transparent; border: none; border-radius: 8px; color: rgba(255,255,255,.4);
-      font-size: .825rem; cursor: pointer; transition: all .15s;
-    }
+    .btn-signout { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; background: transparent; border: none; border-radius: 8px; color: rgba(255,255,255,.4); font-size: .825rem; cursor: pointer; transition: all .15s; }
     .btn-signout:hover { background: rgba(239,68,68,.12); color: #FCA5A5; }
 
-    /* ── Main Content ─────────────────────────────────────────── */
+    /* ── Main Content ── */
     .main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar {
-      background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 32px;
-      display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50;
-    }
+    .topbar { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
     .topbar-title { font-size: 1.2rem; font-weight: 700; color: var(--text); }
-    .topbar-actions { display: flex; gap: 10px; }
-    .btn-accent {
-      padding: 8px 18px; background: var(--accent); color: #fff; border: none; border-radius: 8px;
-      font-size: .875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .15s;
-    }
+    .btn-accent { padding: 8px 18px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: .875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .15s; }
     .btn-accent:hover { background: var(--accent-dark); }
     .content { padding: 28px 32px; flex: 1; }
     .page { display: none; }
     .page.active { display: block; }
 
-    /* ── Stat Cards ───────────────────────────────────────────── */
+    /* ── Stat Cards ── */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
-    .stat-card {
-      background: var(--card); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow);
-      border-left: 4px solid transparent;
-    }
+    .stat-card { background: var(--card); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); border-left: 4px solid transparent; }
     .stat-card.teal   { border-color: var(--accent); }
     .stat-card.green  { border-color: var(--success); }
     .stat-card.yellow { border-color: var(--warning); }
@@ -144,11 +103,11 @@
     .stat-value { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1; }
     .stat-sub { font-size: .775rem; color: var(--text-muted); margin-top: 4px; }
 
-    /* ── Section Header ───────────────────────────────────────── */
+    /* ── Section Header ── */
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
     .section-title { font-size: 1.05rem; font-weight: 700; color: var(--text); }
 
-    /* ── Tables ───────────────────────────────────────────────── */
+    /* ── Tables ── */
     .table-wrap { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
     thead tr { background: #F8FAFC; border-bottom: 2px solid var(--border); }
@@ -156,27 +115,23 @@
     td { padding: 13px 16px; font-size: .875rem; color: var(--text); border-bottom: 1px solid var(--border); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tbody tr:hover { background: #F8FAFC; }
-    .badge {
-      display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600;
-    }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
     .badge-active   { background: #D1FAE5; color: #065F46; }
     .badge-inactive { background: #F1F5F9; color: #64748B; }
     .badge-new      { background: #DBEAFE; color: #1E40AF; }
     .badge-viewed   { background: #F1F5F9; color: #64748B; }
     .table-actions { display: flex; gap: 6px; }
-    .btn-sm {
-      padding: 5px 10px; border-radius: 6px; font-size: .775rem; font-weight: 600; cursor: pointer; border: none; transition: all .15s;
-    }
+    .btn-sm { padding: 5px 10px; border-radius: 6px; font-size: .775rem; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
     .btn-edit   { background: #EFF6FF; color: #2563EB; }
     .btn-edit:hover   { background: #DBEAFE; }
-    .btn-toggle-active { background: #F0FDF4; color: #16A34A; }
+    .btn-toggle-active   { background: #F0FDF4; color: #16A34A; }
     .btn-toggle-active:hover { background: #DCFCE7; }
     .btn-toggle-inactive { background: #FEF9C3; color: #B45309; }
     .btn-toggle-inactive:hover { background: #FEF08A; }
     .btn-delete { background: #FEF2F2; color: #DC2626; }
     .btn-delete:hover { background: #FEE2E2; }
 
-    /* ── Interest Cards ───────────────────────────────────────── */
+    /* ── Interest Cards ── */
     .interests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
     .interest-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
     .interest-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
@@ -192,27 +147,17 @@
     .btn-contact { padding: 5px 12px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: .775rem; font-weight: 600; cursor: pointer; transition: background .15s; text-decoration: none; display: inline-block; }
     .btn-contact:hover { background: var(--accent-dark); }
 
-    /* ── Empty States ─────────────────────────────────────────── */
+    /* ── Empty States ── */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
     .empty-state h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: .875rem; }
 
-    /* ── Modal ────────────────────────────────────────────────── */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200;
-      display: none; align-items: center; justify-content: center; padding: 20px;
-    }
+    /* ── Modal ── */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal-backdrop.open { display: flex; }
-    .modal {
-      background: var(--card); border-radius: 16px; width: 100%; max-width: 620px;
-      max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3);
-    }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 22px 28px; border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; background: var(--card); z-index: 10;
-    }
+    .modal { background: var(--card); border-radius: 16px; width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--card); z-index: 10; }
     .modal-title { font-size: 1.1rem; font-weight: 700; }
     .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 4px; }
     .modal-close:hover { color: var(--text); }
@@ -223,10 +168,7 @@
     .form-section-title { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin: 20px 0 12px; padding-top: 16px; border-top: 1px solid var(--border); }
     .form-section-title:first-child { margin-top: 0; padding-top: 0; border-top: none; }
     .tag-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-    .tag {
-      display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
-      background: #E0F2FE; color: #0369A1; border-radius: 20px; font-size: .775rem; font-weight: 500;
-    }
+    .tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #E0F2FE; color: #0369A1; border-radius: 20px; font-size: .775rem; font-weight: 500; }
     .tag .tag-remove { cursor: pointer; font-size: .85rem; line-height: 1; }
     .tag.photo-tag { background: #F0FDF4; color: #15803D; }
     .add-item-row { display: flex; gap: 8px; }
@@ -237,16 +179,12 @@
     .btn-save { padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: .875rem; font-weight: 600; cursor: pointer; }
     .btn-save:hover { background: var(--accent-dark); }
     .btn-save:disabled { opacity: .6; cursor: not-allowed; }
-    .form-error { color: var(--danger); font-size: .8rem; margin-top: 4px; display: none; }
 
-    /* ── Profile Setup Modal ──────────────────────────────────── */
-    #profileSetupModal .modal { max-width: 460px; }
+    /* ── Filter chips ── */
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip { padding: 5px 14px; border-radius: 20px; font-size: .8rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--text-muted); transition: all .15s; }
+    .chip.active { border-color: var(--accent); background: rgba(20,184,166,.08); color: var(--accent); }
 
-    /* ── Loading Spinner ──────────────────────────────────────── */
-    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Responsive ───────────────────────────────────────────── */
     @media (max-width: 768px) {
       :root { --sidebar-w: 0px; }
       .sidebar { display: none; }
@@ -254,19 +192,11 @@
       .topbar, .content { padding-left: 16px; padding-right: 16px; }
       .form-row { grid-template-columns: 1fr; }
     }
-
-    /* ── School filter chips ──────────────────────────────────── */
-    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-    .chip {
-      padding: 5px 14px; border-radius: 20px; font-size: .8rem; font-weight: 600; cursor: pointer;
-      border: 1.5px solid var(--border); background: var(--card); color: var(--text-muted); transition: all .15s;
-    }
-    .chip.active { border-color: var(--accent); background: rgba(20,184,166,.08); color: var(--accent); }
   </style>
 </head>
 <body>
 
-<!-- ════════════════════ AUTH SCREEN ════════════════════ -->
+<!-- AUTH SCREEN -->
 <div id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">
@@ -274,13 +204,10 @@
       <h1>DormDrop</h1>
       <p>Landlord &amp; Property Manager Portal</p>
     </div>
-
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
       <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
     </div>
-
-    <!-- Login -->
     <div id="authLogin" class="auth-view active">
       <div id="loginError" class="auth-error"></div>
       <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="you@example.com" /></div>
@@ -288,8 +215,6 @@
       <button class="btn-primary" onclick="doLogin()">Sign In</button>
       <div class="auth-switch"><a onclick="switchAuthTab('reset')">Forgot your password?</a></div>
     </div>
-
-    <!-- Signup -->
     <div id="authSignup" class="auth-view">
       <div id="signupError" class="auth-error"></div>
       <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="Jane Smith" /></div>
@@ -298,10 +223,8 @@
       <button class="btn-primary" onclick="doSignup()">Create Account</button>
       <div class="auth-switch">Already have an account? <a onclick="switchAuthTab('login')">Sign in</a></div>
     </div>
-
-    <!-- Reset Password -->
     <div id="authReset" class="auth-view">
-      <div id="resetError"   class="auth-error"></div>
+      <div id="resetError" class="auth-error"></div>
       <div id="resetSuccess" class="auth-success"></div>
       <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:16px;">Enter your email and we'll send a reset link.</p>
       <div class="form-group"><label>Email Address</label><input type="email" id="resetEmail" placeholder="you@example.com" /></div>
@@ -311,102 +234,59 @@
   </div>
 </div>
 
-<!-- ════════════════════ APP SHELL ════════════════════ -->
+<!-- APP SHELL -->
 <div id="appShell">
-
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <a class="sidebar-brand" href="../index.html">
         <span class="brand-icon">🏠</span>
-        <div>
-          <div class="brand-text">DormDrop</div>
-          <div class="brand-sub">Landlord Portal</div>
-        </div>
+        <div><div class="brand-text">DormDrop</div><div class="brand-sub">Landlord Portal</div></div>
       </a>
     </div>
-
     <nav class="sidebar-nav">
       <div class="nav-section">Overview</div>
-      <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
-        <span class="nav-icon">📊</span> Dashboard
-      </button>
-
+      <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span> Dashboard</button>
       <div class="nav-section">Listings</div>
-      <button class="nav-item" onclick="showPage('listings')" id="nav-listings">
-        <span class="nav-icon">🏡</span> My Listings
-      </button>
-      <button class="nav-item" onclick="openAddListing()" id="nav-add">
-        <span class="nav-icon">➕</span> Add New Listing
-      </button>
-
+      <button class="nav-item" onclick="showPage('listings')" id="nav-listings"><span class="nav-icon">🏡</span> My Listings</button>
+      <button class="nav-item" onclick="openAddListing()" id="nav-add"><span class="nav-icon">➕</span> Add New Listing</button>
       <div class="nav-section">Students</div>
       <button class="nav-item" onclick="showPage('interests')" id="nav-interests">
         <span class="nav-icon">⭐</span> Student Interest
         <span class="nav-badge" id="interestBadge" style="display:none"></span>
       </button>
     </nav>
-
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar" id="sidebarAvatar">?</div>
-        <div>
-          <div class="user-name" id="sidebarName">Loading...</div>
-          <div class="user-role">Property Manager</div>
-        </div>
+        <div><div class="user-name" id="sidebarName">Loading...</div><div class="user-role">Property Manager</div></div>
       </div>
-      <button class="btn-signout" onclick="doSignOut()">
-        <span>🚪</span> Sign Out
-      </button>
+      <button class="btn-signout" onclick="doSignOut()"><span>🚪</span> Sign Out</button>
     </div>
   </aside>
 
-  <!-- Main -->
   <div class="main">
     <header class="topbar">
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
-      <div class="topbar-actions">
-        <button class="btn-accent" onclick="openAddListing()">+ Add Listing</button>
-      </div>
+      <div><button class="btn-accent" onclick="openAddListing()">+ Add Listing</button></div>
     </header>
-
     <div class="content">
 
-      <!-- ── Dashboard Page ─────────────────────────────── -->
+      <!-- Dashboard -->
       <div class="page active" id="page-dashboard">
         <div class="stats-grid">
-          <div class="stat-card teal">
-            <div class="stat-label">Total Listings</div>
-            <div class="stat-value" id="statTotal">—</div>
-            <div class="stat-sub">across all schools</div>
-          </div>
-          <div class="stat-card green">
-            <div class="stat-label">Active Listings</div>
-            <div class="stat-value" id="statActive">—</div>
-            <div class="stat-sub">visible to students</div>
-          </div>
-          <div class="stat-card yellow">
-            <div class="stat-label">Student Interests</div>
-            <div class="stat-value" id="statInterests">—</div>
-            <div class="stat-sub">total inquiries</div>
-          </div>
-          <div class="stat-card blue">
-            <div class="stat-label">New This Week</div>
-            <div class="stat-value" id="statNew">—</div>
-            <div class="stat-sub">unread inquiries</div>
-          </div>
+          <div class="stat-card teal"><div class="stat-label">Total Listings</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">across all schools</div></div>
+          <div class="stat-card green"><div class="stat-label">Active Listings</div><div class="stat-value" id="statActive">—</div><div class="stat-sub">visible to students</div></div>
+          <div class="stat-card yellow"><div class="stat-label">Student Interests</div><div class="stat-value" id="statInterests">—</div><div class="stat-sub">total inquiries</div></div>
+          <div class="stat-card blue"><div class="stat-label">New This Week</div><div class="stat-value" id="statNew">—</div><div class="stat-sub">unread inquiries</div></div>
         </div>
-
         <div class="section-header" style="margin-top:8px;">
           <div class="section-title">Recent Student Interest</div>
           <button class="btn-accent" style="font-size:.825rem;padding:6px 14px;" onclick="showPage('interests')">View All</button>
         </div>
-        <div id="recentInterestWrap">
-          <div class="empty-state"><div class="empty-icon">⭐</div><h3>No interest yet</h3><p>Student inquiries will appear here.</p></div>
-        </div>
+        <div id="recentInterestWrap"><div class="empty-state"><div class="empty-icon">⭐</div><h3>No interest yet</h3><p>Student inquiries will appear here.</p></div></div>
       </div>
 
-      <!-- ── My Listings Page ───────────────────────────── -->
+      <!-- My Listings -->
       <div class="page" id="page-listings">
         <div class="section-header">
           <div class="section-title">My Listings</div>
@@ -414,59 +294,39 @@
         </div>
         <div class="filter-row" id="listingFilters">
           <div class="chip active" onclick="filterListings('all',this)">All Schools</div>
-          <div class="chip" onclick="filterListings('Boston University',this)">Boston University</div>
-          <div class="chip" onclick="filterListings('Northeastern University',this)">Northeastern</div>
-          <div class="chip" onclick="filterListings('Merrimack College',this)">Merrimack</div>
+          <div class="chip" onclick="filterListings('bu',this)">Boston University</div>
+          <div class="chip" onclick="filterListings('neu',this)">Northeastern</div>
+          <div class="chip" onclick="filterListings('merrimack',this)">Merrimack</div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Address</th>
-                <th>School</th>
-                <th>Rent / mo</th>
-                <th>Beds/Baths</th>
-                <th>Available</th>
-                <th>Status</th>
-                <th>Interest</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="listingsTableBody">
-              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:40px;">Loading listings…</td></tr>
-            </tbody>
+            <thead><tr><th>Address</th><th>School</th><th>Rent / mo</th><th>Beds/Baths</th><th>Available</th><th>Status</th><th>Interest</th><th>Actions</th></tr></thead>
+            <tbody id="listingsTableBody"><tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:40px;">Loading listings…</td></tr></tbody>
           </table>
         </div>
       </div>
 
-      <!-- ── Student Interest Page ──────────────────────── -->
+      <!-- Student Interest -->
       <div class="page" id="page-interests">
-        <div class="section-header">
-          <div class="section-title">Student Interest</div>
-        </div>
+        <div class="section-header"><div class="section-title">Student Interest</div></div>
         <div class="filter-row" id="interestFilters">
           <div class="chip active" onclick="filterInterests('all',this)">All</div>
           <div class="chip" onclick="filterInterests('new',this)">New</div>
           <div class="chip" onclick="filterInterests('viewed',this)">Viewed</div>
         </div>
         <div class="interests-grid" id="interestsGrid">
-          <div class="empty-state" style="grid-column:1/-1">
-            <div class="empty-icon">⭐</div><h3>No inquiries yet</h3>
-            <p>When students express interest in your listings, they'll appear here.</p>
-          </div>
+          <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⭐</div><h3>No inquiries yet</h3><p>When students express interest in your listings, they'll appear here.</p></div>
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /appShell -->
+    </div>
+  </div>
+</div>
 
-<!-- ════════════════════ PROFILE SETUP MODAL ════════════════════ -->
+<!-- PROFILE SETUP MODAL -->
 <div class="modal-backdrop" id="profileSetupModal">
   <div class="modal" style="max-width:440px;">
-    <div class="modal-header">
-      <div class="modal-title">Complete Your Profile</div>
-    </div>
+    <div class="modal-header"><div class="modal-title">Complete Your Profile</div></div>
     <div class="modal-body">
       <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:20px;">Tell us a bit about yourself so students can reach you.</p>
       <div id="profileSetupError" class="auth-error"></div>
@@ -474,13 +334,11 @@
       <div class="form-group"><label>Company / Business Name <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label><input type="text" id="pCompany" placeholder="Smith Properties LLC" /></div>
       <div class="form-group"><label>Phone Number <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label><input type="tel" id="pPhone" placeholder="(617) 555-1234" /></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-save" onclick="saveProfile()" style="width:100%;">Save &amp; Continue</button>
-    </div>
+    <div class="modal-footer"><button class="btn-save" onclick="saveProfile()" style="width:100%;">Save &amp; Continue</button></div>
   </div>
 </div>
 
-<!-- ════════════════════ ADD / EDIT LISTING MODAL ════════════════════ -->
+<!-- ADD/EDIT LISTING MODAL -->
 <div class="modal-backdrop" id="listingModal">
   <div class="modal">
     <div class="modal-header">
@@ -489,18 +347,18 @@
     </div>
     <div class="modal-body">
       <div id="listingFormError" class="auth-error"></div>
-
       <div class="form-section-title">Property Details</div>
-      <div class="form-group"><label>Street Address *</label><input type="text" id="fAddress" placeholder="123 Commonwealth Ave, Boston, MA 02215" /></div>
+      <div class="form-group"><label>Street Address *</label><input type="text" id="fAddress" placeholder="123 Commonwealth Ave" /></div>
+      <div class="form-group"><label>City</label><input type="text" id="fCity" placeholder="Boston" /></div>
       <div class="form-row">
         <div class="form-group"><label>Monthly Rent ($) *</label><input type="number" id="fRent" placeholder="2000" min="0" /></div>
         <div class="form-group">
           <label>Target School *</label>
           <select id="fSchool">
             <option value="">— Select school —</option>
-            <option value="Boston University">Boston University</option>
-            <option value="Northeastern University">Northeastern University</option>
-            <option value="Merrimack College">Merrimack College</option>
+            <option value="bu">Boston University</option>
+            <option value="neu">Northeastern University</option>
+            <option value="merrimack">Merrimack College</option>
           </select>
         </div>
       </div>
@@ -512,44 +370,34 @@
         <div class="form-group"><label>Square Footage</label><input type="number" id="fSqft" placeholder="850" min="0" /></div>
         <div class="form-group"><label>Available Date *</label><input type="date" id="fAvailable" /></div>
       </div>
-
+      <div class="form-group"><label>Neighborhood</label><input type="text" id="fNeighborhood" placeholder="Fenway, Allston, Mission Hill…" /></div>
       <div class="form-section-title">Description &amp; Amenities</div>
       <div class="form-group"><label>Description</label><textarea id="fDescription" rows="3" placeholder="Spacious 2BR apartment a short walk from campus…"></textarea></div>
-
       <div class="form-group">
         <label>Amenities</label>
         <div class="tag-container" id="amenityTags"></div>
         <div class="add-item-row">
-          <input type="text" id="amenityInput" placeholder="e.g. Laundry In-Unit" onkeydown="if(event.key==='Enter'){event.preventDefault();addAmenity();}" />
+          <input type="text" id="amenityInput" placeholder="e.g. In-Unit Laundry" onkeydown="if(event.key==='Enter'){event.preventDefault();addAmenity();}" />
           <button class="btn-add-tag" onclick="addAmenity()">Add</button>
         </div>
       </div>
-
       <div class="form-group">
-        <label>Photo URLs <span style="font-weight:400;color:var(--text-muted)">(paste direct image links)</span></label>
+        <label>Photo URLs <span style="font-weight:400;color:var(--text-muted)">(direct image links)</span></label>
         <div class="tag-container" id="photoTags"></div>
         <div class="add-item-row">
           <input type="text" id="photoInput" placeholder="https://images.example.com/photo.jpg" onkeydown="if(event.key==='Enter'){event.preventDefault();addPhoto();}" />
           <button class="btn-add-tag" onclick="addPhoto()">Add</button>
         </div>
       </div>
-
       <div class="form-section-title">Additional Options</div>
       <div class="form-row">
         <div class="form-group">
           <label>Furnished?</label>
-          <select id="fFurnished">
-            <option value="no">No</option>
-            <option value="yes">Yes</option>
-            <option value="partial">Partially</option>
-          </select>
+          <select id="fFurnished"><option value="false">No</option><option value="true">Yes</option></select>
         </div>
         <div class="form-group">
           <label>Listing Status</label>
-          <select id="fStatus">
-            <option value="active">Active — visible to students</option>
-            <option value="inactive">Inactive — hidden</option>
-          </select>
+          <select id="fStatus"><option value="true">Active — visible to students</option><option value="false">Inactive — hidden</option></select>
         </div>
       </div>
     </div>
@@ -560,7 +408,6 @@
   </div>
 </div>
 
-<!-- ════════════════════ SCRIPTS ════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>

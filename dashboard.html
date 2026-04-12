@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard — DormDrop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;min-height:100vh;padding:48px 24px}
+.wrap{max-width:520px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:32px;margin-bottom:8px}
+p{color:#6B7280;margin-bottom:28px}
+.grid{display:grid;gap:12px}
+a{display:block;background:#fff;border:1px solid #E5E0D8;border-radius:12px;padding:18px 20px;text-decoration:none;color:#111827;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+a:hover{border-color:#0E6E6E}
+.muted{font-size:13px;color:#9CA3AF;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Dashboard</h1>
+  <p>Welcome back. Jump into roommate discovery or messages.</p>
+  <div class="grid">
+    <a href="/discover.html">Discover roommates</a>
+    <a href="/messages.html">Messages</a>
+    <a href="/profile-setup.html">Edit profile</a>
+    <a href="/bu">Boston University site</a>
+    <a href="/neu">Northeastern site</a>
+    <a href="/merrimack">Merrimack site</a>
+  </div>
+  <p class="muted"><a href="/" style="display:inline;background:none;border:none;padding:0;box-shadow:none;color:#0E6E6E">← Home</a></p>
+</div>
+<script type="module" src="/src/dashboard-entry.js"></script>
+</body>
+</html>

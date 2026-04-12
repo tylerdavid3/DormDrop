@@ -359,7 +359,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="#calculator">Savings</a>
       <a href="#roommates">Roommates</a>
       <a href="#" onclick="openModal('list')">List a Property</a>
-      <a href="../landlord/">Landlord Portal</a>
+      <a href="landlord/">Landlord Portal</a>
     </div>
     <div class="nav-ctas">
       <button id="navLoginBtn" class="btn-ghost" onclick="openAuthModal('login')">Log in</button>
@@ -614,7 +614,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="https://forms.gle/gWmjxW8Yxx8gCaM48" class="btn-outline">Get Notified When Listings Launch →</a>
     </div>
     <div class="filter-strip">
-      <button class="filter-btn active" onclick="filterL(this,'all')">All Properties</button>
+      <button class="filter-btn active" data-filter="all" onclick="filterL(this,'all')">All Properties</button>
       <button class="filter-btn" onclick="filterL(this,'1br')">1 Bedroom</button>
       <button class="filter-btn" onclick="filterL(this,'2br')">2 Bedrooms</button>
       <button class="filter-btn" onclick="filterL(this,'3br')">3+ Bedrooms</button>
@@ -702,7 +702,6 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div class="ft-col">
         <h5>Landlords</h5>
         <a href="#" onclick="openModal('list');return false">List a Property</a>
-        <a href="../landlord/">Landlord Portal</a>
         <a href="https://forms.gle/gWmjxW8Yxx8gCaM48" target="_blank">Submit a Listing</a>
       </div>
       <div class="ft-col">
@@ -817,7 +816,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-var listings=[
+const listings=[
   {id:1,bg:'li-1',em:'🏢',badge:'New',bc:'b-new',price:'$950',per:'/mo per person',addr:'47 Buswell St, Fenway',beds:3,baths:1,sqft:980,avail:'Sep 1',tags:['3 Bed','Furnished','0.4 mi to BU','T: Kenmore'],saving:'Saves ~$5,400 / yr vs dorm',savN:5400,desc:'Spacious 3-bedroom in Fenway, 0.4 miles from BU. Fully furnished, in-unit laundry, hardwood floors. Split three ways, one of the strongest value propositions near campus.',type:'3br',furnished:true},
   {id:2,bg:'li-2',em:'🏛️',badge:'Popular',bc:'b-pop',price:'$1,150',per:'/mo per person',addr:'189 Bay State Rd, Back Bay',beds:2,baths:1,sqft:780,avail:'Sep 1',tags:['2 Bed','Utilities Incl.','0.2 mi to BU','Pets OK'],saving:'Saves ~$4,800 / yr vs dorm',savN:4800,desc:'A well-maintained 2-bedroom brownstone steps from BU\'s main campus. Utilities included, renovated kitchen, exposed brick details throughout.',type:'2br',furnished:false},
   {id:3,bg:'li-3',em:'🏠',badge:'Best Value',bc:'b-new',price:'$750',per:'/mo per person',addr:'23 Brighton Ave, Allston',beds:4,baths:2,sqft:1400,avail:'Sep 1',tags:['4 Bed','2 Bath','1.1 mi to BU','Parking Incl.'],saving:'Saves ~$7,200 / yr vs dorm',savN:7200,desc:'A large 4-bedroom house in Allston. Two full baths, private backyard, and parking included. Split four ways, this represents exceptional value for BU students.',type:'3br',furnished:false},
@@ -836,7 +835,7 @@ const profiles=[
 function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
   document.getElementById('listGrid').innerHTML=s.map(l=>`
-    <div class="list-card" onclick="openDetail('${l.id}')">
+    <div class="list-card" onclick="openDetail(${l.id})">
       <div class="li-img ${l.img?'':l.bg}">${l.img?`<img src="${l.img}" alt="" loading="lazy" onerror="this.parentNode.classList.add('${l.bg}');this.remove()">`:`<div style="font-size:52px;opacity:.45">${l.em}</div>`}<div class="li-badge ${l.bc}">${l.badge}</div></div>
       <div class="li-body">
         <div class="li-price">${l.price}<span> ${l.per}</span></div>
@@ -870,7 +869,7 @@ function openDetail(id){
       return;
     }
   }
-  const l=listings.find(x=>String(x.id)===String(id));
+  const l=listings.find(x=>x.id===id);
   document.getElementById('detailContent').innerHTML=`
     <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
     ${l.img?`<img src="${l.img}" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.insertAdjacentHTML('afterend','<div class=\\'d-img ${l.bg}\\'>${l.em}</div>');this.remove()">`:`<div class="d-img ${l.bg}">${l.em}</div>`}
@@ -885,7 +884,7 @@ function openDetail(id){
     <div class="sav-chip"><div class="sc-lbl">Estimated Annual Savings vs. BU Dorm</div><div class="sc-val">$${l.savN.toLocaleString()}</div></div>
     <p class="d-desc">${l.desc}</p>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px">${l.tags.map(t=>`<span class="ltag">${t}</span>`).join('')}</div>
-    <button class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px" onclick="openInterestModal('${l.id}','${(l.addr||l.address||'').replace(/'/g,'')}','${l.landlordUid||''}')">I'm Interested</button>`;
+    <button class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px" onclick="alert('Sign up to contact this landlord directly.')">Contact Landlord</button>`;
   document.getElementById('detailModal').classList.add('open');
 }
 
@@ -1120,6 +1119,7 @@ renderListings('all');renderProfiles();calc();
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="roommates.js"></script>
 </body>

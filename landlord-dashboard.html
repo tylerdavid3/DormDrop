@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Landlord Dashboard — DormDrop</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;padding:32px 24px}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:28px;margin-bottom:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.stat{background:#fff;border:1px solid #E5E0D8;border-radius:12px;padding:20px;text-align:center}
+.stat b{font-size:28px;display:block}
+.btn{background:#0E6E6E;color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:600;cursor:pointer;margin-bottom:24px}
+.panel{background:#fff;border:1px solid #E5E0D8;border-radius:12px;padding:20px;margin-bottom:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
+.modal-inner{background:#fff;border-radius:16px;padding:28px;max-width:480px;width:100%;max-height:90vh;overflow:auto}
+.fg{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;color:#6B7280;margin-bottom:6px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #E5E0D8;border-radius:8px;font-family:inherit}
+textarea{min-height:72px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+a{color:#0E6E6E}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="login-panel" class="panel" style="max-width:420px;margin:0 auto 24px">
+    <h2 style="margin-bottom:12px">Landlord login</h2>
+    <p style="color:#6B7280;font-size:14px;margin-bottom:16px">New here? <a href="/landlord-signup.html">Create an account</a></p>
+    <form id="ll-login-form">
+      <div class="fg"><label>Email</label><input id="ll-email" type="email" autocomplete="username" required/></div>
+      <div class="fg"><label>Password</label><input id="ll-pwd" type="password" autocomplete="current-password" required/></div>
+      <p id="ll-login-err" style="color:#DC2626;font-size:13px;display:none"></p>
+      <button type="submit" class="btn" style="width:100%">Log in</button>
+    </form>
+  </div>
+
+  <div id="dash-main" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <h1>Landlord dashboard</h1>
+    <button type="button" class="btn" style="margin:0" onclick="logout()">Log out</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="total-listings">0</b><span>Active listings</span></div>
+    <div class="stat"><b id="total-views">0</b><span>Total views</span></div>
+    <div class="stat"><b id="total-inquiries">0</b><span>Inquiries</span></div>
+  </div>
+  <button type="button" class="btn" onclick="showAddListingForm()">+ Add listing</button>
+  <div class="panel"><h2 style="font-size:18px;margin-bottom:12px">Your listings</h2><div id="landlord-listings"></div></div>
+  <div class="panel"><h2 style="font-size:18px;margin-bottom:12px">Inquiries</h2><div id="inquiries-list"></div></div>
+  <p><a href="/">← Home</a> · <a href="/landlord-signup.html">New landlord signup</a></p>
+  </div>
+</div>
+
+<div class="modal" id="add-listing-modal" onclick="if(event.target===this)closeAddListingModal()">
+  <div class="modal-inner">
+    <h2 style="margin-bottom:16px">Add listing</h2>
+    <form id="add-listing-form">
+      <div class="fg"><label>School</label>
+        <select id="listing-school" required>
+          <option value="bu">Boston University</option>
+          <option value="neu">Northeastern University</option>
+          <option value="merrimack">Merrimack College</option>
+        </select>
+      </div>
+      <div class="fg"><label>Address</label><input id="address" type="text" required/></div>
+      <div class="fg"><label>City</label><input id="city" type="text" required/></div>
+      <div class="fg"><label>Monthly rent (total)</label><input id="rent" type="number" min="0" required/></div>
+      <div class="fg"><label>Bedrooms</label><input id="bedrooms" type="number" min="1" value="2" required/></div>
+      <div class="fg"><label>Bathrooms</label><input id="bathrooms" type="number" min="1" step="0.5" value="1" required/></div>
+      <div class="fg"><label>Available date</label><input id="available-date" type="date" required/></div>
+      <div class="fg"><label>Your phone (shown to students)</label><input id="landlord-phone" type="tel" required/></div>
+      <div class="fg"><label>Description</label><textarea id="description"></textarea></div>
+      <div class="fg"><label>Photos (up to 5)</label><input id="photos" type="file" accept="image/*" multiple/></div>
+      <div class="fg"><label>Amenities</label>
+        <div class="row">
+          <label><input type="checkbox" id="heat-included"/> Heat</label>
+          <label><input type="checkbox" id="hot-water-included"/> Hot water</label>
+          <label><input type="checkbox" id="laundry-in-unit"/> Laundry in unit</label>
+          <label><input type="checkbox" id="parking"/> Parking</label>
+          <label><input type="checkbox" id="pets-allowed"/> Pets OK</label>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button type="submit" class="btn" style="flex:1">Publish</button>
+        <button type="button" onclick="closeAddListingModal()" style="padding:12px 20px;border:1px solid #E5E0D8;background:#fff;border-radius:10px;cursor:pointer">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script type="module" src="/src/landlord-dashboard.js"></script>
+</body>
+</html>
