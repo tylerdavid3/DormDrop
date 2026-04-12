@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
 const sgMail = require('@sendgrid/mail');
+const { updateListingsForSchool, SCHOOL_CONFIG } = require('./src/rentcast');
 
 admin.initializeApp();
 
@@ -351,5 +352,70 @@ exports.onNewInquiryEmail = functions.firestore
       subject: `New DormDrop inquiry: ${data.listingId || 'listing'}`,
       text: `You have a new inquiry from ${data.studentName || 'a student'}.\n\n${data.message || ''}\n\nReply to: ${data.studentEmail || ''}`
     });
+    return null;
+  });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RentCast API — listing sync
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * HTTP trigger: update listings for a single school.
+ * GET /updateListingsForSchool?school=bu
+ */
+exports.updateListingsForSchool = functions
+  .runWith({ timeoutSeconds: 300, memory: '1GB' })
+  .https.onRequest(async (req, res) => {
+    const schoolKey = (req.query.school || '').toLowerCase();
+    if (!SCHOOL_CONFIG[schoolKey]) {
+      res.status(400).json({ error: `Unknown school. Use: ${Object.keys(SCHOOL_CONFIG).join(', ')}` });
+      return;
+    }
+    try {
+      const result = await updateListingsForSchool(schoolKey);
+      res.json(result);
+    } catch (err) {
+      console.error('updateListingsForSchool error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+/**
+ * HTTP trigger: update listings for ALL schools.
+ * GET /updateAllListings
+ */
+exports.updateAllListings = functions
+  .runWith({ timeoutSeconds: 540, memory: '1GB' })
+  .https.onRequest(async (req, res) => {
+    const results = {};
+    for (const schoolKey of Object.keys(SCHOOL_CONFIG)) {
+      try {
+        results[schoolKey] = await updateListingsForSchool(schoolKey);
+        // Polite delay between schools to avoid rate limiting
+        await new Promise(r => setTimeout(r, 3000));
+      } catch (err) {
+        results[schoolKey] = { success: false, school: schoolKey, error: err.message };
+      }
+    }
+    res.json({ success: true, results });
+  });
+
+/**
+ * Scheduled: sync listings from RentCast daily at 3 AM Eastern.
+ */
+exports.scheduledListingsSync = functions
+  .runWith({ timeoutSeconds: 540, memory: '1GB' })
+  .pubsub.schedule('0 3 * * *')
+  .timeZone('America/New_York')
+  .onRun(async () => {
+    for (const schoolKey of Object.keys(SCHOOL_CONFIG)) {
+      try {
+        const result = await updateListingsForSchool(schoolKey);
+        console.log('scheduledListingsSync result:', JSON.stringify(result));
+      } catch (err) {
+        console.error(`scheduledListingsSync failed for ${schoolKey}:`, err.message);
+      }
+      await new Promise(r => setTimeout(r, 3000));
+    }
     return null;
   });
