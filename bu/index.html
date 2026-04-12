@@ -359,6 +359,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="#calculator">Savings</a>
       <a href="#roommates">Roommates</a>
       <a href="#" onclick="openModal('list')">List a Property</a>
+      <a href="landlord/">Landlord Portal</a>
     </div>
     <div class="nav-ctas">
       <button id="navLoginBtn" class="btn-ghost" onclick="openAuthModal('login')">Log in</button>
@@ -715,6 +716,24 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     </div>
   </div>
 </footer>
+
+<!-- INTEREST MODAL -->
+<div class="overlay" id="interestModal" onclick="closeOverlay(event,'interestModal')">
+  <div class="modal" style="max-width:460px">
+    <button class="modal-x" onclick="closeModal('interestModal')">✕</button>
+    <div class="m-title" style="margin-bottom:6px">Express Interest</div>
+    <p style="font-size:13px;color:var(--ink-4);margin-bottom:20px" id="interestListingLabel">Send a message to the landlord about this property.</p>
+    <div id="interestFormWrap">
+      <textarea id="interestMsg" rows="4" placeholder="Hi, I'm a BU student interested in this listing. I'd love to schedule a viewing…" style="width:100%;padding:12px 14px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:14px"></textarea>
+      <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px" id="submitInterestBtn" onclick="submitInterest()">Send Interest</button>
+    </div>
+    <div id="interestSuccessMsg" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:40px;margin-bottom:12px">🎉</div>
+      <div style="font-weight:700;font-size:16px;margin-bottom:8px">Interest Sent!</div>
+      <p style="font-size:13px;color:var(--ink-4)">The landlord has been notified. They'll be in touch soon.</p>
+    </div>
+  </div>
+</div>
 
 <!-- SIGNUP MODAL -->
 <div class="overlay" id="signupModal" onclick="closeOverlay(event,'signupModal')">

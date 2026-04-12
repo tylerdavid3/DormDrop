@@ -1433,9 +1433,11 @@ function openDetail(id) {
       })
       .join('') +
     '</div>' +
-    '<button class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px" onclick="contactListing(\'' +
-    String(l._listingId || id).replace(/'/g, "\\'") +
-    '\')">Contact Landlord</button>';
+    '<button class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px" onclick="openInterestModal(\'' +
+    String(l._listingId || id).replace(/'/g, "\\'") + "','" +
+    String(l.addr || l.address || '').replace(/'/g, '') + "','" +
+    String((l._fsListing && l._fsListing.landlordId) || '').replace(/'/g, '') +
+    '\')">I\'m Interested</button>';
   document.getElementById('detailModal').classList.add('open');
 }
 
@@ -1485,3 +1487,76 @@ function contactListing(listingId) {
 window.openDetail = openDetail;
 window.filterL = filterL;
 window.contactListing = contactListing;
+window.openInterestModal = openInterestModal;
+window.submitInterest = submitInterest;
+
+var _pendingInterest = null;
+
+function openInterestModal(listingId, address, landlordId) {
+  if (!currentUser) { openAuthModal('signup'); return; }
+  if (!currentUser.emailVerified) {
+    alert('Please verify your @merrimack.edu email before expressing interest.');
+    return;
+  }
+  _pendingInterest = { listingId: listingId, address: address, landlordId: landlordId };
+  var lbl = document.getElementById('interestListingLabel');
+  if (lbl) lbl.textContent = address ? 'Send a message about: ' + address : 'Send a message to the landlord about this property.';
+  var msgEl = document.getElementById('interestMsg');
+  if (msgEl) msgEl.value = '';
+  var form = document.getElementById('interestFormWrap');
+  var succ = document.getElementById('interestSuccessMsg');
+  if (form) form.style.display = 'block';
+  if (succ) succ.style.display = 'none';
+  var modal = document.getElementById('interestModal');
+  if (modal) modal.classList.add('open');
+}
+
+function submitInterest() {
+  if (!currentUser || !_pendingInterest) return;
+  var msgEl = document.getElementById('interestMsg');
+  var message = msgEl ? msgEl.value.trim() : '';
+  var btn = document.getElementById('submitInterestBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending\u2026'; }
+
+  db.collection('interests')
+    .where('listingId', '==', _pendingInterest.listingId)
+    .where('studentId', '==', currentUser.uid)
+    .get()
+    .then(function(snap) {
+      if (!snap.empty) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; }
+        alert('You\u2019ve already expressed interest in this listing!');
+        return;
+      }
+      var profile = myUserDoc || myProfile || {};
+      var data = {
+        listingId:      _pendingInterest.listingId,
+        listingAddress: _pendingInterest.address || '',
+        landlordId:     _pendingInterest.landlordId || '',
+        studentId:      currentUser.uid,
+        studentName:    profile.name || currentUser.displayName || '',
+        studentEmail:   currentUser.email,
+        studentSchool:  SCHOOL_NAME || 'Merrimack College',
+        studentYear:    profile.year || '',
+        message:        message,
+        status:         'new',
+        createdAt:      firebase.firestore.FieldValue.serverTimestamp()
+      };
+      return db.collection('interests').add(data).then(function() {
+        if (_pendingInterest.listingId) {
+          db.collection('listings').doc(_pendingInterest.listingId).update({
+            interestCount: firebase.firestore.FieldValue.increment(1)
+          }).catch(function() {});
+        }
+        var form = document.getElementById('interestFormWrap');
+        var succ = document.getElementById('interestSuccessMsg');
+        if (form) form.style.display = 'none';
+        if (succ) succ.style.display = 'block';
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; }
+      });
+    })
+    .catch(function(err) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; }
+      alert('Error: ' + err.message);
+    });
+}
