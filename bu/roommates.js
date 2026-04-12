@@ -6,14 +6,19 @@
    Firebase SDKs needed: app-compat, auth-compat, firestore-compat
    ============================================================= */
 
+// ── Constants ──────────────────────────────────────────────────
+var SCHOOL_NAME = 'Boston University';
+var SCHOOL_EMAIL_DOMAIN = '@bu.edu';
+
 // ── State ──────────────────────────────────────────────────────
 var db, auth;
-var currentUser  = null;
-var myProfile    = null;
-var convUnsub    = null;
-var msgUnsub     = null;
-var activeConvId = null;
-var quizAnswers  = {};   // { sleepSchedule, studyHabits, ... }
+var currentUser     = null;
+var myProfile       = null;
+var convUnsub       = null;
+var msgUnsub        = null;
+var activeConvId    = null;
+var quizAnswers     = {};   // { sleepSchedule, studyHabits, ... }
+var pendingInterest = null; // { listingId, address, landlordUid }
 
 // ── Init ───────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
@@ -33,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     window.sendMsg    = function () { /* handled by Firebase chat */ };
     // Show loading state immediately (before auth resolves)
     setRoommateLoading();
+    // Load live listings from Firestore (replaces hardcoded array if any found)
+    loadFirestoreListings();
   } catch (e) {
     console.error('Firebase init error:', e);
   }
@@ -659,4 +666,136 @@ function esc(str) {
 function val(id) {
   var el = document.getElementById(id);
   return el ? el.value.trim() : '';
+}
+
+// ── Firestore Listings ─────────────────────────────────────────
+function loadFirestoreListings() {
+  if (!db) return;
+  db.collection('listings')
+    .where('school', '==', SCHOOL_NAME)
+    .where('status', '==', 'active')
+    .orderBy('createdAt', 'desc')
+    .get()
+    .then(function(snap) {
+      if (snap.empty) return; // keep hardcoded fallback listings
+      var firestoreListings = snap.docs.map(function(doc) {
+        var d = doc.data();
+        return {
+          id:          doc.id,
+          bg:          'li-1',
+          em:          '🏠',
+          badge:       d.status === 'active' ? 'Available' : 'Inactive',
+          bc:          'b-new',
+          price:       '$' + Number(d.monthlyRent || 0).toLocaleString(),
+          per:         '/mo',
+          addr:        d.address || '',
+          address:     d.address || '',
+          beds:        d.beds    || 0,
+          baths:       d.baths   || 0,
+          sqft:        d.sqft    || 0,
+          avail:       d.availableDate || '',
+          tags:        buildTags(d),
+          saving:      '',
+          savN:        0,
+          desc:        d.description || '',
+          type:        d.beds >= 3 ? '3br' : d.beds >= 2 ? '2br' : '1br',
+          furnished:   d.furnished === 'yes' || d.furnished === true,
+          img:         (d.photos && d.photos[0]) ? d.photos[0] : null,
+          landlordUid: d.landlordUid || '',
+          amenities:   d.amenities  || []
+        };
+      });
+      // Replace global listings array and re-render
+      if (typeof window.listings !== 'undefined') {
+        window.listings = firestoreListings;
+      }
+      if (typeof renderListings === 'function') {
+        renderListings('all');
+      }
+    })
+    .catch(function(err) {
+      console.info('Firestore listings not yet available:', err.message);
+    });
+}
+
+function buildTags(d) {
+  var tags = [];
+  if (d.beds)   tags.push(d.beds + ' Bed');
+  if (d.baths)  tags.push(d.baths + ' Bath');
+  if (d.furnished === 'yes') tags.push('Furnished');
+  if (d.amenities && d.amenities.length) {
+    d.amenities.slice(0,2).forEach(function(a) { tags.push(a); });
+  }
+  return tags;
+}
+
+// ── Interest Modal ─────────────────────────────────────────────
+function openInterestModal(listingId, address, landlordUid) {
+  if (!currentUser) { openAuthModal('signup'); return; }
+  if (!currentUser.emailVerified) {
+    alert('Please verify your ' + SCHOOL_EMAIL_DOMAIN + ' email before expressing interest.');
+    return;
+  }
+  pendingInterest = { listingId: listingId, address: address, landlordUid: landlordUid };
+  var lbl = document.getElementById('interestListingLabel');
+  if (lbl) lbl.textContent = address ? 'Send a message about: ' + address : 'Send a message to the landlord about this property.';
+  var msgEl = document.getElementById('interestMsg');
+  if (msgEl) msgEl.value = '';
+  var form = document.getElementById('interestFormWrap');
+  var succ = document.getElementById('interestSuccessMsg');
+  if (form) form.style.display = 'block';
+  if (succ) succ.style.display = 'none';
+  var modal = document.getElementById('interestModal');
+  if (modal) modal.classList.add('open');
+}
+
+function submitInterest() {
+  if (!currentUser || !pendingInterest) return;
+  var msgEl = document.getElementById('interestMsg');
+  var message = msgEl ? msgEl.value.trim() : '';
+  var btn = document.getElementById('submitInterestBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  // Check for duplicate interest
+  db.collection('interests')
+    .where('listingId', '==', pendingInterest.listingId)
+    .where('studentUid', '==', currentUser.uid)
+    .get()
+    .then(function(snap) {
+      if (!snap.empty) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; }
+        alert('You've already expressed interest in this listing!');
+        return;
+      }
+      var data = {
+        listingId:      pendingInterest.listingId,
+        listingAddress: pendingInterest.address,
+        landlordUid:    pendingInterest.landlordUid || '',
+        studentUid:     currentUser.uid,
+        studentName:    (myProfile && myProfile.name)   ? myProfile.name   : (currentUser.displayName || ''),
+        studentEmail:   currentUser.email,
+        studentSchool:  SCHOOL_NAME,
+        studentYear:    (myProfile && myProfile.year)   ? myProfile.year   : '',
+        message:        message,
+        status:         'new',
+        createdAt:      firebase.firestore.FieldValue.serverTimestamp()
+      };
+      return db.collection('interests').add(data).then(function() {
+        // Increment interestCount on listing
+        if (pendingInterest.listingId) {
+          db.collection('listings').doc(pendingInterest.listingId).update({
+            interestCount: firebase.firestore.FieldValue.increment(1)
+          }).catch(function() {});
+        }
+        var form = document.getElementById('interestFormWrap');
+        var succ = document.getElementById('interestSuccessMsg');
+        if (form) form.style.display = 'none';
+        if (succ) succ.style.display = 'block';
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; }
+      });
+    })
+    .catch(function(err) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; }
+      alert('Error: ' + err.message);
+    });
 }

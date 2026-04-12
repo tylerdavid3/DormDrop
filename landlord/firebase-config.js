@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// DormDrop — Firebase Configuration (NEU)
+// DormDrop — Firebase Configuration (Landlord Portal)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const FIREBASE_CONFIG = {

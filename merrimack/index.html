@@ -452,6 +452,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="#calculator">Savings</a>
       <a href="#roommates">Roommates</a>
       <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
+      <a href="../landlord/">Landlord Portal</a>
     </div>
     <div class="nav-ctas">
       <button id="navLoginBtn" class="btn-ghost" onclick="openAuthModal('login')">Log in</button>
@@ -1065,6 +1066,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div class="ft-col">
         <h5>Landlords</h5>
         <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
+        <a href="../landlord/">Landlord Portal</a>
         <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">Submit a Listing</a>
       </div>
       <div class="ft-col">
@@ -1079,6 +1081,24 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     </div>
   </div>
 </footer>
+
+<!-- INTEREST MODAL -->
+<div class="overlay" id="interestModal" onclick="closeOverlay(event,'interestModal')">
+  <div class="modal" style="max-width:460px">
+    <button class="modal-x" onclick="closeModal('interestModal')">✕</button>
+    <div class="m-title" style="margin-bottom:6px">Express Interest</div>
+    <p style="font-size:13px;color:var(--ink-4);margin-bottom:20px" id="interestListingLabel">Send a message to the landlord about this property.</p>
+    <div id="interestFormWrap">
+      <textarea id="interestMsg" rows="4" placeholder="Hi, I'm a Merrimack student interested in this listing. I'd love to schedule a viewing…" style="width:100%;padding:12px 14px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:14px"></textarea>
+      <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px" id="submitInterestBtn" onclick="submitInterest()">Send Interest</button>
+    </div>
+    <div id="interestSuccessMsg" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:40px;margin-bottom:12px">🎉</div>
+      <div style="font-weight:700;font-size:16px;margin-bottom:8px">Interest Sent!</div>
+      <p style="font-size:13px;color:var(--ink-4)">The landlord has been notified. They'll be in touch soon.</p>
+    </div>
+  </div>
+</div>
 
 <!-- SIGNUP MODAL -->
 <div class="overlay" id="signupModal" onclick="closeOverlay(event,'signupModal')">
@@ -1161,7 +1181,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-const listings=[];
+var listings=[];
 
 const profiles=[
   {av:'J',ac:'pa-1',name:'Jordan K.',info:'Business · Junior · North Andover',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
@@ -1173,7 +1193,7 @@ const profiles=[
 function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
   document.getElementById('listGrid').innerHTML=s.map(l=>`
-    <div class="list-card" onclick="openDetail(${l.id})">
+    <div class="list-card" onclick="openDetail('${l.id}')">
       <div class="li-img ${l.bg}"><div style="font-size:52px;opacity:.45">${l.em}</div><div class="li-badge ${l.bc}">${l.badge}</div></div>
       <div class="li-body">
         <div class="li-price">${l.price}<span> ${l.per}</span></div>
@@ -1207,7 +1227,7 @@ function openDetail(id){
       return;
     }
   }
-  const l=listings.find(x=>x.id===id);
+  const l=listings.find(x=>String(x.id)===String(id));
   document.getElementById('detailContent').innerHTML=`
     <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
     <div class="d-img ${l.bg}">${l.em}</div>
@@ -1222,7 +1242,7 @@ function openDetail(id){
     <div class="sav-chip"><div class="sc-lbl">Estimated Annual Savings vs. Merrimack Dorm</div><div class="sc-val">$${l.savN.toLocaleString()}</div></div>
     <p class="d-desc">${l.desc}</p>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px">${l.tags.map(t=>`<span class="ltag">${t}</span>`).join('')}</div>
-    <button class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px" onclick="alert('Sign up to contact this landlord directly.')">Contact Landlord</button>`;
+    <button class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px" onclick="openInterestModal('${l.id}','${(l.addr||l.address||'').replace(/'/g,'')}','${l.landlordUid||''}')">I'm Interested</button>`;
   document.getElementById('detailModal').classList.add('open');
 }
 
