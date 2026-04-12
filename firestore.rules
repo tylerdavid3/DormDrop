@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isStudent() {
+      return userDoc().accountType == 'student';
+    }
+
+    function isLandlord() {
+      return userDoc().accountType == 'landlord';
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+
+    match /listings/{listingId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && isVerified() && isLandlord();
+      allow update: if isAuthenticated() && isLandlord() && resource.data.landlordId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.landlordId == request.auth.uid;
+    }
+
+    match /matches/{matchId} {
+      allow read: if isAuthenticated() && request.auth.uid in resource.data.users;
+      allow create: if isAuthenticated() && isVerified() && request.auth.uid in request.resource.data.users;
+      allow update: if isAuthenticated() && request.auth.uid in resource.data.users;
+    }
+
+    match /messages/{matchId}/messages/{messageId} {
+      allow read: if isAuthenticated() &&
+        request.auth.uid in get(/databases/$(database)/documents/matches/$(matchId)).data.users;
+      allow create: if isAuthenticated() && isVerified() &&
+        request.auth.uid in get(/databases/$(database)/documents/matches/$(matchId)).data.users &&
+        request.resource.data.from == request.auth.uid;
+      allow update: if isAuthenticated() &&
+        request.auth.uid in get(/databases/$(database)/documents/matches/$(matchId)).data.users;
+    }
+
+    match /inquiries/{inquiryId} {
+      allow read: if isAuthenticated() &&
+        (request.auth.uid == resource.data.studentId ||
+         request.auth.uid == resource.data.landlordId);
+      allow create: if isAuthenticated() && isVerified() && request.resource.data.studentId == request.auth.uid;
+      allow update: if isAuthenticated() && request.auth.uid == resource.data.landlordId;
+    }
+
+    // Legacy roommate chat (optional migration path)
+    match /conversations/{convId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /conversations/{convId}/messages/{messageId} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

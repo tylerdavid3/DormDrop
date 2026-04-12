@@ -1,13 +1,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// DormDrop — Firebase Configuration
+// DormDrop — Firebase Configuration (dormdrop-98dd3)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyCWT5Xeu_8dxbPx93ygx4ZZK0gCzdZ843I",
-  authDomain:        "dormdrop-f0c36.firebaseapp.com",
-  projectId:         "dormdrop-f0c36",
-  storageBucket:     "dormdrop-f0c36.firebasestorage.app",
-  messagingSenderId: "260314464397",
-  appId:             "1:260314464397:web:7c16823d5702c8fe59e2c4",
-  measurementId:     "G-M3D3JRQNXN"
+  apiKey: 'AIzaSyB8XICHo3JH_4rPB6AKMoenc6GcQUTEbyc',
+  authDomain: 'dormdrop-98dd3.firebaseapp.com',
+  projectId: 'dormdrop-98dd3',
+  storageBucket: 'dormdrop-98dd3.firebasestorage.app',
+  messagingSenderId: '446119671926',
+  appId: '1:446119671926:web:4927b8a290f1730f598757',
+  measurementId: 'G-4GR6WHK1VG'
 };

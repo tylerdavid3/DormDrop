@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Landlord Sign Up — DormDrop</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;padding:48px 24px}
+.wrap{max-width:440px;margin:0 auto;background:#fff;border:1px solid #E5E0D8;border-radius:16px;padding:32px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+h1{font-size:24px;margin-bottom:8px}
+.fg{margin-bottom:16px}
+label{display:block;font-size:12px;font-weight:600;color:#6B7280;margin-bottom:6px}
+input{width:100%;padding:12px;border:1px solid #E5E0D8;border-radius:8px;font-size:15px}
+button{width:100%;padding:14px;background:#111827;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:8px}
+.err{color:#DC2626;font-size:13px;margin-top:8px;display:none}
+a{color:#0E6E6E}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Landlord account</h1>
+  <p style="color:#6B7280;font-size:14px;margin-bottom:20px">Create an account to publish listings. Verify your email after signup.</p>
+  <form id="ll-form">
+    <div class="fg"><label>Your name</label><input id="name" type="text" required/></div>
+    <div class="fg"><label>Company name</label><input id="company" type="text" required/></div>
+    <div class="fg"><label>Email</label><input id="email" type="email" required/></div>
+    <div class="fg"><label>Phone</label><input id="phone" type="tel" required/></div>
+    <div class="fg"><label>Password (6+ characters)</label><input id="pwd" type="password" required/></div>
+    <div class="fg"><label>License # (optional)</label><input id="license" type="text"/></div>
+    <p id="err" class="err"></p>
+    <button type="submit">Create landlord account</button>
+  </form>
+  <p style="margin-top:16px;font-size:14px"><a href="/">← Home</a></p>
+</div>
+<script type="module" src="/src/landlord-signup.js"></script>
+</body>
+</html>

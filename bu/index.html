@@ -613,7 +613,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="https://forms.gle/gWmjxW8Yxx8gCaM48" class="btn-outline">Get Notified When Listings Launch →</a>
     </div>
     <div class="filter-strip">
-      <button class="filter-btn active" onclick="filterL(this,'all')">All Properties</button>
+      <button class="filter-btn active" data-filter="all" onclick="filterL(this,'all')">All Properties</button>
       <button class="filter-btn" onclick="filterL(this,'1br')">1 Bedroom</button>
       <button class="filter-btn" onclick="filterL(this,'2br')">2 Bedrooms</button>
       <button class="filter-btn" onclick="filterL(this,'3br')">3+ Bedrooms</button>
@@ -1100,6 +1100,7 @@ renderListings('all');renderProfiles();calc();
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="roommates.js"></script>
 </body>

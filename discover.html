@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Discover Roommates — DormDrop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;padding:24px}
+.container{max-width:420px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:26px;text-align:center;margin-bottom:20px}
+#card-stack{background:#fff;border:1px solid #E5E0D8;border-radius:16px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.06);min-height:320px}
+.actions{display:flex;justify-content:center;gap:16px;margin-top:20px}
+.actions button{width:56px;height:56px;border-radius:50%;border:none;font-size:22px;cursor:pointer}
+#no-more-matches{display:none;text-align:center;padding:40px 20px}
+#match-modal{display:none;position:fixed;inset:0;background:rgba(17,24,39,.5);align-items:center;justify-content:center;z-index:50}
+#match-modal .box{background:#fff;padding:32px;border-radius:16px;max-width:360px;text-align:center}
+.nav{margin-bottom:20px}
+.nav a{color:#0E6E6E;text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="nav"><a href="/dashboard.html">← Dashboard</a></div>
+<div class="container">
+  <h1>Discover roommates</h1>
+  <div id="card-stack"></div>
+  <div class="actions">
+    <button type="button" style="background:#fee2e2" onclick="passCurrentCard()" title="Pass">❌</button>
+    <button type="button" style="background:#e0f2fe" onclick="alert('Bio details are on the card.')" title="Info">ℹ️</button>
+    <button type="button" style="background:#d1fae5" onclick="likeCurrentCard()" title="Like">💚</button>
+  </div>
+  <div id="no-more-matches">
+    <p style="font-size:18px;margin-bottom:12px">That’s everyone for now.</p>
+    <p style="color:#6B7280;margin-bottom:20px">Check back later for new students.</p>
+    <a href="/dashboard.html" style="display:inline-block;background:#0E6E6E;color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600">Dashboard</a>
+  </div>
+</div>
+<div id="match-modal">
+  <div class="box">
+    <div style="font-size:48px">🎉</div>
+    <h2 style="font-family:'Playfair Display',serif">It’s a match!</h2>
+    <p>You and <span id="match-name"></span> both liked each other.</p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+      <button class="btn-primary" style="background:#0E6E6E;color:#fff;border:none;padding:12px 20px;border-radius:10px;cursor:pointer;font-weight:600" onclick="openChat()">Messages</button>
+      <button style="background:#fff;border:1px solid #E5E0D8;padding:12px 20px;border-radius:10px;cursor:pointer" onclick="keepSwiping()">Keep swiping</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/discover.js"></script>
+</body>
+</html>
