@@ -401,6 +401,46 @@ exports.updateAllListings = functions
   });
 
 /**
+ * HTTP alias: fetchListingsForSchool (same as updateListingsForSchool)
+ * GET /fetchListingsForSchool?school=bu
+ */
+exports.fetchListingsForSchool = functions
+  .runWith({ timeoutSeconds: 300, memory: '1GB' })
+  .https.onRequest(async (req, res) => {
+    const schoolKey = (req.query.school || '').toLowerCase();
+    if (!SCHOOL_CONFIG[schoolKey]) {
+      res.status(400).json({ error: `Unknown school. Use: ${Object.keys(SCHOOL_CONFIG).join(', ')}` });
+      return;
+    }
+    try {
+      const result = await updateListingsForSchool(schoolKey);
+      res.json(result);
+    } catch (err) {
+      console.error('fetchListingsForSchool error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+/**
+ * HTTP alias: fetchAllListings (same as updateAllListings)
+ * GET /fetchAllListings
+ */
+exports.fetchAllListings = functions
+  .runWith({ timeoutSeconds: 540, memory: '1GB' })
+  .https.onRequest(async (req, res) => {
+    const results = {};
+    for (const schoolKey of Object.keys(SCHOOL_CONFIG)) {
+      try {
+        results[schoolKey] = await updateListingsForSchool(schoolKey);
+        await new Promise(r => setTimeout(r, 3000));
+      } catch (err) {
+        results[schoolKey] = { success: false, school: schoolKey, error: err.message };
+      }
+    }
+    res.json({ success: true, results });
+  });
+
+/**
  * Scheduled: sync listings from RentCast daily at 3 AM Eastern.
  */
 exports.scheduledListingsSync = functions

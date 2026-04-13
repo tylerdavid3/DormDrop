@@ -8,7 +8,15 @@ const fetch = require('node-fetch');
 // Endpoint: https://api.rentcast.io/v1/listings/rental/long-term
 // ─────────────────────────────────────────────────────────────────────────────
 
-const RENTCAST_API_KEY = process.env.RENTCAST_API_KEY;
+// Support both modern .env approach and legacy functions.config() approach
+let _rentcastKey;
+try {
+  const functions = require('firebase-functions');
+  _rentcastKey = process.env.RENTCAST_API_KEY || (functions.config().rentcast && functions.config().rentcast.api_key);
+} catch (_) {
+  _rentcastKey = process.env.RENTCAST_API_KEY;
+}
+const RENTCAST_API_KEY = _rentcastKey;
 const RENTCAST_BASE = 'https://api.rentcast.io/v1/listings/rental/long-term';
 
 const SCHOOL_CONFIG = {
