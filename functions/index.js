@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
 const sgMail = require('@sendgrid/mail');
-const { updateListingsForSchool, SCHOOL_CONFIG } = require('./src/rentcast');
+const { processSchool, SCHOOL_CONFIG, getApiKey } = require('./src/rentcast');
 
 admin.initializeApp();
 
@@ -360,60 +360,124 @@ exports.onNewInquiryEmail = functions.firestore
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * HTTP trigger: update listings for a single school.
- * GET /updateListingsForSchool?school=bu
+ * Shared handler used by all RentCast HTTP endpoints.
+ * Validates API key, runs processSchool(), returns detailed JSON.
  */
+async function runSchoolSync(schoolKey, res) {
+  res.set('Access-Control-Allow-Origin', '*');
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return res.status(500).json({
+      success: false,
+      error: 'RENTCAST_API_KEY not configured.',
+      fix: 'Set it in GitHub Actions secrets as RENTCAST_API_KEY, then redeploy. Or run: firebase functions:config:set rentcast.api_key="YOUR_KEY"',
+    });
+  }
+
+  if (!SCHOOL_CONFIG[schoolKey]) {
+    return res.status(400).json({
+      success: false,
+      error: `Invalid school "${schoolKey}". Valid values: ${Object.keys(SCHOOL_CONFIG).join(', ')}`,
+    });
+  }
+
+  try {
+    const result = await processSchool(schoolKey, apiKey);
+    return res.json({ success: true, ...result });
+  } catch (err) {
+    console.error(`[${schoolKey}] Fatal error:`, err.message);
+    return res.status(500).json({
+      success: false,
+      school: schoolKey,
+      error: err.message,
+      stack: err.stack,
+    });
+  }
+}
+
+/**
+ * GET /fetchListingsForSchool?school=bu
+ * GET /updateListingsForSchool?school=bu  (alias)
+ */
+exports.fetchListingsForSchool = functions
+  .runWith({ timeoutSeconds: 300, memory: '1GB' })
+  .https.onRequest(async (req, res) => {
+    const school = (req.query.school || '').toLowerCase().trim();
+    await runSchoolSync(school, res);
+  });
+
 exports.updateListingsForSchool = functions
   .runWith({ timeoutSeconds: 300, memory: '1GB' })
   .https.onRequest(async (req, res) => {
-    const schoolKey = (req.query.school || '').toLowerCase();
-    if (!SCHOOL_CONFIG[schoolKey]) {
-      res.status(400).json({ error: `Unknown school. Use: ${Object.keys(SCHOOL_CONFIG).join(', ')}` });
-      return;
-    }
-    try {
-      const result = await updateListingsForSchool(schoolKey);
-      res.json(result);
-    } catch (err) {
-      console.error('updateListingsForSchool error:', err);
-      res.status(500).json({ error: err.message });
-    }
+    const school = (req.query.school || '').toLowerCase().trim();
+    await runSchoolSync(school, res);
   });
 
 /**
- * HTTP trigger: update listings for ALL schools.
  * GET /updateAllListings
+ * GET /fetchAllListings  (alias)
+ * Runs all three schools sequentially with a 3-second pause between.
  */
+async function runAllSchools(res) {
+  res.set('Access-Control-Allow-Origin', '*');
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return res.status(500).json({
+      success: false,
+      error: 'RENTCAST_API_KEY not configured.',
+      fix: 'Set GitHub Actions secret RENTCAST_API_KEY and redeploy.',
+    });
+  }
+
+  const results = {};
+  let totalAdded = 0, totalUpdated = 0, totalErrors = 0;
+
+  for (const schoolKey of Object.keys(SCHOOL_CONFIG)) {
+    try {
+      const r = await processSchool(schoolKey, apiKey);
+      results[schoolKey] = { success: true, ...r };
+      totalAdded   += r.added   || 0;
+      totalUpdated += r.updated || 0;
+      totalErrors  += (r.errors || []).length;
+    } catch (err) {
+      console.error(`[${schoolKey}] error:`, err.message);
+      results[schoolKey] = { success: false, school: schoolKey, error: err.message };
+      totalErrors++;
+    }
+    // Polite pause — avoid RentCast rate limits
+    await new Promise(r => setTimeout(r, 3000));
+  }
+
+  return res.json({ success: true, results, totalAdded, totalUpdated, totalErrors });
+}
+
 exports.updateAllListings = functions
   .runWith({ timeoutSeconds: 540, memory: '1GB' })
-  .https.onRequest(async (req, res) => {
-    const results = {};
-    for (const schoolKey of Object.keys(SCHOOL_CONFIG)) {
-      try {
-        results[schoolKey] = await updateListingsForSchool(schoolKey);
-        // Polite delay between schools to avoid rate limiting
-        await new Promise(r => setTimeout(r, 3000));
-      } catch (err) {
-        results[schoolKey] = { success: false, school: schoolKey, error: err.message };
-      }
-    }
-    res.json({ success: true, results });
-  });
+  .https.onRequest(async (req, res) => { await runAllSchools(res); });
+
+exports.fetchAllListings = functions
+  .runWith({ timeoutSeconds: 540, memory: '1GB' })
+  .https.onRequest(async (req, res) => { await runAllSchools(res); });
 
 /**
- * Scheduled: sync listings from RentCast daily at 3 AM Eastern.
+ * Scheduled: daily at 3 AM Eastern.
  */
 exports.scheduledListingsSync = functions
   .runWith({ timeoutSeconds: 540, memory: '1GB' })
   .pubsub.schedule('0 3 * * *')
   .timeZone('America/New_York')
   .onRun(async () => {
+    const apiKey = getApiKey();
+    if (!apiKey) { console.error('scheduledListingsSync: no API key configured'); return null; }
+
     for (const schoolKey of Object.keys(SCHOOL_CONFIG)) {
       try {
-        const result = await updateListingsForSchool(schoolKey);
-        console.log('scheduledListingsSync result:', JSON.stringify(result));
+        const r = await processSchool(schoolKey, apiKey);
+        console.log(`scheduledListingsSync [${schoolKey}]:`, JSON.stringify(r));
       } catch (err) {
-        console.error(`scheduledListingsSync failed for ${schoolKey}:`, err.message);
+        console.error(`scheduledListingsSync [${schoolKey}] failed:`, err.message);
       }
       await new Promise(r => setTimeout(r, 3000));
     }

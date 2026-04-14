@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DormDrop — Landlord Portal</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🏠</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2314B8A6'/><text y='22' x='7' font-size='16' font-weight='700' fill='white' font-family='sans-serif'>D</text></svg>" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -200,9 +200,9 @@
 <div id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">
-      <span class="logo-icon">🏠</span>
+      <div style="width:48px;height:48px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;font-weight:800;color:#fff;font-family:system-ui,sans-serif;letter-spacing:-1px;">DD</div>
       <h1>DormDrop</h1>
-      <p>Landlord &amp; Property Manager Portal</p>
+      <p>Property Management Portal</p>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
@@ -239,19 +239,19 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <a class="sidebar-brand" href="../index.html">
-        <span class="brand-icon">🏠</span>
-        <div><div class="brand-text">DormDrop</div><div class="brand-sub">Landlord Portal</div></div>
+        <div style="width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;letter-spacing:-0.5px;flex-shrink:0;">DD</div>
+        <div><div class="brand-text">DormDrop</div><div class="brand-sub">Property Manager</div></div>
       </a>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">Overview</div>
-      <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span> Dashboard</button>
+      <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</button>
       <div class="nav-section">Listings</div>
-      <button class="nav-item" onclick="showPage('listings')" id="nav-listings"><span class="nav-icon">🏡</span> My Listings</button>
-      <button class="nav-item" onclick="openAddListing()" id="nav-add"><span class="nav-icon">➕</span> Add New Listing</button>
+      <button class="nav-item" onclick="showPage('listings')" id="nav-listings">My Listings</button>
+      <button class="nav-item" onclick="openAddListing()" id="nav-add">Add New Listing</button>
       <div class="nav-section">Students</div>
       <button class="nav-item" onclick="showPage('interests')" id="nav-interests">
-        <span class="nav-icon">⭐</span> Student Interest
+        Student Interest
         <span class="nav-badge" id="interestBadge" style="display:none"></span>
       </button>
     </nav>
@@ -260,7 +260,7 @@
         <div class="user-avatar" id="sidebarAvatar">?</div>
         <div><div class="user-name" id="sidebarName">Loading...</div><div class="user-role">Property Manager</div></div>
       </div>
-      <button class="btn-signout" onclick="doSignOut()"><span>🚪</span> Sign Out</button>
+      <button class="btn-signout" onclick="doSignOut()">Sign Out</button>
     </div>
   </aside>
 
@@ -283,7 +283,7 @@
           <div class="section-title">Recent Student Interest</div>
           <button class="btn-accent" style="font-size:.825rem;padding:6px 14px;" onclick="showPage('interests')">View All</button>
         </div>
-        <div id="recentInterestWrap"><div class="empty-state"><div class="empty-icon">⭐</div><h3>No interest yet</h3><p>Student inquiries will appear here.</p></div></div>
+        <div id="recentInterestWrap"><div class="empty-state"><h3>No interest yet</h3><p>Student inquiries will appear here once students express interest in your listings.</p></div></div>
       </div>
 
       <!-- My Listings -->
@@ -315,7 +315,7 @@
           <div class="chip" onclick="filterInterests('viewed',this)">Viewed</div>
         </div>
         <div class="interests-grid" id="interestsGrid">
-          <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⭐</div><h3>No inquiries yet</h3><p>When students express interest in your listings, they'll appear here.</p></div>
+          <div class="empty-state" style="grid-column:1/-1"><h3>No inquiries yet</h3><p>When students express interest in your listings, they'll appear here.</p></div>
         </div>
       </div>
 
