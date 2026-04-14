@@ -1,14 +1,12 @@
 name: Deploy Firebase Functions
 
 on:
-  # Run automatically on every push to main
   push:
     branches: [main]
     paths:
       - 'functions/**'
       - 'firestore.rules'
       - 'storage.rules'
-  # Also allow manual trigger from the GitHub Actions tab
   workflow_dispatch:
 
 jobs:
@@ -30,5 +28,10 @@ jobs:
       - name: Write .env file
         run: echo "RENTCAST_API_KEY=${{ secrets.RENTCAST_API_KEY }}" > functions/.env
 
+      - name: Write service account credentials
+        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > /tmp/service-account.json
+
       - name: Deploy Firebase Functions + Rules
-        run: npx firebase-tools deploy --only functions,firestore:rules,storage --project dormdrop-98dd3 --token "${{ secrets.FIREBASE_TOKEN }}" --non-interactive
+        run: npx firebase-tools deploy --only functions,firestore:rules,storage --project dormdrop-98dd3 --non-interactive
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
