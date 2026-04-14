@@ -31,7 +31,7 @@ jobs:
       - name: Write service account credentials
         run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > /tmp/service-account.json
 
-      - name: Deploy Firebase Functions + Firestore Rules
-        run: npx firebase-tools deploy --only functions,firestore:rules --project dormdrop-98dd3 --non-interactive
+      - name: Deploy Firebase Functions only
+        run: npx firebase-tools deploy --only functions --project dormdrop-98dd3 --non-interactive
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
