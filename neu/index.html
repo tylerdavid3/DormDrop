@@ -385,13 +385,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="h-stat-fig"><sup>$</sup>10,660</div>
         <div class="h-stat-txt">Max savings vs. NEU standard double + dining</div>
       </div>
-      <div class="h-stat">
-        <div class="h-stat-fig">47<sup>+</sup></div>
+      <div class="h-stat" id="listingCountStat" style="display:none">
+        <div class="h-stat-fig" id="listingCountFig">—</div>
         <div class="h-stat-txt">Active listings near campus</div>
-      </div>
-      <div class="h-stat">
-        <div class="h-stat-fig" id="userCount">2,341</div>
-        <div class="h-stat-txt">Students connected</div>
       </div>
     </div>
   </div>
@@ -615,6 +611,16 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button class="filter-btn" onclick="filterL(this,'furnished')">Furnished</button>
     </div>
     <div class="list-grid" id="listGrid"></div>
+    <div id="waitlistSection" style="display:none;text-align:center;padding:60px 40px;background:var(--teal-lt);border-radius:var(--r-lg);border:1px solid var(--teal-md)">
+      <div style="font-size:32px;margin-bottom:16px">🏠</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px">Verified Listings Coming Soon</h3>
+      <p style="font-size:15px;color:var(--ink-3);max-width:480px;margin:0 auto 28px;line-height:1.65">We're personally verifying every listing before launch. Be the first to see NEU apartments when they go live.</p>
+      <div id="waitlistFormWrap" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto">
+        <input id="waitlistEmail" type="email" placeholder="Your NEU email address" style="flex:1;min-width:220px;padding:12px 16px;border:1px solid var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;outline:none"/>
+        <button onclick="saveWaitlistEmail()" style="background:var(--teal);color:#fff;border:none;padding:12px 22px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap">Notify Me</button>
+      </div>
+      <div id="waitlistSuccess" style="display:none;color:var(--teal);font-weight:600;margin-top:12px">✓ You're on the list! We'll email you when NEU listings go live.</div>
+    </div>
   </div>
 </section>
 
@@ -627,7 +633,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <div class="rm-grid">
       <div>
         <div class="p-cards" id="pGrid"></div>
-        <div class="msg-box">
+        <div class="msg-box" style="position:relative">
           <div class="msg-box-title">Messages</div>
           <div class="msg-list" id="msgList">
             <div class="msg-item">
@@ -642,6 +648,11 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div class="msg-compose" id="inlineCompose">
             <input class="msg-input" id="msgIn" placeholder="Message Jordan…" onkeydown="sendMsg(event)"/>
             <button class="msg-send" onclick="sendMsgBtn()">↑</button>
+          </div>
+          <div style="position:absolute;inset:0;background:rgba(249,247,244,.88);backdrop-filter:blur(3px);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px">
+            <div style="font-size:22px;margin-bottom:10px">💬</div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px">Sample preview</div>
+            <div style="font-size:13px;color:var(--ink-3);line-height:1.5;max-width:220px">Real messaging launches with your matches — <a href="#roommates" style="color:var(--teal)">complete your profile</a> to get started.</div>
           </div>
         </div>
       </div>

@@ -314,7 +314,7 @@ function finishSetup() {
   };
 
   function saveProfile(photoURL) {
-    if (photoURL) profileData.photoURL = photoURL;
+    if (photoURL) profileData.profilePhoto = photoURL;
     db.collection('users').doc(currentUser.uid).update({
       profile: profileData,
       profileComplete: true,

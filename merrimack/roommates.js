@@ -80,6 +80,7 @@ function subscribeSchoolListings() {
             var tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
             return tb - ta;
           });
+        updateListingCountStat(firestoreListings.length);
         var activeBtn = document.querySelector('.filter-btn.active');
         var f = activeBtn ? activeBtn.getAttribute('data-filter') || 'all' : 'all';
         if (!activeBtn) f = 'all';
@@ -1275,7 +1276,46 @@ function resendVerification() {
     });
 }
 
+function updateListingCountStat(count) {
+  var stat = document.getElementById('listingCountStat');
+  var fig = document.getElementById('listingCountFig');
+  if (!stat) return;
+  if (count >= 5) {
+    if (fig) fig.textContent = count;
+    stat.style.display = '';
+  } else {
+    stat.style.display = 'none';
+  }
+}
+
+function saveWaitlistEmail() {
+  var email = (document.getElementById('waitlistEmail') || {}).value || '';
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  var succ = document.getElementById('waitlistSuccess');
+  var wrap = document.getElementById('waitlistFormWrap');
+  db.collection('waitlist_emails').add({
+    email: email,
+    school: SCHOOL_KEY,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function () {
+    if (wrap) wrap.style.display = 'none';
+    if (succ) succ.style.display = 'block';
+  }).catch(function (e) {
+    console.error(e);
+    alert('Could not save your email. Please try again.');
+  });
+}
+
 function renderListings(f) {
+  var waitlistEl = document.getElementById('waitlistSection');
+  var gridEl = document.getElementById('listGrid');
+  if (firestoreListings.length < 3) {
+    if (gridEl) gridEl.style.display = 'none';
+    if (waitlistEl) waitlistEl.style.display = 'block';
+    return;
+  }
+  if (gridEl) gridEl.style.display = '';
+  if (waitlistEl) waitlistEl.style.display = 'none';
   var all = mergedListings();
   var s =
     f === 'all'

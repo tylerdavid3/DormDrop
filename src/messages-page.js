@@ -11,6 +11,7 @@ import {
   addDoc,
   serverTimestamp,
   updateDoc,
+  increment,
   where
 } from 'firebase/firestore';
 
@@ -82,6 +83,11 @@ function openThread(matchId, otherUid) {
   activeMatchId = matchId;
   activeOtherUid = otherUid;
   if (unsubMsgs) unsubMsgs();
+  // Mark messages as read for current user
+  if (auth.currentUser) {
+    const unreadKey = `unreadCount.${auth.currentUser.uid}`;
+    updateDoc(doc(db, 'matches', matchId), { [unreadKey]: 0 }).catch(function () {});
+  }
   const mq = query(
     collection(db, 'messages', matchId, 'messages'),
     orderBy('timestamp', 'asc'),
@@ -116,19 +122,18 @@ async function send() {
   const text = inp.value.trim();
   if (!text || !activeMatchId || !auth.currentUser) return;
   inp.value = '';
+  const uid = auth.currentUser.uid;
   await addDoc(collection(db, 'messages', activeMatchId, 'messages'), {
-    from: auth.currentUser.uid,
+    from: uid,
     to: activeOtherUid,
     text: text,
     timestamp: serverTimestamp(),
     read: false
   });
+  const unreadKey = `unreadCount.${activeOtherUid}`;
   await updateDoc(doc(db, 'matches', activeMatchId), {
-    lastMessage: {
-      text: text,
-      from: auth.currentUser.uid,
-      timestamp: serverTimestamp()
-    }
+    lastMessage: { text: text, from: uid, timestamp: serverTimestamp() },
+    [unreadKey]: increment(1)
   });
 }
 
