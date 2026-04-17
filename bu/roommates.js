@@ -341,11 +341,6 @@ function doLogin() {
   auth
     .signInWithEmailAndPassword(email, pwd)
     .then(function (cred) {
-      if (!cred.user.emailVerified) {
-        return auth.signOut().then(function () {
-          throw new Error('verify');
-        });
-      }
       return db.collection('users').doc(cred.user.uid).get();
     })
     .then(function (snap) {
@@ -367,11 +362,7 @@ function doLogin() {
       }
     })
     .catch(function (e) {
-      if (e && e.message === 'verify') {
-        showAuthError('Please verify your email before logging in. Check your inbox.');
-      } else {
-        showAuthError(friendlyAuthError(e.code));
-      }
+      showAuthError(friendlyAuthError(e.code));
     })
     .finally(function () {
       setAuthBtnLoading(false, 'loginBtn', 'Log In');
@@ -1427,10 +1418,6 @@ function contactListing(listingId) {
     openAuthModal('signup');
     return;
   }
-  if (!currentUser.emailVerified) {
-    alert('Please verify your email first.');
-    return;
-  }
   var msg = prompt('Message to the landlord (include your phone if you want a call back):');
   if (!msg) return;
   db.collection('listings')
@@ -1476,10 +1463,6 @@ var _pendingInterest = null;
 
 function openInterestModal(listingId, address, landlordId) {
   if (!currentUser) { openAuthModal('signup'); return; }
-  if (!currentUser.emailVerified) {
-    alert('Please verify your ' + (SCHOOL_EMAIL_DOMAIN || '@bu.edu') + ' email before expressing interest.');
-    return;
-  }
   _pendingInterest = { listingId: listingId, address: address, landlordId: landlordId };
   var lbl = document.getElementById('interestListingLabel');
   if (lbl) lbl.textContent = address ? 'Send a message about: ' + address : 'Send a message to the landlord about this property.';
