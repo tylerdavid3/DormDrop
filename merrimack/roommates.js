@@ -1356,25 +1356,6 @@ function filterL(btn, f) {
 }
 
 function openDetail(id) {
-  if (auth && !currentUser) {
-    openAuthModal('signup');
-    return;
-  }
-  if (auth && currentUser && !currentUser.emailVerified) {
-    document.getElementById('detailContent').innerHTML =
-      '<button class="modal-x" onclick="closeModal(\'detailModal\')">\u2715</button>' +
-      '<div style="text-align:center;padding:40px 20px">' +
-      '<div style="font-size:52px;margin-bottom:16px">&#128231;</div>' +
-      '<div class="m-title" style="margin-bottom:8px">Verify your email first</div>' +
-      '<p style="font-size:14px;color:var(--ink-4);line-height:1.6;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Check your inbox for a verification link from DormDrop, then click below to refresh.</p>' +
-      '<button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px;margin-bottom:10px" onclick="currentUser.reload().then(()=>{if(currentUser.emailVerified){closeModal(\'detailModal\');openDetail(\'' +
-      id +
-      '\');}else{alert(\'Still not verified — check your inbox.\');}})">I\'ve Verified — Refresh</button>' +
-      '<button class="btn-ghost" style="width:100%;padding:12px;background:none;border:1px solid var(--rule);border-radius:9px;font-family:\'Outfit\',sans-serif;font-size:14px;cursor:pointer" onclick="currentUser.sendEmailVerification().then(()=>alert(\'Verification email sent!\'))">Resend Verification Email</button>' +
-      '</div>';
-    document.getElementById('detailModal').classList.add('open');
-    return;
-  }
   var all = mergedListings();
   var l = all.find(function (x) {
     return String(x.id) === String(id);
