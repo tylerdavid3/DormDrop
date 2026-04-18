@@ -10,8 +10,9 @@
 /* global firebase, FIREBASE_CONFIG */
 
 firebase.initializeApp(FIREBASE_CONFIG);
-var auth = firebase.auth();
-var db   = firebase.firestore();
+var auth    = firebase.auth();
+var db      = firebase.firestore();
+var storage = firebase.storage();
 
 // ── State ─────────────────────────────────────────────────────────────────────
 var currentUser     = null;
@@ -48,7 +49,7 @@ function showAppShell() {
 }
 
 function loadLandlordProfile(uid) {
-  db.collection('landlords').doc(uid).get().then(function(snap) {
+  db.collection('users').doc(uid).get().then(function(snap) {
     if (snap.exists) {
       landlordProfile = snap.data();
       applyProfileToUI();
@@ -83,7 +84,7 @@ function saveProfile() {
   if (!name) { errEl.textContent = 'Please enter your full name.'; errEl.style.display = 'block'; return; }
 
   var data = { name: name, company: company, phone: phone, email: currentUser.email, uid: currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
-  db.collection('landlords').doc(currentUser.uid).set(data).then(function() {
+  db.collection('users').doc(currentUser.uid).set(data, { merge: true }).then(function() {
     landlordProfile = data;
     applyProfileToUI();
     document.getElementById('profileSetupModal').classList.remove('open');
@@ -213,7 +214,7 @@ function renderListingsTable() {
   if (!tbody) return;
   var filtered = listingFilter === 'all' ? allListings : allListings.filter(function(l) { return l.school === listingFilter; });
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏡</div><h3>No listings yet</h3><p>Click "+ Add Listing" to post your first property.</p></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><h3>No listings yet</h3><p>Click "+ Add Listing" to post your first property.</p></div></td></tr>';
     return;
   }
   tbody.innerHTML = filtered.map(function(l) {
@@ -253,7 +254,7 @@ function renderInterestsGrid() {
   if (!grid) return;
   var filtered = interestFilter === 'all' ? allInterests : allInterests.filter(function(i) { return i.status === interestFilter; });
   if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⭐</div><h3>No ' + (interestFilter === 'all' ? '' : interestFilter + ' ') + 'inquiries</h3><p>Student inquiries about your listings will appear here.</p></div>';
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><h3>No ' + (interestFilter === 'all' ? '' : interestFilter + ' ') + 'inquiries</h3><p>Student inquiries about your listings will appear here.</p></div>';
     return;
   }
   grid.innerHTML = filtered.map(interestCardHTML).join('');
@@ -288,7 +289,7 @@ function renderRecentInterests() {
   var wrap = document.getElementById('recentInterestWrap');
   if (!wrap) return;
   var recent = allInterests.slice(0, 3);
-  if (!recent.length) { wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><h3>No interest yet</h3><p>Student inquiries will appear here.</p></div>'; return; }
+  if (!recent.length) { wrap.innerHTML = '<div class="empty-state"><h3>No interest yet</h3><p>Student inquiries will appear here.</p></div>'; return; }
   var g = document.createElement('div'); g.className = 'interests-grid';
   g.innerHTML = recent.map(interestCardHTML).join('');
   wrap.innerHTML = ''; wrap.appendChild(g);
@@ -331,7 +332,9 @@ function openEditListing(id) {
 function closeListingModal() { document.getElementById('listingModal').classList.remove('open'); editingListingId = null; }
 
 function clearListingForm() {
-  ['fAddress','fCity','fRent','fBeds','fBaths','fSqft','fNeighborhood','fDescription','amenityInput','photoInput'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+  ['fAddress','fCity','fRent','fBeds','fBaths','fSqft','fNeighborhood','fDescription','amenityInput'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+  var pf = document.getElementById('photoFiles'); if (pf) pf.value = '';
+  var ps = document.getElementById('photoUploadStatus'); if (ps) ps.textContent = '';
   document.getElementById('fSchool').value    = '';
   document.getElementById('fFurnished').value = 'false';
   document.getElementById('fStatus').value    = 'true';
@@ -343,9 +346,40 @@ function addAmenity() { var v = document.getElementById('amenityInput').value.tr
 function removeAmenity(i) { amenities.splice(i, 1); renderAmenityTags(); }
 function renderAmenityTags() { document.getElementById('amenityTags').innerHTML = amenities.map(function(a, i) { return '<span class="tag">' + esc(a) + ' <span class="tag-remove" onclick="removeAmenity(' + i + ')">×</span></span>'; }).join(''); }
 
-function addPhoto() { var v = document.getElementById('photoInput').value.trim(); if (!v) return; if (!photos.includes(v)) photos.push(v); document.getElementById('photoInput').value = ''; renderPhotoTags(); }
+function handlePhotoFiles(files) {
+  var statusEl = document.getElementById('photoUploadStatus');
+  var remaining = Math.max(0, 5 - photos.length);
+  var toUpload = Array.prototype.slice.call(files, 0, remaining);
+  if (!toUpload.length) { statusEl.textContent = 'Max 5 photos reached.'; return; }
+  statusEl.textContent = 'Uploading 1/' + toUpload.length + '…';
+  var done = 0;
+  toUpload.forEach(function(file) {
+    var path = 'listings/' + currentUser.uid + '/' + Date.now() + '_' + file.name;
+    storage.ref(path).put(file).then(function(snap) {
+      return snap.ref.getDownloadURL();
+    }).then(function(url) {
+      photos.push(url);
+      done++;
+      if (done < toUpload.length) {
+        statusEl.textContent = 'Uploading ' + (done + 1) + '/' + toUpload.length + '…';
+      } else {
+        statusEl.textContent = done + ' photo' + (done !== 1 ? 's' : '') + ' uploaded.';
+      }
+      renderPhotoTags();
+    }).catch(function(err) {
+      statusEl.textContent = 'Upload error: ' + err.message;
+    });
+  });
+}
 function removePhoto(i) { photos.splice(i, 1); renderPhotoTags(); }
-function renderPhotoTags() { document.getElementById('photoTags').innerHTML = photos.map(function(p, i) { var s = p.length > 40 ? '…' + p.slice(-30) : p; return '<span class="tag photo-tag">' + esc(s) + ' <span class="tag-remove" onclick="removePhoto(' + i + ')">×</span></span>'; }).join(''); }
+function renderPhotoTags() {
+  document.getElementById('photoTags').innerHTML = photos.map(function(url, i) {
+    return '<div style="position:relative;display:inline-block;">' +
+      '<img src="' + esc(url) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);" />' +
+      '<span onclick="removePhoto(' + i + ')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:18px;height:18px;text-align:center;line-height:18px;font-size:12px;cursor:pointer;">×</span>' +
+    '</div>';
+  }).join('');
+}
 
 function saveListing() {
   var errEl = document.getElementById('listingFormError');

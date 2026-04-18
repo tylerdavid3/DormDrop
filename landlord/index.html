@@ -258,7 +258,7 @@
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar" id="sidebarAvatar">?</div>
-        <div><div class="user-name" id="sidebarName">Loading...</div><div class="user-role">Property Manager</div></div>
+        <div><div class="user-name" id="sidebarName">Loading...</div></div>
       </div>
       <button class="btn-signout" onclick="doSignOut()">Sign Out</button>
     </div>
@@ -382,12 +382,10 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Photo URLs <span style="font-weight:400;color:var(--text-muted)">(direct image links)</span></label>
-        <div class="tag-container" id="photoTags"></div>
-        <div class="add-item-row">
-          <input type="text" id="photoInput" placeholder="https://images.example.com/photo.jpg" onkeydown="if(event.key==='Enter'){event.preventDefault();addPhoto();}" />
-          <button class="btn-add-tag" onclick="addPhoto()">Add</button>
-        </div>
+        <label>Photos <span style="font-weight:400;color:var(--text-muted)">(up to 5 images)</span></label>
+        <input type="file" id="photoFiles" accept="image/*" multiple style="margin-bottom:8px;" onchange="handlePhotoFiles(this.files)" />
+        <div id="photoUploadStatus" style="font-size:.8rem;color:var(--text-muted);margin-bottom:6px;"></div>
+        <div id="photoTags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
       </div>
       <div class="form-section-title">Additional Options</div>
       <div class="form-row">
@@ -411,6 +409,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="landlord.js"></script>
 </body>
