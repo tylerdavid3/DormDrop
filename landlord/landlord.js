@@ -83,7 +83,7 @@ function saveProfile() {
   errEl.style.display = 'none';
   if (!name) { errEl.textContent = 'Please enter your full name.'; errEl.style.display = 'block'; return; }
 
-  var data = { name: name, company: company, phone: phone, email: currentUser.email, uid: currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  var data = { name: name, company: company, phone: phone, email: currentUser.email, uid: currentUser.uid, accountType: 'landlord', createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   db.collection('users').doc(currentUser.uid).set(data, { merge: true }).then(function() {
     landlordProfile = data;
     applyProfileToUI();
@@ -419,6 +419,7 @@ function saveListing() {
     description:   desc,
     furnished:     furnished,
     active:        active,         // boolean, matching Cursor query: .where('active', '==', true)
+    source:        'landlord',
     amenities:     amenities,
     photos:        photos,
     landlordId:    currentUser.uid,

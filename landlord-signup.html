@@ -11,8 +11,9 @@ body{margin:0;background:#F9F7F4;font-family:Outfit,sans-serif;padding:48px 24px
 h1{font-size:24px;margin-bottom:8px}
 .fg{margin-bottom:16px}
 label{display:block;font-size:12px;font-weight:600;color:#6B7280;margin-bottom:6px}
-input{width:100%;padding:12px;border:1px solid #E5E0D8;border-radius:8px;font-size:15px}
-button{width:100%;padding:14px;background:#111827;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:8px}
+input{width:100%;padding:12px;border:1px solid #E5E0D8;border-radius:8px;font-size:15px;box-sizing:border-box}
+button{width:100%;padding:14px;background:#111827;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:8px;font-size:15px}
+button:disabled{opacity:.6;cursor:not-allowed}
 .err{color:#DC2626;font-size:13px;margin-top:8px;display:none}
 a{color:#0E6E6E}
 </style>
@@ -20,19 +21,90 @@ a{color:#0E6E6E}
 <body>
 <div class="wrap">
   <h1>Landlord account</h1>
-  <p style="color:#6B7280;font-size:14px;margin-bottom:20px">Create an account to publish listings. Verify your email after signup.</p>
+  <p style="color:#6B7280;font-size:14px;margin-bottom:20px">Create an account to publish listings on DormDrop.</p>
   <form id="ll-form">
-    <div class="fg"><label>Your name</label><input id="name" type="text" required/></div>
-    <div class="fg"><label>Company name</label><input id="company" type="text" required/></div>
-    <div class="fg"><label>Email</label><input id="email" type="email" required/></div>
-    <div class="fg"><label>Phone</label><input id="phone" type="tel" required/></div>
-    <div class="fg"><label>Password (6+ characters)</label><input id="pwd" type="password" required/></div>
-    <div class="fg"><label>License # (optional)</label><input id="license" type="text"/></div>
+    <div class="fg"><label>Your name</label><input id="name" type="text" required placeholder="Jane Smith"/></div>
+    <div class="fg"><label>Company name</label><input id="company" type="text" required placeholder="Smith Properties LLC"/></div>
+    <div class="fg"><label>Email</label><input id="email" type="email" required placeholder="you@example.com"/></div>
+    <div class="fg"><label>Phone</label><input id="phone" type="tel" required placeholder="(617) 555-1234"/></div>
+    <div class="fg"><label>Password (6+ characters)</label><input id="pwd" type="password" required placeholder="••••••••"/></div>
+    <div class="fg"><label>License # <span style="font-weight:400;color:#9CA3AF">(optional)</span></label><input id="license" type="text" placeholder="RE-12345"/></div>
     <p id="err" class="err"></p>
-    <button type="submit">Create landlord account</button>
+    <button type="submit" id="submitBtn">Create landlord account</button>
   </form>
-  <p style="margin-top:16px;font-size:14px"><a href="/">← Home</a></p>
+  <p style="margin-top:16px;font-size:14px;text-align:center"><a href="/landlord/">Already have an account? Sign in</a> · <a href="/">← Home</a></p>
 </div>
-<script type="module" src="/src/landlord-signup.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:            "AIzaSyB8XICHo3JH_4rPB6AKMoenc6GcQUTEbyc",
+  authDomain:        "dormdrop-98dd3.firebaseapp.com",
+  projectId:         "dormdrop-98dd3",
+  storageBucket:     "dormdrop-98dd3.firebasestorage.app",
+  messagingSenderId: "446119671926",
+  appId:             "1:446119671926:web:4927b8a290f1730f598757"
+});
+var auth = firebase.auth();
+var db   = firebase.firestore();
+
+document.getElementById('ll-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var errEl  = document.getElementById('err');
+  var btn    = document.getElementById('submitBtn');
+  var name    = document.getElementById('name').value.trim();
+  var company = document.getElementById('company').value.trim();
+  var email   = document.getElementById('email').value.trim();
+  var phone   = document.getElementById('phone').value.trim();
+  var pwd     = document.getElementById('pwd').value;
+  var license = document.getElementById('license').value.trim();
+
+  errEl.style.display = 'none';
+  if (!name || !company || !email || !phone || !pwd) {
+    errEl.textContent = 'Please fill in all required fields.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (pwd.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating account…';
+
+  auth.createUserWithEmailAndPassword(email, pwd).then(function(cred) {
+    var uid = cred.user.uid;
+    return cred.user.updateProfile({ displayName: name }).then(function() {
+      return db.collection('users').doc(uid).set({
+        name:        name,
+        company:     company,
+        phone:       phone,
+        email:       email,
+        uid:         uid,
+        accountType: 'landlord',
+        licenseNumber: license || '',
+        createdAt:   firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+  }).then(function() {
+    window.location.href = '/landlord/';
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Create landlord account';
+    var msgs = {
+      'auth/email-already-in-use': 'An account with this email already exists. <a href="/landlord/">Sign in instead</a>.',
+      'auth/weak-password':        'Password must be at least 6 characters.',
+      'auth/invalid-email':        'Please enter a valid email address.',
+      'auth/too-many-requests':    'Too many attempts. Please try again later.'
+    };
+    errEl.innerHTML = msgs[err.code] || (err.message || 'Signup failed.');
+    errEl.style.display = 'block';
+  });
+});
+</script>
 </body>
 </html>
