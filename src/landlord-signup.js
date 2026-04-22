@@ -17,7 +17,7 @@ document.getElementById('ll-form').addEventListener('submit', async function (e)
     );
     await signOut(auth);
     alert('Account created. Check your email to verify, then open Landlord dashboard and log in.');
-    window.location.href = '/landlord-dashboard.html';
+    window.location.href = '/landlord/';
   } catch (ex) {
     err.textContent = ex.message || 'Signup failed.';
     err.style.display = 'block';

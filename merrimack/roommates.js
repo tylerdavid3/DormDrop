@@ -351,7 +351,7 @@ function doLogin() {
       }
       var data = snap.data();
       if (data.accountType === 'landlord') {
-        window.location.href = '/landlord-dashboard.html';
+        window.location.href = '/landlord/';
         return;
       }
       var p = data.profile || {};
