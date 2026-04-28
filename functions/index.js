@@ -7,7 +7,7 @@ const { processSchool, SCHOOL_CONFIG, getApiKey } = require('./src/rentcast');
 admin.initializeApp();
 
 const SENDGRID_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'hello@mydormdrop.com';
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'dormdrop.business@gmail.com';
 
 if (SENDGRID_KEY) {
   sgMail.setApiKey(SENDGRID_KEY);
