@@ -1386,6 +1386,38 @@ function filterL(btn, f) {
   renderListings(f);
 }
 
+
+function buildCarousel(photos, bg, em) {
+  if (!photos || !photos.length) return '<div class="d-img ' + bg + '">' + em + '</div>';
+  window._carouselIdx = 0;
+  if (photos.length === 1) {
+    return '<img src="' + esc(photos[0]) + '" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.style.display='none'">';
+  }
+  var slides = photos.map(function(url) {
+    return '<img src="' + esc(url) + '" alt="" style="min-width:100%;height:220px;object-fit:cover;" onerror="this.style.opacity=0">';
+  }).join('');
+  var dots = photos.map(function(_, i) {
+    return '<span onclick="carouselGo(' + i + ')" data-dot="' + i + '" style="width:8px;height:8px;border-radius:50%;background:' + (i===0?'#fff':'rgba(255,255,255,.5)') + ';cursor:pointer;display:inline-block;margin:0 3px;transition:background .15s"></span>';
+  }).join('');
+  return '<div id="photoCarousel" style="position:relative;margin-bottom:28px;overflow:hidden;border-radius:12px;">' +
+    '<div id="carouselTrack" style="display:flex;transition:transform .25s ease;">' + slides + '</div>' +
+    '<button onclick="carouselGo((window._carouselIdx||0)-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;width:32px;height:32px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer;z-index:2">&#8249;</button>' +
+    '<button onclick="carouselGo((window._carouselIdx||0)+1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;width:32px;height:32px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer;z-index:2">&#8250;</button>' +
+    '<div style="position:absolute;bottom:8px;left:0;right:0;text-align:center">' + dots + '</div>' +
+    '</div>';
+}
+
+window.carouselGo = function(n) {
+  var track = document.getElementById('carouselTrack');
+  if (!track) return;
+  var total = track.children.length;
+  window._carouselIdx = ((n % total) + total) % total;
+  track.style.transform = 'translateX(-' + (window._carouselIdx * 100) + '%)';
+  document.querySelectorAll('[data-dot]').forEach(function(dot) {
+    dot.style.background = parseInt(dot.getAttribute('data-dot')) === window._carouselIdx ? '#fff' : 'rgba(255,255,255,.5)';
+  });
+};
+
 function openDetail(id) {
   var all = mergedListings();
   var l = all.find(function (x) {
@@ -1395,19 +1427,7 @@ function openDetail(id) {
   var fs = l._fsListing;
   document.getElementById('detailContent').innerHTML =
     '<button class="modal-x" onclick="closeModal(\'detailModal\')">\u2715</button>' +
-    (l.img
-      ? '<img src="' +
-        l.img +
-        '" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.insertAdjacentHTML(\'afterend\',\'<div class=\\\'d-img ' +
-        l.bg +
-        '\\\'>' +
-        l.em +
-        '</div>\');this.remove()">'
-      : '<div class="d-img ' +
-        l.bg +
-        '">' +
-        l.em +
-        '</div>') +
+    buildCarousel((fs && fs.photos && fs.photos.length ? fs.photos : (l.img ? [l.img] : null)), l.bg, l.em) +
     '<div class="d-price">' +
     l.price +
     ' <span style="font-family:\'Outfit\',sans-serif;font-size:16px;font-weight:400;color:var(--ink-4)">' +

@@ -348,9 +348,9 @@ function renderAmenityTags() { document.getElementById('amenityTags').innerHTML 
 
 function handlePhotoFiles(files) {
   var statusEl = document.getElementById('photoUploadStatus');
-  var remaining = Math.max(0, 5 - photos.length);
+  var remaining = Math.max(0, 10 - photos.length);
   var toUpload = Array.prototype.slice.call(files, 0, remaining);
-  if (!toUpload.length) { statusEl.textContent = 'Max 5 photos reached.'; return; }
+  if (!toUpload.length) { statusEl.textContent = 'Max 10 photos reached.'; return; }
   statusEl.textContent = 'Uploading 1/' + toUpload.length + '…';
   var done = 0;
   toUpload.forEach(function(file) {
@@ -374,8 +374,8 @@ function handlePhotoFiles(files) {
 function removePhoto(i) { photos.splice(i, 1); renderPhotoTags(); }
 function renderPhotoTags() {
   document.getElementById('photoTags').innerHTML = photos.map(function(url, i) {
-    return '<div style="position:relative;display:inline-block;">' +
-      '<img src="' + esc(url) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);" />' +
+    return '<div style="position:relative;">' +
+      '<img src="' + esc(url) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;" />' +
       '<span onclick="removePhoto(' + i + ')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:18px;height:18px;text-align:center;line-height:18px;font-size:12px;cursor:pointer;">×</span>' +
     '</div>';
   }).join('');
