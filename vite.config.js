@@ -17,6 +17,14 @@ function copySchoolScripts() {
           resolve(__dirname, 'dist', dir, 'roommates.js')
         );
       });
+      // Copy landlord portal (compat SDK — not processed by Vite bundler)
+      mkdirSync(resolve(__dirname, 'dist', 'landlord'), { recursive: true });
+      ['index.html', 'landlord.js', 'firebase-config.js'].forEach(function (f) {
+        copyFileSync(
+          resolve(__dirname, 'landlord', f),
+          resolve(__dirname, 'dist', 'landlord', f)
+        );
+      });
     }
   };
 }
