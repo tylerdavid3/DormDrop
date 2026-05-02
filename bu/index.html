@@ -649,17 +649,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="msg-box" style="position:relative">
           <div class="msg-box-title">Messages</div>
           <div class="msg-list" id="msgList">
-            <div class="msg-item">
-              <div class="m-av j">J</div>
-              <div><div class="m-sender">Jordan K.</div><div class="m-bubble">Hey — saw we matched 94%. Looking at the Allston place on Gardner St. Are you a night owl or early riser?</div><div class="m-meta">2 minutes ago</div></div>
-            </div>
-            <div class="msg-item msg-mine">
-              <div class="m-av me">Y</div>
-              <div><div class="m-bubble">Night owl for sure. Also really interested in that spot — want to set up a tour together?</div><div class="m-meta">Just now</div></div>
-            </div>
           </div>
           <div class="msg-compose" id="inlineCompose">
-            <input class="msg-input" id="msgIn" placeholder="Message Jordan…" onkeydown="sendMsg(event)"/>
+            <input class="msg-input" id="msgIn" placeholder="Type a message…" onkeydown="sendMsg(event)"/>
             <button class="msg-send" onclick="sendMsgBtn()">↑</button>
           </div>
           <!-- Preview overlay -->
@@ -836,21 +828,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-const listings=[
-  {id:1,bg:'li-1',em:'🏢',badge:'New',bc:'b-new',price:'$950',per:'/mo per person',addr:'47 Buswell St, Fenway',beds:3,baths:1,sqft:980,avail:'Sep 1',tags:['3 Bed','Furnished','0.4 mi to BU','T: Kenmore'],saving:'Saves ~$5,400 / yr vs dorm',savN:5400,desc:'Spacious 3-bedroom in Fenway, 0.4 miles from BU. Fully furnished, in-unit laundry, hardwood floors. Split three ways, one of the strongest value propositions near campus.',type:'3br',furnished:true,img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop&auto=format'},
-  {id:2,bg:'li-2',em:'🏛️',badge:'Popular',bc:'b-pop',price:'$1,150',per:'/mo per person',addr:'189 Bay State Rd, Back Bay',beds:2,baths:1,sqft:780,avail:'Sep 1',tags:['2 Bed','Utilities Incl.','0.2 mi to BU','Pets OK'],saving:'Saves ~$4,800 / yr vs dorm',savN:4800,desc:'A well-maintained 2-bedroom brownstone steps from BU\'s main campus. Utilities included, renovated kitchen, exposed brick details throughout.',type:'2br',furnished:false,img:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop&auto=format'},
-  {id:3,bg:'li-3',em:'🏠',badge:'Best Value',bc:'b-new',price:'$750',per:'/mo per person',addr:'23 Brighton Ave, Allston',beds:4,baths:2,sqft:1400,avail:'Sep 1',tags:['4 Bed','2 Bath','1.1 mi to BU','Parking Incl.'],saving:'Saves ~$7,200 / yr vs dorm',savN:7200,desc:'A large 4-bedroom house in Allston. Two full baths, private backyard, and parking included. Split four ways, this represents exceptional value for BU students.',type:'3br',furnished:false,img:'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&h=400&fit=crop&auto=format'},
-  {id:4,bg:'li-4',em:'🏗️',badge:'New',bc:'b-new',price:'$1,600',per:'/mo',addr:'312 Commonwealth Ave, BU East',beds:1,baths:1,sqft:520,avail:'Aug 1',tags:['1 Bed','Renovated','On Commonwealth','Walk Score 98'],saving:'Saves ~$3,200 / yr vs dorm',savN:3200,desc:'A modern 1-bedroom directly on Commonwealth Ave. Fully renovated with high ceilings, stainless appliances, immediate access to BU East campus.',type:'1br',furnished:false,img:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop&auto=format'},
-  {id:5,bg:'li-5',em:'🏘️',badge:'Furnished',bc:'b-new',price:'$1,100',per:'/mo per person',addr:'55 Gardner St, Allston',beds:2,baths:1,sqft:720,avail:'Sep 1',tags:['2 Bed','Fully Furnished','0.9 mi to BU','In-Unit Laundry'],saving:'Saves ~$5,000 / yr vs dorm',savN:5000,desc:'A fully furnished 2-bedroom in Allston — move-in ready. Everything included, ideal for students wanting a frictionless transition from dormitory living.',type:'2br',furnished:true,img:'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&h=400&fit=crop&auto=format'},
-  {id:6,bg:'li-6',em:'🏡',badge:'High Demand',bc:'b-pop',price:'$875',per:'/mo per person',addr:'78 Pratt St, Brighton',beds:3,baths:1,sqft:900,avail:'Sep 1',tags:['3 Bed','Backyard','T: Warren St','1.3 mi to BU'],saving:'Saves ~$6,800 / yr vs dorm',savN:6800,desc:'A classic 3-bedroom Brighton house with private backyard. Strong MBTA access via Warren St. Consistently one of the most in-demand listings among BU students.',type:'3br',furnished:false,img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop&auto=format'}
-];
+const listings=[];
 
-const profiles=[
-  {av:'J',ac:'pa-1',name:'Jordan K.',info:'CAS · Junior · Allston',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
-  {av:'M',ac:'pa-2',name:'Maya R.',info:'Questrom · Sophomore · Fenway',match:87,traits:['Social','Pet-friendly'],matched:false},
-  {av:'S',ac:'pa-3',name:'Sam T.',info:'ENG · Senior · Brighton',match:82,traits:['Studies at home','Early riser'],matched:false},
-  {av:'A',ac:'pa-4',name:'Alex P.',info:'COM · Junior · Coolidge',match:79,traits:['Tidy','Night owl','Cook'],matched:false}
-];
+const profiles=[];
 
 function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
@@ -990,7 +970,7 @@ function sendMsgBtn(){
   list.appendChild(d);inp.value='';list.scrollTop=list.scrollHeight;
   setTimeout(()=>{
     const r=document.createElement('div');r.className='msg-item';
-    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Jordan K.</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
+    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Your match</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
     list.appendChild(r);list.scrollTop=list.scrollHeight;
   },900);
 }

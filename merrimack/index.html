@@ -726,17 +726,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="msg-box" style="position:relative">
           <div class="msg-box-title">Messages</div>
           <div class="msg-list" id="msgList">
-            <div class="msg-item">
-              <div class="m-av j">J</div>
-              <div><div class="m-sender">Jordan K.</div><div class="m-bubble">Hey — saw we matched 94%. Looking at the Allston place on Gardner St. Are you a night owl or early riser?</div><div class="m-meta">2 minutes ago</div></div>
-            </div>
-            <div class="msg-item msg-mine">
-              <div class="m-av me">Y</div>
-              <div><div class="m-bubble">Night owl for sure. Also really interested in that spot — want to set up a tour together?</div><div class="m-meta">Just now</div></div>
-            </div>
           </div>
           <div class="msg-compose" id="inlineCompose">
-            <input class="msg-input" id="msgIn" placeholder="Message Jordan…" onkeydown="sendMsg(event)"/>
+            <input class="msg-input" id="msgIn" placeholder="Type a message…" onkeydown="sendMsg(event)"/>
             <button class="msg-send" onclick="sendMsgBtn()">↑</button>
           </div>
           <div style="position:absolute;inset:0;background:rgba(249,247,244,.88);backdrop-filter:blur(3px);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px">
@@ -911,21 +903,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-const listings=[
-  {id:1,bg:'li-1',em:'',badge:'New',bc:'b-new',price:'$725',per:'/mo per person',addr:'14 Elm St, North Andover',beds:3,baths:1,sqft:1020,avail:'Sep 1',tags:['3 Bed','Furnished','0.6 mi to MC','Parking Incl.'],saving:'Saves ~$4,800 / yr vs dorm',savN:4800,desc:'Spacious 3-bedroom near Merrimack campus. Fully furnished with in-unit laundry, hardwood floors, and private parking. Split three ways, this is one of the best values near campus.',type:'3br',furnished:true,img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop&auto=format'},
-  {id:2,bg:'li-2',em:'',badge:'Popular',bc:'b-pop',price:'$850',per:'/mo per person',addr:'88 Andover St, North Andover',beds:2,baths:1,sqft:810,avail:'Sep 1',tags:['2 Bed','Utilities Incl.','0.9 mi to MC','Pets OK'],saving:'Saves ~$4,200 / yr vs dorm',savN:4200,desc:'Well-maintained 2-bedroom apartment with utilities included. Updated kitchen, plenty of natural light, and pet-friendly. A quick drive or bike ride to Merrimack.',type:'2br',furnished:false,img:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop&auto=format'},
-  {id:3,bg:'li-3',em:'',badge:'Best Value',bc:'b-new',price:'$650',per:'/mo per person',addr:'7 Osgood St, North Andover',beds:4,baths:2,sqft:1500,avail:'Sep 1',tags:['4 Bed','2 Bath','1.2 mi to MC','Backyard'],saving:'Saves ~$6,600 / yr vs dorm',savN:6600,desc:'Large 4-bedroom house in North Andover with two full bathrooms, a private backyard, and parking. Split four ways this is exceptional value for Merrimack students.',type:'3br',furnished:false,img:'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&h=400&fit=crop&auto=format'},
-  {id:4,bg:'li-4',em:'',badge:'New',bc:'b-new',price:'$1,200',per:'/mo',addr:'22 Main St, Andover',beds:1,baths:1,sqft:540,avail:'Aug 1',tags:['1 Bed','Renovated','In-Unit Laundry','Walk Score 88'],saving:'Saves ~$2,800 / yr vs dorm',savN:2800,desc:'Modern 1-bedroom in downtown Andover. Fully renovated with new appliances, high ceilings, and an in-unit washer/dryer. Perfect for a student who values privacy.',type:'1br',furnished:false,img:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop&auto=format'},
-  {id:5,bg:'li-5',em:'',badge:'Furnished',bc:'b-new',price:'$975',per:'/mo per person',addr:'33 Chickering Rd, North Andover',beds:2,baths:1,sqft:740,avail:'Sep 1',tags:['2 Bed','Fully Furnished','0.8 mi to MC','In-Unit Laundry'],saving:'Saves ~$3,900 / yr vs dorm',savN:3900,desc:'Move-in ready furnished 2-bedroom. Everything included — ideal for students who want a frictionless transition from dorm life. Steps from Merrimack campus.',type:'2br',furnished:true,img:'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&h=400&fit=crop&auto=format'},
-  {id:6,bg:'li-6',em:'',badge:'High Demand',bc:'b-pop',price:'$800',per:'/mo per person',addr:'59 Waverly Rd, North Andover',beds:3,baths:1,sqft:940,avail:'Sep 1',tags:['3 Bed','Backyard','1.0 mi to MC','Quiet Street'],saving:'Saves ~$5,400 / yr vs dorm',savN:5400,desc:'Classic 3-bedroom house on a quiet street in North Andover with a private backyard. One of the most consistently in-demand rentals among Merrimack students.',type:'3br',furnished:false,img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop&auto=format'}
-];
+const listings=[];
 
-const profiles=[
-  {av:'J',ac:'pa-1',name:'Jordan K.',info:'Business · Junior · North Andover',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
-  {av:'M',ac:'pa-2',name:'Maya R.',info:'Health Sciences · Sophomore · Lawrence',match:87,traits:['Social','Pet-friendly'],matched:false},
-  {av:'S',ac:'pa-3',name:'Sam T.',info:'Engineering · Senior · Andover',match:82,traits:['Studies at home','Early riser'],matched:false},
-  {av:'A',ac:'pa-4',name:'Alex P.',info:'Liberal Arts · Junior · Methuen',match:79,traits:['Tidy','Night owl','Cook'],matched:false}
-];
+const profiles=[];
 
 function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
@@ -1055,7 +1035,7 @@ function sendMsgBtn(){
   list.appendChild(d);inp.value='';list.scrollTop=list.scrollHeight;
   setTimeout(()=>{
     const r=document.createElement('div');r.className='msg-item';
-    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Jordan K.</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
+    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Your match</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
     list.appendChild(r);list.scrollTop=list.scrollHeight;
   },900);
 }

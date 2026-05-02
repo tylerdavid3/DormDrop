@@ -636,17 +636,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="msg-box" style="position:relative">
           <div class="msg-box-title">Messages</div>
           <div class="msg-list" id="msgList">
-            <div class="msg-item">
-              <div class="m-av j">J</div>
-              <div><div class="m-sender">Jordan K.</div><div class="m-bubble">Hey — saw we matched 94%. Looking at the Allston place on Gardner St. Are you a night owl or early riser?</div><div class="m-meta">2 minutes ago</div></div>
-            </div>
-            <div class="msg-item msg-mine">
-              <div class="m-av me">Y</div>
-              <div><div class="m-bubble">Night owl for sure. Also really interested in that spot — want to set up a tour together?</div><div class="m-meta">Just now</div></div>
-            </div>
           </div>
           <div class="msg-compose" id="inlineCompose">
-            <input class="msg-input" id="msgIn" placeholder="Message Jordan…" onkeydown="sendMsg(event)"/>
+            <input class="msg-input" id="msgIn" placeholder="Type a message…" onkeydown="sendMsg(event)"/>
             <button class="msg-send" onclick="sendMsgBtn()">↑</button>
           </div>
           <div style="position:absolute;inset:0;background:rgba(249,247,244,.88);backdrop-filter:blur(3px);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px">
@@ -822,21 +814,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-var listings=[
-  {id:1,bg:'li-1',em:'',badge:'New',bc:'b-new',price:'$800',per:'/mo per person',addr:'34 Parker St, Mission Hill',beds:3,baths:1,sqft:1020,avail:'Sep 1',tags:['3 Bed','Furnished','0.6 mi to NEU','T: Roxbury Crossing'],saving:'Saves ~$6,460 / yr vs dorm',savN:6460,desc:'Spacious 3-bedroom in Mission Hill, 0.6 miles from NEU. Fully furnished, hardwood floors, in-unit laundry. Split three ways, one of the best value options near Huntington Ave.',type:'3br',furnished:true},
-  {id:2,bg:'li-2',em:'',badge:'Popular',bc:'b-pop',price:'$1,050',per:'/mo per person',addr:'91 Gainsborough St, Fenway',beds:2,baths:1,sqft:800,avail:'Sep 1',tags:['2 Bed','Utilities Incl.','0.3 mi to NEU','T: Northeastern (E)'],saving:'Saves ~$4,060 / yr vs dorm',savN:4060,desc:'A well-maintained 2-bedroom steps from NEU campus. Utilities included, renovated kitchen, exposed brick. Direct access to the Green Line E at Northeastern station.',type:'2br',furnished:false},
-  {id:3,bg:'li-3',em:'',badge:'Best Value',bc:'b-new',price:'$720',per:'/mo per person',addr:'45 Terrace St, Jamaica Plain',beds:4,baths:2,sqft:1500,avail:'Sep 1',tags:['4 Bed','2 Bath','T: Green St (Orange)','Parking Incl.'],saving:'Saves ~$7,060 / yr vs dorm',savN:7060,desc:'A large 4-bedroom house in Jamaica Plain. Two full baths, private backyard, and parking included. Orange Line access at Green St. Split four ways, exceptional value for NEU students.',type:'3br',furnished:false},
-  {id:4,bg:'li-4',em:'',badge:'New',bc:'b-new',price:'$1,700',per:'/mo',addr:'280 St. Stephen St, South End',beds:1,baths:1,sqft:540,avail:'Aug 1',tags:['1 Bed','Renovated','T: Mass Ave (Orange)','Walk Score 97'],saving:'Saves ~$2,560 / yr vs dorm',savN:2560,desc:'A modern 1-bedroom in the South End. Fully renovated with high ceilings and stainless appliances. Orange Line at Mass Ave station, easy commute to NEU via Huntington Ave.',type:'1br',furnished:false},
-  {id:5,bg:'li-5',em:'',badge:'Furnished',bc:'b-new',price:'$875',per:'/mo per person',addr:'22 Smith St, Roxbury',beds:2,baths:1,sqft:740,avail:'Sep 1',tags:['2 Bed','Fully Furnished','0.4 mi to NEU','T: Ruggles (Orange)'],saving:'Saves ~$6,010 / yr vs dorm',savN:6010,desc:'A fully furnished 2-bedroom in Roxbury — move-in ready. Orange Line at Ruggles, 0.4 miles from NEU. Everything included, ideal for students wanting a seamless transition from dorm living.',type:'2br',furnished:true},
-  {id:6,bg:'li-6',em:'',badge:'High Demand',bc:'b-pop',price:'$775',per:'/mo per person',addr:'110 Tremont St, Mission Hill',beds:3,baths:1,sqft:960,avail:'Sep 1',tags:['3 Bed','Backyard','T: Roxbury Crossing','0.8 mi to NEU'],saving:'Saves ~$6,760 / yr vs dorm',savN:6760,desc:'A classic 3-bedroom Mission Hill home with private backyard. Excellent MBTA access via Roxbury Crossing on the Orange Line. Consistently one of the most in-demand listings among NEU students.',type:'3br',furnished:false}
-];
+var listings=[];
 
-const profiles=[
-  {av:'J',ac:'pa-1',name:'Jordan K.',info:'CSSH · Junior · Mission Hill',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
-  {av:'M',ac:'pa-2',name:'Maya R.',info:"D'Amore-McKim · Sophomore · Fenway",match:87,traits:['Social','Pet-friendly'],matched:false},
-  {av:'S',ac:'pa-3',name:'Sam T.',info:'Khoury · Senior · Roxbury',match:82,traits:['Studies at home','Early riser'],matched:false},
-  {av:'A',ac:'pa-4',name:'Alex P.',info:'CAMD · Junior · Jamaica Plain',match:79,traits:['Tidy','Night owl','Cook'],matched:false}
-];
+const profiles=[];
 
 function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
@@ -974,7 +954,7 @@ function sendMsgBtn(){
   list.appendChild(d);inp.value='';list.scrollTop=list.scrollHeight;
   setTimeout(()=>{
     const r=document.createElement('div');r.className='msg-item';
-    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Jordan K.</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
+    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Your match</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
     list.appendChild(r);list.scrollTop=list.scrollHeight;
   },900);
 }
