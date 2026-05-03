@@ -430,14 +430,19 @@ function renderLoggedOutState() {
   var pg = document.getElementById('pGrid');
   if (pg)
     pg.innerHTML =
-      '<div class="rm-state-box">' +
-      '<div style="font-size:36px;margin-bottom:12px">&#128075;</div>' +
-      '<div class="rm-state-title">Find your perfect roommate</div>' +
-      '<p class="rm-state-desc">Create a free account to see students who match your lifestyle.</p>' +
-      '<button class="btn-primary rm-state-btn" onclick="openAuthModal(\'signup\')">Sign Up &mdash; It\'s Free</button>' +
+      '<div class="rm-cta-card">' +
+      '<div class="rm-cta-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>' +
+      '<p class="rm-cta-eyebrow">Roommate Matching &middot; Members Only</p>' +
+      '<h3 class="rm-cta-title">Your matches are<br>a free account away.</h3>' +
+      '<p class="rm-cta-desc">Create a free DormDrop account to take the lifestyle quiz and see compatible Northeastern students with built-in messaging. We match on sleep schedule, study habits, cleanliness, and more — not just proximity.</p>' +
+      '<ul class="rm-cta-bullets">' +
+      '<li><span class="rm-cta-check">&#10003;</span> Match with verified Northeastern students only</li>' +
+      '<li><span class="rm-cta-check">&#10003;</span> See compatibility scores based on real lifestyle preferences</li>' +
+      '<li><span class="rm-cta-check">&#10003;</span> Direct messaging — no third-party apps needed</li>' +
+      '</ul>' +
+      '<button class="btn-primary" style="width:100%;padding:15px;border:none;cursor:pointer;font-size:15px;border-radius:var(--r)" onclick="openAuthModal(\'signup\')">Create Free Account</button>' +
+      '<p class="rm-cta-login">Already have an account? <a href="#" onclick="openAuthModal(\'login\');return false">Log in</a></p>' +
       '</div>';
-  var ml = document.getElementById('msgList');
-  if (ml) ml.innerHTML = '<p class="conv-empty">Sign in to view messages</p>';
   var ic = document.getElementById('inlineCompose');
   if (ic) ic.style.display = 'none';
 }
@@ -1285,6 +1290,15 @@ function resendVerification() {
 }
 
 function renderListings(f) {
+  var waitlistEl = document.getElementById('waitlistSection');
+  var gridEl = document.getElementById('listGrid');
+  if (firestoreListings.length === 0) {
+    if (gridEl) gridEl.style.display = 'none';
+    if (waitlistEl) waitlistEl.style.display = '';
+    return;
+  }
+  if (waitlistEl) waitlistEl.style.display = 'none';
+  if (gridEl) gridEl.style.display = '';
   var all = mergedListings();
   var s =
     f === 'all'

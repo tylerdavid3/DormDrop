@@ -440,6 +440,42 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 .chat-body    { flex:1; overflow-y:auto; padding:20px; }
 .chat-footer  { padding:14px 16px; border-top:1px solid var(--rule); display:flex; gap:8px; flex-shrink:0; }
 .auth-err     { font-size:13px; color:#DC2626; margin-bottom:14px; display:none; }
+
+/* WAITLIST CARD */
+.wl-card{max-width:600px;margin:56px auto;background:var(--white);border:1px solid var(--rule);border-radius:16px;padding:52px 48px;box-shadow:var(--sh-md);text-align:center}
+.wl-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:22px}
+.wl-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:18px;letter-spacing:-.5px}
+.wl-desc{font-size:15px;color:var(--ink-3);line-height:1.7;max-width:460px;margin:0 auto 36px}
+.wl-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto 14px}
+.wl-form input[type="email"]{flex:1;min-width:200px;padding:14px 16px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;color:var(--ink);background:var(--linen);transition:border-color .2s}
+.wl-form input[type="email"]:focus{border-color:var(--teal);background:var(--white)}
+.wl-form button{background:var(--ink);color:var(--white);border:none;padding:14px 28px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s}
+.wl-form button:hover:not(:disabled){background:var(--teal)}
+.wl-form button:disabled{opacity:.6;cursor:default}
+.wl-micro{font-size:12px;color:var(--ink-4)}
+.wl-success{text-align:center;padding:8px 0;display:none}
+.wl-success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--teal);margin-bottom:8px}
+.wl-success-desc{font-size:14px;color:var(--ink-3);line-height:1.6}
+
+/* ROOMMATE CTA CARD */
+.rm-cta-card{background:var(--white);border:1px solid var(--rule);border-radius:16px;padding:40px 36px;box-shadow:var(--sh-md);text-align:center;grid-column:1/-1}
+.rm-cta-icon{width:52px;height:52px;background:var(--teal-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.rm-cta-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.rm-cta-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1.25;margin-bottom:12px;letter-spacing:-.3px}
+.rm-cta-desc{font-size:14px;color:var(--ink-3);line-height:1.65;margin-bottom:22px}
+.rm-cta-bullets{list-style:none;padding:0;margin:0 0 28px;text-align:left;display:inline-block}
+.rm-cta-bullets li{font-size:13px;color:var(--ink-2);margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;line-height:1.4}
+.rm-cta-check{color:var(--teal);font-weight:700;font-size:14px;flex-shrink:0}
+.rm-cta-login{font-size:13px;color:var(--ink-3);margin-top:16px}
+.rm-cta-login a{color:var(--teal);text-decoration:none;font-weight:500}
+.rm-cta-login a:hover{text-decoration:underline}
+@media(max-width:768px){
+  .wl-card{padding:36px 24px;margin:32px 0}
+  .wl-title{font-size:26px}
+  .wl-form{flex-direction:column}
+  .wl-form input[type="email"]{min-width:unset;width:100%}
+  .rm-cta-card{padding:32px 24px}
+}
 </style>
 </head>
 <body>
@@ -452,7 +488,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="#listings">Listings</a>
       <a href="#calculator">Savings</a>
       <a href="#roommates">Roommates</a>
-      <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
+      <a href="../landlord/">List a Property</a>
       <a href="../landlord/">Landlord Portal</a>
     </div>
     <div class="nav-ctas">
@@ -682,310 +718,25 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 <!-- LISTINGS -->
 <section class="list-sec" id="listings">
   <div class="container">
-    <div class="list-head">
-      <div>
-        <div class="sec-eyebrow">Properties Near Merrimack</div>
-        <h2 class="sec-title" style="margin-bottom:0">Available listings.</h2>
-      </div>
-      <a href="https://forms.gle/NQNp73pe5fxzQ4jH6" target="_blank" class="btn-outline">Get Notified When Listings Launch →</a>
-    </div>
-    <div class="filter-strip">
-      <button class="filter-btn active" data-filter="all" onclick="filterL(this,'all')">All Properties</button>
-      <button class="filter-btn" onclick="filterL(this,'1br')">1 Bedroom</button>
-      <button class="filter-btn" onclick="filterL(this,'2br')">2 Bedrooms</button>
-      <button class="filter-btn" onclick="filterL(this,'3br')">3+ Bedrooms</button>
-      <button class="filter-btn" onclick="filterL(this,'furnished')">Furnished</button>
-    </div>
-
-    <!-- ROYAL CREST PROPERTY CARD -->
-    <div class="property-card">
-      <div class="property-header">
-        <div class="property-badge">🔥 BEST VALUE FOR STUDENTS</div>
-        <div class="property-main">
-          <div class="property-image">🏘️</div>
-          <div class="property-info">
-            <h3>Royal Crest Estates North Andover</h3>
-            <p class="property-address">📍 50 Royal Crest Drive, North Andover, MA 01845</p>
-            <p class="property-address">🚗 2.8 miles from Merrimack College (6 min drive)</p>
-            <div class="property-quick-stats">
-              <div class="stat">
-                <span class="stat-value">11</span>
-                <span class="stat-label">Units Available</span>
-              </div>
-              <div class="stat">
-                <span class="stat-value">From $1,183/mo</span>
-                <span class="stat-label">Per Person</span>
-              </div>
-              <div class="stat">
-                <span class="stat-value">June 2026</span>
-                <span class="stat-label">Move-In</span>
-              </div>
-            </div>
-            <div class="property-savings-banner">
-              💰 <strong>Save up to $7,800/year</strong> vs. Merrimack dorms
-            </div>
-            <div class="property-amenities-preview">
-              <span>🏊 Pool</span>
-              <span>💪 Gym</span>
-              <span>🅿️ Parking</span>
-              <span>🐕 Pets OK</span>
-              <span>🔥 Heat Included</span>
-            </div>
+    <div class="list-grid" id="listGrid" style="display:none"></div>
+    <div id="waitlistSection">
+      <div class="wl-card">
+        <p class="wl-eyebrow">Verified Listings &middot; Launching Summer 2026</p>
+        <h2 class="wl-title">Real listings.<br>Real landlords.<br>Coming soon.</h2>
+        <p class="wl-desc">We're personally verifying every property and landlord before launch. Be the first to see verified Merrimack apartments when they go live — and get exclusive access to our early-bird listings.</p>
+        <div id="waitlistFormWrap">
+          <div class="wl-form">
+            <input id="waitlistEmail" type="email" placeholder="your.email@merrimack.edu"/>
+            <button id="wlNotifyBtn" onclick="saveWaitlistEmail()">Notify Me</button>
           </div>
+          <p class="wl-micro">No spam. We'll only email you when listings launch. &#10003;</p>
         </div>
-      </div>
-
-      <button class="expand-units-btn" onclick="toggleRoyalCrest(this)">
-        <span class="expand-text">View All 11 Available Units</span>
-        <span class="expand-icon">▼</span>
-      </button>
-
-      <div id="royal-crest-units" class="units-list">
-        <!-- 3BR UNITS -->
-        <div class="units-category">
-          <h4 class="category-title">🔥 Best Value - 3 Bedroom Apartments</h4>
-          <p class="category-subtitle">Split 3 ways for maximum savings</p>
-
-          <div class="unit-row best-value">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Windsor</span>
-                <span class="unit-badge">MOST POPULAR</span>
-              </div>
-              <div class="unit-specs">3 Bed / 2 Bath • 1,300 sq ft</div>
-              <div style="margin-top:8px">
-                <img src="images/windsor.jpg" alt="Windsor floor plan" style="max-width:200px;border-radius:8px;border:1px solid var(--rule);">
-              </div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">$3,548/month</div>
-              <div class="price-per-person">$1,183/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $650/mo</span>
-              <span class="savings-annual">= $7,800/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row best-value">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Windsor II</span>
-                <span class="unit-badge">EXTRA SPACE</span>
-              </div>
-              <div class="unit-specs">3 Bed / 2 Bath • 1,450 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">$3,575/month</div>
-              <div class="price-per-person">$1,192/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $641/mo</span>
-              <span class="savings-annual">= $7,692/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-        </div>
-
-        <!-- 2BR BUDGET -->
-        <div class="units-category">
-          <h4 class="category-title">2 Bedroom - Budget Friendly</h4>
-          <p class="category-subtitle">Under $1,400/person</p>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name"><span class="unit-model">Hampton</span></div>
-              <div class="unit-specs">2 Bed / 1 Bath • 885 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">From $2,630/month</div>
-              <div class="price-per-person">$1,315/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $518/mo</span>
-              <span class="savings-annual">= $6,216/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name"><span class="unit-model">Buckingham</span></div>
-              <div class="unit-specs">2 Bed / 1 Bath • 950 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">From $2,660/month</div>
-              <div class="price-per-person">$1,330/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $503/mo</span>
-              <span class="savings-annual">= $6,036/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name"><span class="unit-model">Buckingham II</span></div>
-              <div class="unit-specs">2 Bed / 1 Bath • 975 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">From $2,680/month</div>
-              <div class="price-per-person">$1,340/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $493/mo</span>
-              <span class="savings-annual">= $5,916/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Astor</span>
-                <span class="unit-badge">2 BATHS</span>
-              </div>
-              <div class="unit-specs">2 Bed / 2 Bath • 1,200 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">From $2,745/month</div>
-              <div class="price-per-person">$1,373/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $460/mo</span>
-              <span class="savings-annual">= $5,520/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 16, 2026</strong></div>
-          </div>
-        </div>
-
-        <!-- 2BR UPGRADED -->
-        <div class="units-category">
-          <h4 class="category-title">2 Bedroom - Upgraded</h4>
-          <p class="category-subtitle">$1,400-1,600/person</p>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Hampton II</span>
-                <span class="unit-badge">2 BATHS</span>
-              </div>
-              <div class="unit-specs">2 Bed / 2 Bath • 885 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">From $2,760/month</div>
-              <div class="price-per-person">$1,380/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $453/mo</span>
-              <span class="savings-annual">= $5,436/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Astor II</span>
-                <span class="unit-badge">SPACIOUS</span>
-              </div>
-              <div class="unit-specs">2 Bed / 2 Bath • 1,250 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">From $2,845/month</div>
-              <div class="price-per-person">$1,423/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $410/mo</span>
-              <span class="savings-annual">= $4,920/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Hampton Premier</span>
-                <span class="unit-badge">PREMIER</span>
-              </div>
-              <div class="unit-specs">2 Bed / 1 Bath • 885 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">$3,075/month</div>
-              <div class="price-per-person">$1,538/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $295/mo</span>
-              <span class="savings-annual">= $3,540/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Hampton II Premier</span>
-                <span class="unit-badge">PREMIER + 2 BATHS</span>
-              </div>
-              <div class="unit-specs">2 Bed / 2 Bath • 885 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">$3,120/month</div>
-              <div class="price-per-person">$1,560/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $273/mo</span>
-              <span class="savings-annual">= $3,276/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jun 21, 2026</strong></div>
-          </div>
-        </div>
-
-        <!-- 2BR PREMIUM -->
-        <div class="units-category">
-          <h4 class="category-title">2 Bedroom - Premium</h4>
-          <p class="category-subtitle">Luxury finishes</p>
-
-          <div class="unit-row">
-            <div class="unit-main-info">
-              <div class="unit-name">
-                <span class="unit-model">Astor Premier</span>
-                <span class="unit-badge">LUXURY</span>
-              </div>
-              <div class="unit-specs">2 Bed / 2 Bath • 1,200 sq ft</div>
-            </div>
-            <div class="unit-pricing">
-              <div class="price-total">$3,305/month</div>
-              <div class="price-per-person">$1,653/person</div>
-            </div>
-            <div class="unit-savings">
-              <span class="savings-amount">Save $180/mo</span>
-              <span class="savings-annual">= $2,160/year</span>
-            </div>
-            <div class="unit-availability">Available: <strong>Jul 27, 2026</strong></div>
-          </div>
-        </div>
-
-        <!-- CONTACT SECTION -->
-        <div class="property-contact-section">
-          <div class="contact-info-box">
-            <h4>⚠️ About June Move-In Dates</h4>
-            <p>Royal Crest offers 12-month leases starting in June. <strong>Even paying 3 months of "empty" rent, you still save $4,000+/year vs. dorms.</strong> Many students sublet summer months or stay for internships.</p>
-          </div>
-          <div class="contact-cta">
-            <h4>Ready to tour Royal Crest?</h4>
-            <a href="https://www.royalcrestnorthandover.com" class="btn-contact-primary" target="_blank">
-              🏠 Contact Royal Crest →
-            </a>
-            <p class="urgency-text">⚡ Units filling fast! Feb-March is peak leasing season.</p>
-          </div>
+        <div id="waitlistSuccess" class="wl-success">
+          <div class="wl-success-title">&#10003; You're on the list.</div>
+          <div class="wl-success-desc">We'll email you the moment verified Merrimack listings go live.</div>
         </div>
       </div>
     </div>
-
-    <div class="list-grid" id="listGrid"></div>
   </div>
 </section>
 
@@ -997,22 +748,19 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <p class="sec-body">Answer a few questions about how you live and we'll pair you with compatible Merrimack students — with direct messaging built in.</p>
     <div class="rm-grid">
       <div>
-        <div class="p-cards" id="pGrid"></div>
-        <div class="msg-box">
-          <div class="msg-box-title">Messages</div>
-          <div class="msg-list" id="msgList">
-            <div class="msg-item">
-              <div class="m-av j">J</div>
-              <div><div class="m-sender">Jordan K.</div><div class="m-bubble">Hey — saw we matched 94%. Looking at the Allston place on Gardner St. Are you a night owl or early riser?</div><div class="m-meta">2 minutes ago</div></div>
-            </div>
-            <div class="msg-item msg-mine">
-              <div class="m-av me">Y</div>
-              <div><div class="m-bubble">Night owl for sure. Also really interested in that spot — want to set up a tour together?</div><div class="m-meta">Just now</div></div>
-            </div>
-          </div>
-          <div class="msg-compose" id="inlineCompose">
-            <input class="msg-input" id="msgIn" placeholder="Message Jordan…" onkeydown="sendMsg(event)"/>
-            <button class="msg-send" onclick="sendMsgBtn()">↑</button>
+        <div class="p-cards" id="pGrid">
+          <div class="rm-cta-card">
+            <div class="rm-cta-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <p class="rm-cta-eyebrow">Roommate Matching &middot; Members Only</p>
+            <h3 class="rm-cta-title">Your matches are<br>a free account away.</h3>
+            <p class="rm-cta-desc">Create a free DormDrop account to take the lifestyle quiz and see compatible Merrimack students with built-in messaging. We match on sleep schedule, study habits, cleanliness, and more — not just proximity.</p>
+            <ul class="rm-cta-bullets">
+              <li><span class="rm-cta-check">&#10003;</span> Match with verified Merrimack students only</li>
+              <li><span class="rm-cta-check">&#10003;</span> See compatibility scores based on real lifestyle preferences</li>
+              <li><span class="rm-cta-check">&#10003;</span> Direct messaging — no third-party apps needed</li>
+            </ul>
+            <button class="btn-primary" style="width:100%;padding:15px;border:none;cursor:pointer;font-size:15px;border-radius:var(--r)" onclick="openAuthModal('signup')">Create Free Account</button>
+            <p class="rm-cta-login">Already have an account? <a href="#" onclick="openAuthModal('login');return false">Log in</a></p>
           </div>
         </div>
       </div>
@@ -1066,9 +814,9 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       </div>
       <div class="ft-col">
         <h5>Landlords</h5>
-        <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
+        <a href="../landlord/">List a Property</a>
         <a href="../landlord/">Landlord Portal</a>
-        <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">Submit a Listing</a>
+        <a href="../landlord/">Submit a Listing</a>
       </div>
       <div class="ft-col">
         <h5>Company</h5>
@@ -1184,12 +932,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 <script>
 var listings=[];
 
-const profiles=[
-  {av:'J',ac:'pa-1',name:'Jordan K.',info:'Business · Junior · North Andover',match:94,traits:['Night Owl','Tidy','Quiet hours'],matched:true},
-  {av:'M',ac:'pa-2',name:'Maya R.',info:'Health Sciences · Sophomore · Lawrence',match:87,traits:['Social','Pet-friendly'],matched:false},
-  {av:'S',ac:'pa-3',name:'Sam T.',info:'Engineering · Senior · Andover',match:82,traits:['Studies at home','Early riser'],matched:false},
-  {av:'A',ac:'pa-4',name:'Alex P.',info:'Liberal Arts · Junior · Methuen',match:79,traits:['Tidy','Night owl','Cook'],matched:false}
-];
+const profiles=[];
 
 function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
@@ -1248,6 +991,7 @@ function openDetail(id){
 }
 
 function renderProfiles(){
+  if(!profiles.length) return;
   document.getElementById('pGrid').innerHTML=profiles.map(p=>`
     <div class="p-card ${p.matched?'matched':''}" onclick="alert('Sign up to message ${p.name}.')">
       <div class="p-av ${p.ac}">${p.av}</div>
@@ -1255,6 +999,23 @@ function renderProfiles(){
       <span class="mp ${p.match>=85?'mp-hi':'mp-md'}">${p.match}% Match</span>
       <div class="p-traits">${p.traits.map(t=>`<span class="p-trait">${t}</span>`).join('')}</div>
     </div>`).join('');
+}
+function saveWaitlistEmail(){
+  const email=(document.getElementById('waitlistEmail')||{}).value||'';
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    const inp=document.getElementById('waitlistEmail');
+    if(inp){inp.style.borderColor='var(--amber)';inp.focus();}
+    return;
+  }
+  const btn=document.getElementById('wlNotifyBtn');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  if(typeof db!=='undefined'&&db){
+    db.collection('waitlist_emails').add({email,school:'merrimack',source:'listings_section',createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(()=>{
+      const w=document.getElementById('waitlistFormWrap'),s=document.getElementById('waitlistSuccess');
+      if(w)w.style.display='none';if(s)s.style.display='block';
+    }).catch(e=>{console.error(e);if(btn){btn.disabled=false;btn.textContent='Notify Me';}});
+  }
 }
 
 var leaseMo=9;
@@ -1354,7 +1115,7 @@ function sendMsgBtn(){
   list.appendChild(d);inp.value='';list.scrollTop=list.scrollHeight;
   setTimeout(()=>{
     const r=document.createElement('div');r.className='msg-item';
-    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Jordan K.</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
+    r.innerHTML=`<div class="m-av j">M</div><div><div class="m-sender">Your match</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
     list.appendChild(r);list.scrollTop=list.scrollHeight;
   },900);
 }
