@@ -440,15 +440,45 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 .chat-body    { flex:1; overflow-y:auto; padding:20px; }
 .chat-footer  { padding:14px 16px; border-top:1px solid var(--rule); display:flex; gap:8px; flex-shrink:0; }
 .auth-err     { font-size:13px; color:#DC2626; margin-bottom:14px; display:none; }
+
+/* WAITLIST CARD */
+.wl-card{max-width:600px;margin:56px auto;background:var(--white);border:1px solid var(--rule);border-radius:16px;padding:52px 48px;box-shadow:var(--sh-md);text-align:center}
+.wl-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:22px}
+.wl-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:18px;letter-spacing:-.5px}
+.wl-desc{font-size:15px;color:var(--ink-3);line-height:1.7;max-width:460px;margin:0 auto 36px}
+.wl-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto 14px}
+.wl-form input[type="email"]{flex:1;min-width:200px;padding:14px 16px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;color:var(--ink);background:var(--linen);transition:border-color .2s}
+.wl-form input[type="email"]:focus{border-color:var(--teal);background:var(--white)}
+.wl-form button{background:var(--ink);color:var(--white);border:none;padding:14px 28px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s}
+.wl-form button:hover:not(:disabled){background:var(--teal)}
+.wl-form button:disabled{opacity:.6;cursor:default}
+.wl-micro{font-size:12px;color:var(--ink-4)}
+.wl-success{text-align:center;padding:8px 0;display:none}
+.wl-success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--teal);margin-bottom:8px}
+.wl-success-desc{font-size:14px;color:var(--ink-3);line-height:1.6}
+
+/* ROOMMATE CTA CARD */
+.rm-cta-card{background:var(--white);border:1px solid var(--rule);border-radius:16px;padding:40px 36px;box-shadow:var(--sh-md);text-align:center;grid-column:1/-1}
+.rm-cta-icon{width:52px;height:52px;background:var(--teal-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.rm-cta-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.rm-cta-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1.25;margin-bottom:12px;letter-spacing:-.3px}
+.rm-cta-desc{font-size:14px;color:var(--ink-3);line-height:1.65;margin-bottom:22px}
+.rm-cta-bullets{list-style:none;padding:0;margin:0 0 28px;text-align:left;display:inline-block}
+.rm-cta-bullets li{font-size:13px;color:var(--ink-2);margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;line-height:1.4}
+.rm-cta-check{color:var(--teal);font-weight:700;font-size:14px;flex-shrink:0}
+.rm-cta-login{font-size:13px;color:var(--ink-3);margin-top:16px}
+.rm-cta-login a{color:var(--teal);text-decoration:none;font-weight:500}
+.rm-cta-login a:hover{text-decoration:underline}
+@media(max-width:768px){
+  .wl-card{padding:36px 24px;margin:32px 0}
+  .wl-title{font-size:26px}
+  .wl-form{flex-direction:column}
+  .wl-form input[type="email"]{min-width:unset;width:100%}
+  .rm-cta-card{padding:32px 24px}
+}
 </style>
 </head>
 <body>
-
-<!-- DEMO BANNER -->
-<div id="demoBanner" style="display:none;position:fixed;top:0;left:0;right:0;background:#0f172a;color:#fff;text-align:center;padding:9px 16px;font-size:13px;font-family:'Outfit',sans-serif;z-index:10000;border-bottom:1px solid #334155">
-  You are in <strong>Demo Preview</strong> mode — viewing the site as a verified student.
-  <button onclick="deactivateDemoMode()" style="margin-left:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif">Exit Demo</button>
-</div>
 
 <!-- NAV -->
 <nav>
@@ -458,7 +488,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <a href="#listings">Listings</a>
       <a href="#calculator">Savings</a>
       <a href="#roommates">Roommates</a>
-      <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
+      <a href="../landlord/">List a Property</a>
       <a href="../landlord/">Landlord Portal</a>
     </div>
     <div class="nav-ctas">
@@ -485,9 +515,13 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="h-stat-fig"><sup>$</sup>12,334</div>
         <div class="h-stat-txt">Max savings vs. Merrimack double + dining</div>
       </div>
-      <div class="h-stat" id="listingCountStat" style="display:none">
-        <div class="h-stat-fig" id="listingCountFig">—</div>
-        <div class="h-stat-txt">Active listings near campus</div>
+      <div class="h-stat">
+        <div class="h-stat-fig">25<sup>+</sup></div>
+        <div class="h-stat-txt">Properties near campus</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-fig" id="userCount">547</div>
+        <div class="h-stat-txt">Students connected</div>
       </div>
     </div>
   </div>
@@ -505,15 +539,15 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     </div>
     <div class="divline"></div>
     <div class="ins-row">
-      <div class="ins-icon ii-t" style="font-size:12px;font-weight:700;color:var(--teal)">MC</div>
+      <div class="ins-icon ii-t">📋</div>
       <div><div class="ins-title">Official 2025–26 Merrimack rates used</div><div class="ins-sub">Source: Merrimack Housing Office</div></div>
     </div>
     <div class="ins-row">
-      <div class="ins-icon ii-t" style="font-size:15px;font-weight:700;color:var(--teal)">5mi</div>
+      <div class="ins-icon ii-t">🏘️</div>
       <div><div class="ins-title">Properties within 5 miles of campus</div><div class="ins-sub">North Andover · Andover · Lawrence · Methuen</div></div>
     </div>
     <div class="ins-row">
-      <div class="ins-icon ii-a" style="font-size:13px;font-weight:700;color:var(--teal)">Chat</div>
+      <div class="ins-icon ii-a">💬</div>
       <div><div class="ins-title">Roommate matching included</div><div class="ins-sub">Lifestyle-based matching with direct messaging</div></div>
     </div>
   </div>
@@ -641,7 +675,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           </select>
         </div>
         <div class="fg">
-          <label style="color:var(--teal)">Financial Aid Applied to Housing <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">Reduces on-campus cost</span></label>
+          <label style="color:var(--teal)">🎓 Financial Aid Applied to Housing <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">Reduces on-campus cost</span></label>
           <select id="financialAid" onchange="calc()">
             <option value="0">No aid applied to housing</option>
             <option value="3000">~$3,000/yr housing aid</option>
@@ -684,32 +718,24 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 <!-- LISTINGS -->
 <section class="list-sec" id="listings">
   <div class="container">
-    <div class="list-head">
-      <div>
-        <div class="sec-eyebrow">Properties Near Merrimack</div>
-        <h2 class="sec-title" style="margin-bottom:0">Available listings.</h2>
+    <div class="list-grid" id="listGrid" style="display:none"></div>
+    <div id="waitlistSection">
+      <div class="wl-card">
+        <p class="wl-eyebrow">Verified Listings &middot; Launching Summer 2026</p>
+        <h2 class="wl-title">Real listings.<br>Real landlords.<br>Coming soon.</h2>
+        <p class="wl-desc">We're personally verifying every property and landlord before launch. Be the first to see verified Merrimack apartments when they go live — and get exclusive access to our early-bird listings.</p>
+        <div id="waitlistFormWrap">
+          <div class="wl-form">
+            <input id="waitlistEmail" type="email" placeholder="your.email@merrimack.edu"/>
+            <button id="wlNotifyBtn" onclick="saveWaitlistEmail()">Notify Me</button>
+          </div>
+          <p class="wl-micro">No spam. We'll only email you when listings launch. &#10003;</p>
+        </div>
+        <div id="waitlistSuccess" class="wl-success">
+          <div class="wl-success-title">&#10003; You're on the list.</div>
+          <div class="wl-success-desc">We'll email you the moment verified Merrimack listings go live.</div>
+        </div>
       </div>
-      <a href="https://forms.gle/NQNp73pe5fxzQ4jH6" target="_blank" class="btn-outline">Get Notified When Listings Launch →</a>
-    </div>
-    <div class="filter-strip">
-      <button class="filter-btn active" data-filter="all" onclick="filterL(this,'all')">All Properties</button>
-      <button class="filter-btn" onclick="filterL(this,'1br')">1 Bedroom</button>
-      <button class="filter-btn" onclick="filterL(this,'2br')">2 Bedrooms</button>
-      <button class="filter-btn" onclick="filterL(this,'3br')">3+ Bedrooms</button>
-      <button class="filter-btn" onclick="filterL(this,'furnished')">Furnished</button>
-    </div>
-
-
-    <div class="list-grid" id="listGrid"></div>
-    <div id="waitlistSection" style="display:none;text-align:center;padding:60px 40px;background:var(--teal-lt);border-radius:var(--r-lg);border:1px solid var(--teal-md)">
-      <div style="font-size:32px;margin-bottom:16px">🏠</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px">Verified Merrimack Listings Coming Soon</h3>
-      <p style="font-size:15px;color:var(--ink-3);max-width:480px;margin:0 auto 28px;line-height:1.65">We personally verify every listing before publishing. Be the first to see new apartments for next semester.</p>
-      <div id="waitlistFormWrap" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto">
-        <input id="waitlistEmail" type="email" placeholder="Your Merrimack email address" style="flex:1;min-width:220px;padding:12px 16px;border:1px solid var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;outline:none"/>
-        <button onclick="saveWaitlistEmail()" style="background:var(--teal);color:#fff;border:none;padding:12px 22px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap">Notify Me</button>
-      </div>
-      <div id="waitlistSuccess" style="display:none;color:var(--teal);font-weight:600;margin-top:12px">✓ You're on the list! We'll email you when Merrimack listings go live.</div>
     </div>
   </div>
 </section>
@@ -722,19 +748,19 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <p class="sec-body">Answer a few questions about how you live and we'll pair you with compatible Merrimack students — with direct messaging built in.</p>
     <div class="rm-grid">
       <div>
-        <div class="p-cards" id="pGrid"></div>
-        <div class="msg-box" style="position:relative">
-          <div class="msg-box-title">Messages</div>
-          <div class="msg-list" id="msgList">
-          </div>
-          <div class="msg-compose" id="inlineCompose">
-            <input class="msg-input" id="msgIn" placeholder="Type a message…" onkeydown="sendMsg(event)"/>
-            <button class="msg-send" onclick="sendMsgBtn()">↑</button>
-          </div>
-          <div style="position:absolute;inset:0;background:rgba(249,247,244,.88);backdrop-filter:blur(3px);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px">
-            <div style="font-size:22px;margin-bottom:10px">💬</div>
-            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px">Sample preview</div>
-            <div style="font-size:13px;color:var(--ink-3);line-height:1.5;max-width:220px">Real messaging launches with your matches — <a href="#roommates" style="color:var(--teal)">complete your profile</a> to get started.</div>
+        <div class="p-cards" id="pGrid">
+          <div class="rm-cta-card">
+            <div class="rm-cta-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <p class="rm-cta-eyebrow">Roommate Matching &middot; Members Only</p>
+            <h3 class="rm-cta-title">Your matches are<br>a free account away.</h3>
+            <p class="rm-cta-desc">Create a free DormDrop account to take the lifestyle quiz and see compatible Merrimack students with built-in messaging. We match on sleep schedule, study habits, cleanliness, and more — not just proximity.</p>
+            <ul class="rm-cta-bullets">
+              <li><span class="rm-cta-check">&#10003;</span> Match with verified Merrimack students only</li>
+              <li><span class="rm-cta-check">&#10003;</span> See compatibility scores based on real lifestyle preferences</li>
+              <li><span class="rm-cta-check">&#10003;</span> Direct messaging — no third-party apps needed</li>
+            </ul>
+            <button class="btn-primary" style="width:100%;padding:15px;border:none;cursor:pointer;font-size:15px;border-radius:var(--r)" onclick="openAuthModal('signup')">Create Free Account</button>
+            <p class="rm-cta-login">Already have an account? <a href="#" onclick="openAuthModal('login');return false">Log in</a></p>
           </div>
         </div>
       </div>
@@ -742,12 +768,12 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="pref-title">Your lifestyle,<br>your match.</div>
         <p class="pref-desc">We match on more than proximity. Sleep schedule, study habits, cleanliness, and social preferences all factor into your compatibility score.</p>
         <div class="pref-grid" id="prefGrid">
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-l">Night Owl</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Early Riser</div></div>
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-l">Studies at Home</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Social / Outgoing</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Pet-Friendly</div></div>
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-l">Keeps Things Tidy</div></div>
+          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">🌙</div><div class="pi-l">Night Owl</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">☀️</div><div class="pi-l">Early Riser</div></div>
+          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">📚</div><div class="pi-l">Studies at Home</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">🎉</div><div class="pi-l">Social / Outgoing</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
+          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">🧹</div><div class="pi-l">Keeps Things Tidy</div></div>
         </div>
         <button onclick="onFindMatches()" class="btn-primary" style="width:100%;text-align:center;display:block;padding:16px;font-size:15px;border:none;cursor:pointer;border-radius:var(--r);">Find My Matches</button>
       </div>
@@ -777,7 +803,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div class="ft-brand">
         <a class="logo" href="#">Dorm<em>Drop</em></a>
         <p class="ft-tag">The smarter way for college students and families to evaluate off-campus housing — starting at Merrimack College.</p>
-        <div class="bu-chip" style="margin-top:20px">Merrimack College</div>
+        <div class="bu-chip" style="margin-top:20px">🔵 Merrimack College</div>
       </div>
       <div class="ft-col">
         <h5>Students</h5>
@@ -788,14 +814,14 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       </div>
       <div class="ft-col">
         <h5>Landlords</h5>
-        <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">List a Property</a>
+        <a href="../landlord/">List a Property</a>
         <a href="../landlord/">Landlord Portal</a>
-        <a href="https://forms.gle/pptfKhEetPL16ctP8" target="_blank">Submit a Listing</a>
+        <a href="../landlord/">Submit a Listing</a>
       </div>
       <div class="ft-col">
         <h5>Company</h5>
         <a href="/">DormDrop Home</a>
-        <a href="mailto:dormdrop.business@gmail.com">Contact Us</a>
+        <a href="mailto:hello@mydormdrop.com">Contact Us</a>
       </div>
     </div>
     <div class="ft-bot">
@@ -816,6 +842,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px" id="submitInterestBtn" onclick="submitInterest()">Send Interest</button>
     </div>
     <div id="interestSuccessMsg" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:40px;margin-bottom:12px">🎉</div>
       <div style="font-weight:700;font-size:16px;margin-bottom:8px">Interest Sent!</div>
       <p style="font-size:13px;color:var(--ink-4)">The landlord has been notified. They'll be in touch soon.</p>
     </div>
@@ -848,8 +875,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <button id="loginBtn" data-label="Log In" class="btn-primary" onclick="doLogin()" style="width:100%;padding:15px;font-size:15px;border:none;cursor:pointer;border-radius:10px">Log In</button>
       <div class="or-div">or</div>
       <button class="btn-ghost" onclick="showAuthView('forgotFields')" style="width:100%;text-align:center;display:block;padding:12px;margin-bottom:6px">Forgot Password?</button>
-      <button class="btn-ghost" onclick="showAuthView('signupFields')" style="width:100%;text-align:center;display:block;padding:12px;margin-bottom:6px">Create New Account</button>
-      <button onclick="activateDemoMode()" style="width:100%;text-align:center;display:block;padding:12px;background:none;border:1.5px dashed var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--ink-4);cursor:pointer">Preview as Demo User</button>
+      <button class="btn-ghost" onclick="showAuthView('signupFields')" style="width:100%;text-align:center;display:block;padding:12px">Create New Account</button>
     </div>
 
     <!-- Forgot password view -->
@@ -863,6 +889,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <!-- Email verification pending view -->
     <div id="verifyFields" style="display:none">
       <div style="text-align:center;padding:16px 0 8px">
+        <div style="font-size:48px;margin-bottom:16px">📧</div>
         <p style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Check your inbox</p>
         <p style="font-size:13px;color:var(--ink-4);line-height:1.6;margin-bottom:24px">We sent a verification link to your @merrimack.edu email. Click the link in that email, then come back here.</p>
         <button class="btn-primary" onclick="checkEmailVerified()" style="width:100%;padding:15px;border:none;cursor:pointer;border-radius:10px;margin-bottom:10px">I've Verified My Email ✓</button>
@@ -903,7 +930,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
 </div>
 
 <script>
-const listings=[];
+var listings=[];
 
 const profiles=[];
 
@@ -911,10 +938,10 @@ function renderListings(f){
   const s=f==='all'?listings:listings.filter(l=>f==='1br'?l.beds===1:f==='2br'?l.beds===2:f==='3br'?l.beds>=3:f==='furnished'?l.furnished:true);
   document.getElementById('listGrid').innerHTML=s.map(l=>`
     <div class="list-card" onclick="openDetail('${l.id}')">
-      <div class="li-img ${l.img?'':l.bg}">${l.img?`<img src="${l.img}" alt="" loading="lazy" onerror="this.parentNode.classList.add('${l.bg}');this.remove()">`:`<div style="font-size:52px;opacity:.45">${l.em}</div>`}<div class="li-badge ${l.bc}">${l.badge}</div></div>
+      <div class="li-img ${l.bg}"><div style="font-size:52px;opacity:.45">${l.em}</div><div class="li-badge ${l.bc}">${l.badge}</div></div>
       <div class="li-body">
         <div class="li-price">${l.price}<span> ${l.per}</span></div>
-        <div class="li-addr">${l.addr}</div>
+        <div class="li-addr">📍 ${l.addr}</div>
         <div class="li-tags">${l.tags.map(t=>`<span class="ltag">${t}</span>`).join('')}</div>
         <div class="li-footer"><div class="li-saving">${l.saving}</div><button class="btn-sm">View</button></div>
       </div>
@@ -928,12 +955,13 @@ function filterL(btn,f){
 
 function openDetail(id){
   // Require verified Merrimack email to view listing details
-  if(!window.demoMode && typeof auth!=='undefined'&&auth){
+  if(typeof auth!=='undefined'&&auth){
     if(!currentUser){openAuthModal('signup');return;}
     if(!currentUser.emailVerified){
       document.getElementById('detailContent').innerHTML=`
         <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
         <div style="text-align:center;padding:40px 20px">
+          <div style="font-size:52px;margin-bottom:16px">📧</div>
           <div class="m-title" style="margin-bottom:8px">Verify your email first</div>
           <p style="font-size:14px;color:var(--ink-4);line-height:1.6;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Check your inbox for a verification link from DormDrop, then click below to refresh.</p>
           <button class="btn-primary" style="width:100%;border:none;cursor:pointer;padding:15px;border-radius:10px;margin-bottom:10px" onclick="currentUser.reload().then(()=>{if(currentUser.emailVerified){closeModal('detailModal');openDetail(${id});}else{alert('Still not verified — check your inbox.');}})">I've Verified — Refresh</button>
@@ -946,9 +974,9 @@ function openDetail(id){
   const l=listings.find(x=>String(x.id)===String(id));
   document.getElementById('detailContent').innerHTML=`
     <button class="modal-x" onclick="closeModal('detailModal')">✕</button>
-    ${l.img?`<img src="${l.img}" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.insertAdjacentHTML('afterend','<div class=\\'d-img ${l.bg}\\'></div>');this.remove()">`:`<div class="d-img ${l.bg}"></div>`}
+    <div class="d-img ${l.bg}">${l.em}</div>
     <div class="d-price">${l.price} <span style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:400;color:var(--ink-4)">${l.per}</span></div>
-    <div class="d-addr">${l.addr}</div>
+    <div class="d-addr">📍 ${l.addr}</div>
     <div class="d-stats">
       <div class="d-stat"><div class="d-val">${l.beds}</div><div class="d-lbl">Beds</div></div>
       <div class="d-stat"><div class="d-val">${l.baths}</div><div class="d-lbl">Baths</div></div>
@@ -963,6 +991,7 @@ function openDetail(id){
 }
 
 function renderProfiles(){
+  if(!profiles.length) return;
   document.getElementById('pGrid').innerHTML=profiles.map(p=>`
     <div class="p-card ${p.matched?'matched':''}" onclick="alert('Sign up to message ${p.name}.')">
       <div class="p-av ${p.ac}">${p.av}</div>
@@ -970,6 +999,23 @@ function renderProfiles(){
       <span class="mp ${p.match>=85?'mp-hi':'mp-md'}">${p.match}% Match</span>
       <div class="p-traits">${p.traits.map(t=>`<span class="p-trait">${t}</span>`).join('')}</div>
     </div>`).join('');
+}
+function saveWaitlistEmail(){
+  const email=(document.getElementById('waitlistEmail')||{}).value||'';
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    const inp=document.getElementById('waitlistEmail');
+    if(inp){inp.style.borderColor='var(--amber)';inp.focus();}
+    return;
+  }
+  const btn=document.getElementById('wlNotifyBtn');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  if(typeof db!=='undefined'&&db){
+    db.collection('waitlist_emails').add({email,school:'merrimack',source:'listings_section',createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(()=>{
+      const w=document.getElementById('waitlistFormWrap'),s=document.getElementById('waitlistSuccess');
+      if(w)w.style.display='none';if(s)s.style.display='block';
+    }).catch(e=>{console.error(e);if(btn){btn.disabled=false;btn.textContent='Notify Me';}});
+  }
 }
 
 var leaseMo=9;
@@ -1014,6 +1060,40 @@ function calc(){
   document.getElementById('fyNote').textContent=saveNote;
 }
 
+// Royal Crest expand/collapse
+function toggleRoyalCrest(btn) {
+  const unitsList = document.getElementById('royal-crest-units');
+  const icon = btn.querySelector('.expand-icon');
+  const text = btn.querySelector('.expand-text');
+  
+  if (unitsList.classList.contains('expanded')) {
+    unitsList.classList.remove('expanded');
+    btn.classList.remove('expanded');
+    text.textContent = 'View All 11 Available Units';
+  } else {
+    unitsList.classList.add('expanded');
+    btn.classList.add('expanded');
+    text.textContent = 'Hide Units';
+  }
+}
+
+// Royal Crest expand/collapse
+function toggleRoyalCrest(btn) {
+  const unitsList = document.getElementById('royal-crest-units');
+  const icon = btn.querySelector('.expand-icon');
+  const text = btn.querySelector('.expand-text');
+  
+  if (unitsList.classList.contains('expanded')) {
+    unitsList.classList.remove('expanded');
+    btn.classList.remove('expanded');
+    text.textContent = 'View All 11 Available Units';
+  } else {
+    unitsList.classList.add('expanded');
+    btn.classList.add('expanded');
+    text.textContent = 'Hide Units';
+  }
+}
+
 function openModal(t){ document.getElementById(t==='signup'?'signupModal':'listModal').classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 function closeOverlay(e,id){ if(e.target===e.currentTarget)closeModal(id); }
@@ -1035,7 +1115,7 @@ function sendMsgBtn(){
   list.appendChild(d);inp.value='';list.scrollTop=list.scrollHeight;
   setTimeout(()=>{
     const r=document.createElement('div');r.className='msg-item';
-    r.innerHTML=`<div class="m-av j">J</div><div><div class="m-sender">Your match</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
+    r.innerHTML=`<div class="m-av j">M</div><div><div class="m-sender">Your match</div><div class="m-bubble">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="m-meta">Just now</div></div>`;
     list.appendChild(r);list.scrollTop=list.scrollHeight;
   },900);
 }
@@ -1075,25 +1155,6 @@ function resendVerification(){
 }
 
 renderListings('all');renderProfiles();calc();
-
-function activateDemoMode(){
-  window.demoMode=true;
-  window.currentUser={uid:'demo-dormdrop-001',email:'demo@merrimack.edu',displayName:'Demo User',emailVerified:true,reload:()=>Promise.resolve(),sendEmailVerification:()=>Promise.resolve()};
-  closeModal('signupModal');
-  document.getElementById('demoBanner').style.display='block';
-  document.body.style.paddingTop='42px';
-  var lb=document.getElementById('navLoginBtn'),sb=document.getElementById('navSignupBtn');
-  if(lb){lb.textContent='Demo User';lb.style.color='var(--teal)';lb.style.fontWeight='600';lb.onclick=null;}
-  if(sb){sb.textContent='Sign Out';sb.onclick=function(){deactivateDemoMode();};}
-}
-function deactivateDemoMode(){
-  window.demoMode=false;window.currentUser=null;
-  document.getElementById('demoBanner').style.display='none';
-  document.body.style.paddingTop='';
-  var lb=document.getElementById('navLoginBtn'),sb=document.getElementById('navSignupBtn');
-  if(lb){lb.textContent='Log in';lb.style.color='';lb.style.fontWeight='';lb.onclick=function(){openAuthModal('login');};}
-  if(sb){sb.textContent='Get Started';sb.onclick=function(){openAuthModal('signup');};}
-}
 </script>
 
 <!-- ── PROFILE SETUP MODAL ─────────────────────────────────────── -->
@@ -1125,28 +1186,28 @@ function deactivateDemoMode(){
     <div id="profStep2" style="display:none">
       <p style="font-size:14px;color:var(--ink-3);margin-bottom:20px">Answer these 6 questions to find your most compatible matches.</p>
       <div class="quiz-group"><div class="quiz-group-label">Sleep Schedule</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-l">Night Owl</div></div>
-        <div class="pref-item" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-l">Early Riser</div></div>
+        <div class="pref-item" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-e">🌙</div><div class="pi-l">Night Owl</div></div>
+        <div class="pref-item" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-e">☀️</div><div class="pi-l">Early Riser</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Study Habits</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-l">Study at Home</div></div>
-        <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-l">Study on Campus</div></div>
+        <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-e">🏠</div><div class="pi-l">Study at Home</div></div>
+        <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-e">🎓</div><div class="pi-l">Study on Campus</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Social Style</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('socialPreferences','outgoing',this)"><div class="pi-l">Outgoing</div></div>
-        <div class="pref-item" onclick="selectQuiz('socialPreferences','quiet',this)"><div class="pi-l">Introverted</div></div>
+        <div class="pref-item" onclick="selectQuiz('socialPreferences','outgoing',this)"><div class="pi-e">🎉</div><div class="pi-l">Outgoing</div></div>
+        <div class="pref-item" onclick="selectQuiz('socialPreferences','quiet',this)"><div class="pi-e">🤫</div><div class="pi-l">Introverted</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Cleanliness</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('cleanliness','tidy',this)"><div class="pi-l">Very Tidy</div></div>
-        <div class="pref-item" onclick="selectQuiz('cleanliness','organized-chaos',this)"><div class="pi-l">Organized Chaos</div></div>
+        <div class="pref-item" onclick="selectQuiz('cleanliness','tidy',this)"><div class="pi-e">✨</div><div class="pi-l">Very Tidy</div></div>
+        <div class="pref-item" onclick="selectQuiz('cleanliness','organized-chaos',this)"><div class="pi-e">🗂️</div><div class="pi-l">Organized Chaos</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Pets</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('pets','pet-friendly',this)"><div class="pi-l">Pet-Friendly</div></div>
-        <div class="pref-item" onclick="selectQuiz('pets','no-pets',this)"><div class="pi-l">No Pets</div></div>
+        <div class="pref-item" onclick="selectQuiz('pets','pet-friendly',this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
+        <div class="pref-item" onclick="selectQuiz('pets','no-pets',this)"><div class="pi-e">🚫</div><div class="pi-l">No Pets</div></div>
       </div></div>
       <div class="quiz-group"><div class="quiz-group-label">Guests &amp; Parties</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('guestsParties','fine-with-guests',this)"><div class="pi-l">Guests are Fine</div></div>
-        <div class="pref-item" onclick="selectQuiz('guestsParties','prefer-quiet',this)"><div class="pi-l">Prefer Quiet</div></div>
+        <div class="pref-item" onclick="selectQuiz('guestsParties','fine-with-guests',this)"><div class="pi-e">🥳</div><div class="pi-l">Guests are Fine</div></div>
+        <div class="pref-item" onclick="selectQuiz('guestsParties','prefer-quiet',this)"><div class="pi-e">🔇</div><div class="pi-l">Prefer Quiet</div></div>
       </div></div>
     </div>
     <p id="profError" style="font-size:13px;color:#DC2626;margin-bottom:12px;display:none"></p>

@@ -10,14 +10,14 @@
 
 'use strict';
 
+const fs    = require('fs');
 const admin = require('firebase-admin');
 const axios = require('axios');
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
 const RENTCAST_API_KEY = '8a7a84a4576544308f45afe6bf99c9f2';
-const FIREBASE_PROJECT  = 'dormdrop-98dd3';
-const RENTCAST_BASE     = 'https://api.rentcast.io/v1/listings/rental/long-term';
+const RENTCAST_BASE    = 'https://api.rentcast.io/v1/listings/rental/long-term';
 
 const SCHOOLS = {
   bu: {
@@ -42,7 +42,16 @@ const SCHOOLS = {
 const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 if (!credPath) {
   console.error('\nERROR: Set GOOGLE_APPLICATION_CREDENTIALS to your service account JSON path.');
-  console.error('Example: GOOGLE_APPLICATION_CREDENTIALS=../service-account.json node seed-listings.js\n');
+  console.error('Example: GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json node seed-listings.js\n');
+  process.exit(1);
+}
+
+let FIREBASE_PROJECT;
+try {
+  FIREBASE_PROJECT = JSON.parse(fs.readFileSync(credPath, 'utf8')).project_id;
+  if (!FIREBASE_PROJECT) throw new Error('project_id not found in service account JSON');
+} catch (e) {
+  console.error('\nERROR: Could not read service account file:', e.message);
   process.exit(1);
 }
 

@@ -80,7 +80,6 @@ function subscribeSchoolListings() {
             var tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
             return tb - ta;
           });
-        updateListingCountStat(firestoreListings.length);
         var activeBtn = document.querySelector('.filter-btn.active');
         var f = activeBtn ? activeBtn.getAttribute('data-filter') || 'all' : 'all';
         if (!activeBtn) f = 'all';
@@ -342,6 +341,11 @@ function doLogin() {
   auth
     .signInWithEmailAndPassword(email, pwd)
     .then(function (cred) {
+      if (!cred.user.emailVerified) {
+        return auth.signOut().then(function () {
+          throw new Error('verify');
+        });
+      }
       return db.collection('users').doc(cred.user.uid).get();
     })
     .then(function (snap) {
@@ -351,7 +355,7 @@ function doLogin() {
       }
       var data = snap.data();
       if (data.accountType === 'landlord') {
-        window.location.href = '/landlord/';
+        window.location.href = '/landlord-dashboard.html';
         return;
       }
       var p = data.profile || {};
@@ -363,7 +367,11 @@ function doLogin() {
       }
     })
     .catch(function (e) {
-      showAuthError(friendlyAuthError(e.code));
+      if (e && e.message === 'verify') {
+        showAuthError('Please verify your email before logging in. Check your inbox.');
+      } else {
+        showAuthError(friendlyAuthError(e.code));
+      }
     })
     .finally(function () {
       setAuthBtnLoading(false, 'loginBtn', 'Log In');
@@ -422,14 +430,19 @@ function renderLoggedOutState() {
   var pg = document.getElementById('pGrid');
   if (pg)
     pg.innerHTML =
-      '<div class="rm-state-box">' +
-      '<div style="font-size:36px;margin-bottom:12px">&#128075;</div>' +
-      '<div class="rm-state-title">Find your perfect roommate</div>' +
-      '<p class="rm-state-desc">Create a free account to see students who match your lifestyle.</p>' +
-      '<button class="btn-primary rm-state-btn" onclick="openAuthModal(\'signup\')">Sign Up &mdash; It\'s Free</button>' +
+      '<div class="rm-cta-card">' +
+      '<div class="rm-cta-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>' +
+      '<p class="rm-cta-eyebrow">Roommate Matching &middot; Members Only</p>' +
+      '<h3 class="rm-cta-title">Your matches are<br>a free account away.</h3>' +
+      '<p class="rm-cta-desc">Create a free DormDrop account to take the lifestyle quiz and see compatible Northeastern students with built-in messaging. We match on sleep schedule, study habits, cleanliness, and more — not just proximity.</p>' +
+      '<ul class="rm-cta-bullets">' +
+      '<li><span class="rm-cta-check">&#10003;</span> Match with verified Northeastern students only</li>' +
+      '<li><span class="rm-cta-check">&#10003;</span> See compatibility scores based on real lifestyle preferences</li>' +
+      '<li><span class="rm-cta-check">&#10003;</span> Direct messaging — no third-party apps needed</li>' +
+      '</ul>' +
+      '<button class="btn-primary" style="width:100%;padding:15px;border:none;cursor:pointer;font-size:15px;border-radius:var(--r)" onclick="openAuthModal(\'signup\')">Create Free Account</button>' +
+      '<p class="rm-cta-login">Already have an account? <a href="#" onclick="openAuthModal(\'login\');return false">Log in</a></p>' +
       '</div>';
-  var ml = document.getElementById('msgList');
-  if (ml) ml.innerHTML = '<p class="conv-empty">Sign in to view messages</p>';
   var ic = document.getElementById('inlineCompose');
   if (ic) ic.style.display = 'none';
 }
@@ -1276,46 +1289,16 @@ function resendVerification() {
     });
 }
 
-function updateListingCountStat(count) {
-  var stat = document.getElementById('listingCountStat');
-  var fig = document.getElementById('listingCountFig');
-  if (!stat) return;
-  if (count >= 5) {
-    if (fig) fig.textContent = count;
-    stat.style.display = '';
-  } else {
-    stat.style.display = 'none';
-  }
-}
-
-function saveWaitlistEmail() {
-  var email = (document.getElementById('waitlistEmail') || {}).value || '';
-  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
-  var succ = document.getElementById('waitlistSuccess');
-  var wrap = document.getElementById('waitlistFormWrap');
-  db.collection('waitlist_emails').add({
-    email: email,
-    school: SCHOOL_KEY,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(function () {
-    if (wrap) wrap.style.display = 'none';
-    if (succ) succ.style.display = 'block';
-  }).catch(function (e) {
-    console.error(e);
-    alert('Could not save your email. Please try again.');
-  });
-}
-
 function renderListings(f) {
   var waitlistEl = document.getElementById('waitlistSection');
   var gridEl = document.getElementById('listGrid');
-  if (firestoreListings.length < 3) {
+  if (firestoreListings.length === 0) {
     if (gridEl) gridEl.style.display = 'none';
-    if (waitlistEl) waitlistEl.style.display = 'block';
+    if (waitlistEl) waitlistEl.style.display = '';
     return;
   }
-  if (gridEl) gridEl.style.display = '';
   if (waitlistEl) waitlistEl.style.display = 'none';
+  if (gridEl) gridEl.style.display = '';
   var all = mergedListings();
   var s =
     f === 'all'
@@ -1386,38 +1369,6 @@ function filterL(btn, f) {
   renderListings(f);
 }
 
-
-function buildCarousel(photos, bg, em) {
-  if (!photos || !photos.length) return '<div class="d-img ' + bg + '">' + em + '</div>';
-  window._carouselIdx = 0;
-  if (photos.length === 1) {
-    return '<img src="' + esc(photos[0]) + '" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.style.display='none'">';
-  }
-  var slides = photos.map(function(url) {
-    return '<img src="' + esc(url) + '" alt="" style="min-width:100%;height:220px;object-fit:cover;" onerror="this.style.opacity=0">';
-  }).join('');
-  var dots = photos.map(function(_, i) {
-    return '<span onclick="carouselGo(' + i + ')" data-dot="' + i + '" style="width:8px;height:8px;border-radius:50%;background:' + (i===0?'#fff':'rgba(255,255,255,.5)') + ';cursor:pointer;display:inline-block;margin:0 3px;transition:background .15s"></span>';
-  }).join('');
-  return '<div id="photoCarousel" style="position:relative;margin-bottom:28px;overflow:hidden;border-radius:12px;">' +
-    '<div id="carouselTrack" style="display:flex;transition:transform .25s ease;">' + slides + '</div>' +
-    '<button onclick="carouselGo((window._carouselIdx||0)-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;width:32px;height:32px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer;z-index:2">&#8249;</button>' +
-    '<button onclick="carouselGo((window._carouselIdx||0)+1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;width:32px;height:32px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer;z-index:2">&#8250;</button>' +
-    '<div style="position:absolute;bottom:8px;left:0;right:0;text-align:center">' + dots + '</div>' +
-    '</div>';
-}
-
-window.carouselGo = function(n) {
-  var track = document.getElementById('carouselTrack');
-  if (!track) return;
-  var total = track.children.length;
-  window._carouselIdx = ((n % total) + total) % total;
-  track.style.transform = 'translateX(-' + (window._carouselIdx * 100) + '%)';
-  document.querySelectorAll('[data-dot]').forEach(function(dot) {
-    dot.style.background = parseInt(dot.getAttribute('data-dot')) === window._carouselIdx ? '#fff' : 'rgba(255,255,255,.5)';
-  });
-};
-
 function openDetail(id) {
   var all = mergedListings();
   var l = all.find(function (x) {
@@ -1427,7 +1378,19 @@ function openDetail(id) {
   var fs = l._fsListing;
   document.getElementById('detailContent').innerHTML =
     '<button class="modal-x" onclick="closeModal(\'detailModal\')">\u2715</button>' +
-    buildCarousel((fs && fs.photos && fs.photos.length ? fs.photos : (l.img ? [l.img] : null)), l.bg, l.em) +
+    (l.img
+      ? '<img src="' +
+        l.img +
+        '" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:12px;margin-bottom:28px" onerror="this.insertAdjacentHTML(\'afterend\',\'<div class=\\\'d-img ' +
+        l.bg +
+        '\\\'>' +
+        l.em +
+        '</div>\');this.remove()">'
+      : '<div class="d-img ' +
+        l.bg +
+        '">' +
+        l.em +
+        '</div>') +
     '<div class="d-price">' +
     l.price +
     ' <span style="font-family:\'Outfit\',sans-serif;font-size:16px;font-weight:400;color:var(--ink-4)">' +
@@ -1478,6 +1441,10 @@ function contactListing(listingId) {
     openAuthModal('signup');
     return;
   }
+  if (!currentUser.emailVerified) {
+    alert('Please verify your email first.');
+    return;
+  }
   var msg = prompt('Message to the landlord (include your phone if you want a call back):');
   if (!msg) return;
   db.collection('listings')
@@ -1522,6 +1489,10 @@ var _pendingInterest = null;
 
 function openInterestModal(listingId, address, landlordId) {
   if (!currentUser) { openAuthModal('signup'); return; }
+  if (!currentUser.emailVerified) {
+    alert('Please verify your @northeastern.edu email before expressing interest.');
+    return;
+  }
   _pendingInterest = { listingId: listingId, address: address, landlordId: landlordId };
   var lbl = document.getElementById('interestListingLabel');
   if (lbl) lbl.textContent = address ? 'Send a message about: ' + address : 'Send a message to the landlord about this property.';
