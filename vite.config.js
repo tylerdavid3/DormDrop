@@ -6,7 +6,7 @@ function copySchoolScripts() {
   return {
     name: 'copy-school-scripts',
     closeBundle() {
-      ['bu', 'neu', 'merrimack'].forEach(function (dir) {
+      ['bu', 'neu', 'merrimack', 'curry'].forEach(function (dir) {
         mkdirSync(resolve(__dirname, 'dist', dir), { recursive: true });
         copyFileSync(
           resolve(__dirname, dir, 'firebase-config.js'),
@@ -41,6 +41,7 @@ export default defineConfig({
         bu: resolve(__dirname, 'bu/index.html'),
         neu: resolve(__dirname, 'neu/index.html'),
         merrimack: resolve(__dirname, 'merrimack/index.html'),
+        curry: resolve(__dirname, 'curry/index.html'),
         profileSetup: resolve(__dirname, 'profile-setup.html'),
         discover: resolve(__dirname, 'discover.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
