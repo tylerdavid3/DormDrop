@@ -1,7 +1,10 @@
 const functions = require('firebase-functions');
+const {onRequest} = require('firebase-functions/v2/https');
+const {defineSecret} = require('firebase-functions/params');
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
 const sgMail = require('@sendgrid/mail');
+const Anthropic = require('@anthropic-ai/sdk').default;
 const { processSchool, SCHOOL_CONFIG, getApiKey } = require('./src/rentcast');
 
 admin.initializeApp();
@@ -483,3 +486,136 @@ exports.scheduledListingsSync = functions
     }
     return null;
   });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI Bill Extraction — Claude vision parses tuition/housing bills
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
+
+exports.extractBill = onRequest(
+  {
+    secrets: [ANTHROPIC_API_KEY],
+    cors: true,
+    maxInstances: 10,
+    timeoutSeconds: 60,
+    memory: '512MiB',
+  },
+  async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      return res.status(204).send('');
+    }
+
+    if (req.method !== 'POST') {
+      return res.status(405).json({error: 'Only POST allowed'});
+    }
+
+    try {
+      const {image} = req.body;
+
+      if (!image || typeof image !== 'string') {
+        return res.status(400).json({
+          error: "Missing 'image' field. Send base64-encoded image.",
+        });
+      }
+
+      const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+      let mediaType = 'image/jpeg';
+      if (image.includes('data:image/png')) mediaType = 'image/png';
+      if (image.includes('data:image/webp')) mediaType = 'image/webp';
+
+      const sizeInBytes = (base64Data.length * 3) / 4;
+      if (sizeInBytes > 5 * 1024 * 1024) {
+        return res.status(400).json({error: 'Image too large. Max 5MB.'});
+      }
+
+      const client = new Anthropic({
+        apiKey: ANTHROPIC_API_KEY.value(),
+      });
+
+      const response = await client.messages.create({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: {
+                  type: 'base64',
+                  media_type: mediaType,
+                  data: base64Data,
+                },
+              },
+              {
+                type: 'text',
+                text: `You are extracting financial data from a college tuition bill or financial aid award letter. Analyze this image carefully.
+
+Return ONLY valid JSON in this exact format (no markdown, no explanation):
+
+{
+  "tuition": number or null,
+  "room": number or null,
+  "board": number or null,
+  "total_grants": number or null,
+  "school_name": string or null,
+  "academic_year": string or null,
+  "confidence": "high" | "medium" | "low",
+  "notes": string
+}
+
+Rules:
+- All monetary amounts are ANNUAL totals in USD
+- If a bill shows a semester amount, multiply by 2 for annual
+- "room" = housing/dorm cost only (not meal plan)
+- "board" = meal plan/dining cost only
+- "total_grants" = sum of all grants and scholarships (NOT loans)
+- If a field is not visible or unclear, use null
+- If this doesn't appear to be a college bill, set all numeric fields to null and confidence to "low"
+- "notes" should briefly describe what you saw (1 sentence)
+
+Return ONLY the JSON. No code blocks, no extra text.`,
+              },
+            ],
+          },
+        ],
+      });
+
+      const aiText = response.content[0].text.trim();
+
+      const cleanJson = aiText
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/, '')
+        .replace(/\s*```$/, '')
+        .trim();
+
+      let extractedData;
+      try {
+        extractedData = JSON.parse(cleanJson);
+      } catch (parseError) {
+        console.error('JSON parse failed. Raw AI response:', aiText);
+        return res.status(500).json({
+          error: 'AI returned unparseable response',
+          raw: aiText.substring(0, 500),
+        });
+      }
+
+      console.log('Extracted data:', extractedData);
+
+      return res.json({
+        success: true,
+        data: extractedData,
+      });
+    } catch (error) {
+      console.error('Extraction error:', error);
+      return res.status(500).json({
+        error: error.message || 'Failed to process image',
+      });
+    }
+  }
+);

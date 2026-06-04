@@ -10,7 +10,8 @@
     "firebase-functions": "^5.0.0",
     "axios": "^1.6.0",
     "node-fetch": "^2.7.0",
-    "@sendgrid/mail": "^8.1.0"
+    "@sendgrid/mail": "^8.1.0",
+    "@anthropic-ai/sdk": "^0.39.0"
   },
   "private": true
 }
