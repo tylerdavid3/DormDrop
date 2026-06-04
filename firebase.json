@@ -16,7 +16,8 @@
       { "source": "/bu", "destination": "/bu/index.html" },
       { "source": "/neu", "destination": "/neu/index.html" },
       { "source": "/merrimack", "destination": "/merrimack/index.html" },
-      { "source": "/curry", "destination": "/curry/index.html" }
+      { "source": "/curry", "destination": "/curry/index.html" },
+      { "source": "/snap", "destination": "/snap/index.html" }
     ]
   }
 }

@@ -47,7 +47,8 @@ export default defineConfig({
         dashboard: resolve(__dirname, 'dashboard.html'),
         messages: resolve(__dirname, 'messages.html'),
         landlordDashboard: resolve(__dirname, 'landlord-dashboard.html'),
-        landlordSignup: resolve(__dirname, 'landlord-signup.html')
+        landlordSignup: resolve(__dirname, 'landlord-signup.html'),
+        snap: resolve(__dirname, 'snap/index.html')
       }
     }
   },
