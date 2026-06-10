@@ -488,18 +488,19 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
   <div class="container" style="max-width:900px;padding:28px 48px;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
       <div style="display:flex;align-items:center;gap:16px">
-        <div style="font-size:36px;line-height:1">📸</div>
+        <div style="display:flex;align-items:center;justify-content:center;width:52px;height:52px;background:#E6F4F4;border:1px solid #C2E0E0;border-radius:14px;color:#0E6E6E;flex-shrink:0"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span style="font-size:13px;font-weight:700;color:var(--teal);letter-spacing:.5px;text-transform:uppercase">NEW</span>
-            <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--amber-lt);color:var(--amber);border:1px solid #F59E0B55;padding:2px 7px;border-radius:100px">Beta</span>
+            <span style="font-size:13px;font-weight:700;color:#0E6E6E;letter-spacing:.5px;text-transform:uppercase">NEW</span>
+            <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:#FEF3C7;color:#B45309;border:1px solid #F59E0B55;padding:2px 7px;border-radius:100px">Beta</span>
           </div>
-          <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--ink)">Snap your tuition bill</div>
-          <div style="font-size:13px;color:var(--ink-3);margin-top:2px">AI reads it. See your savings in 10 seconds.</div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#111827">Snap your tuition bill</div>
+          <div style="font-size:13px;color:#6B7280;margin-top:2px">AI reads it. See your savings in 10 seconds.</div>
         </div>
       </div>
-      <a href="/snap" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:var(--teal);color:var(--white);text-decoration:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(14,110,110,.2);white-space:nowrap;flex-shrink:0">
-        Try It Free →
+      <a href="/snap" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);white-space:nowrap;flex-shrink:0">
+        Try It Free
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
   </div>
@@ -1123,8 +1124,8 @@ renderListings('all');renderProfiles();calc();
       <div class="quiz-group">
         <div class="quiz-group-label">Study Habits</div>
         <div class="quiz-options">
-          <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-e">🏠</div><div class="pi-l">Study at Home</div></div>
-          <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-e">🎓</div><div class="pi-l">Study on Campus</div></div>
+          <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-e" style="font-size:18px;line-height:1;color:var(--teal)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="pi-l">Study at Home</div></div>
+          <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-e" style="font-size:18px;line-height:1;color:var(--teal)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div class="pi-l">Study on Campus</div></div>
         </div>
       </div>
       <div class="quiz-group">

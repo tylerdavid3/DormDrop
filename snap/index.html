@@ -27,7 +27,6 @@ html{scroll-behavior:smooth;}
   --red-lt:#FEE2E2;--red:#B91C1C;
   --sh-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --sh-md:0 4px 16px rgba(0,0,0,.07),0 2px 6px rgba(0,0,0,.04);
-  --sh-lg:0 12px 40px rgba(0,0,0,.09),0 4px 12px rgba(0,0,0,.05);
   --r:12px;--r-lg:20px;
 }
 body{background:var(--linen);color:var(--ink);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden;}
@@ -53,7 +52,7 @@ main{padding-top:60px;min-height:100vh;display:flex;flex-direction:column;}
 
 /* ── STATE 1: UPLOAD ── */
 .s1-hero{text-align:center;padding:48px 0 40px;}
-.s1-icon{font-size:64px;line-height:1;margin-bottom:24px;}
+.s1-icon{display:flex;align-items:center;justify-content:center;width:80px;height:80px;background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:20px;margin:0 auto 24px;color:var(--teal);}
 .s1-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
 .s1-eyebrow::before,.s1-eyebrow::after{content:'';flex:1;height:1px;background:var(--teal-md);}
 h1{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,42px);font-weight:700;line-height:1.15;letter-spacing:-.5px;color:#0F172A;margin-bottom:16px;}
@@ -62,21 +61,22 @@ h1 em{font-style:italic;color:var(--teal);}
 .upload-zone{border:2px dashed var(--teal-md);border-radius:var(--r-lg);padding:40px 24px;text-align:center;cursor:pointer;background:var(--white);position:relative;transition:all .2s;}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--teal);background:var(--teal-lt);}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-zone-icon{font-size:40px;margin-bottom:12px;}
+.upload-zone-icon{display:flex;align-items:center;justify-content:center;color:var(--ink-4);margin:0 auto 12px;width:48px;height:48px;}
 .upload-zone-title{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px;}
 .upload-zone-sub{font-size:13px;color:var(--ink-4);}
-.btn-upload{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:var(--teal);color:var(--white);border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:16px;box-shadow:0 4px 14px rgba(14,110,110,.25);}
-.btn-upload:hover{background:#0a5858;transform:translateY(-1px);box-shadow:0 6px 20px rgba(14,110,110,.35);}
+.btn-upload{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:#0E6E6E;color:#FFFFFF;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:16px;box-shadow:0 4px 14px rgba(14,110,110,.3);}
+.btn-upload:hover{background:#0a5858;transform:translateY(-1px);box-shadow:0 6px 20px rgba(14,110,110,.4);}
 .privacy-note{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--ink-4);margin-top:20px;}
 .privacy-note svg{flex-shrink:0;}
-.error-msg{background:var(--red-lt);border:1px solid #FECACA;color:var(--red);border-radius:var(--r);padding:14px 18px;font-size:14px;margin-top:20px;display:none;}
+.error-msg{background:var(--red-lt);border:1px solid #FECACA;color:var(--red);border-radius:var(--r);padding:14px 18px;font-size:14px;margin-top:20px;display:none;line-height:1.6;}
 .error-msg.show{display:block;}
+.error-msg a{color:var(--red);font-weight:600;}
 
 /* ── STATE 2: PROCESSING ── */
 .s2-wrap{text-align:center;padding:80px 0;}
 .spinner{width:56px;height:56px;border:3px solid var(--teal-md);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 32px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.s2-text{font-size:18px;font-weight:500;color:var(--ink-2);min-height:28px;}
+.s2-text{font-size:17px;font-weight:500;color:var(--ink-2);min-height:28px;}
 .s2-dots{display:inline-block;overflow:hidden;width:24px;vertical-align:bottom;animation:dots 1.5s steps(4,end) infinite;}
 @keyframes dots{0%,100%{width:0}25%{width:6px}50%{width:12px}75%{width:18px}}
 
@@ -88,23 +88,29 @@ h1 em{font-style:italic;color:var(--teal);}
 .conf-high{background:var(--green-lt);color:var(--green);}
 .conf-med{background:var(--yellow-lt);color:var(--yellow);}
 .conf-low{background:var(--red-lt);color:var(--red);}
-.notes-box{background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--teal);margin-bottom:24px;}
+.notes-box{display:flex;align-items:flex-start;gap:10px;background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--teal);margin-bottom:24px;}
+.notes-box svg{flex-shrink:0;margin-top:1px;}
 .form-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px;box-shadow:var(--sh-sm);}
 .fg{margin-bottom:18px;}
 .fg:last-child{margin-bottom:0;}
 .fg label{display:block;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;}
-.fg input{width:100%;background:var(--linen);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-family:'Outfit',sans-serif;font-size:15px;color:var(--ink);outline:none;}
-.fg input:focus{border-color:var(--teal);background:var(--white);box-shadow:0 0 0 3px rgba(14,110,110,.1);}
+.fg input,.fg select{width:100%;background:var(--linen);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-family:'Outfit',sans-serif;font-size:15px;color:var(--ink);outline:none;appearance:none;}
+.fg input:focus,.fg select:focus{border-color:var(--teal);background:var(--white);box-shadow:0 0 0 3px rgba(14,110,110,.1);}
+.select-wrap{position:relative;}
+.select-wrap svg{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ink-4);}
 .input-prefix{position:relative;}
 .input-prefix span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--ink-3);font-weight:500;}
 .input-prefix input{padding-left:28px;}
-.btn-calc{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;background:var(--teal);color:var(--white);border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:24px;box-shadow:0 4px 14px rgba(14,110,110,.22);}
+.insufficient-msg{background:var(--amber-lt);border:1px solid #F59E0B55;color:var(--amber);border-radius:var(--r);padding:14px 18px;font-size:14px;margin-top:20px;display:none;line-height:1.6;}
+.insufficient-msg.show{display:block;}
+.btn-calc{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;background:#0E6E6E;color:#FFFFFF;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:24px;box-shadow:0 4px 14px rgba(14,110,110,.3);}
 .btn-calc:hover{background:#0a5858;transform:translateY(-1px);}
 
 /* ── STATE 4: RESULTS ── */
 .s4-hero{text-align:center;padding:40px 0 32px;}
 .s4-eyebrow{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
-.s4-savings{font-family:'Playfair Display',serif;font-size:clamp(48px,10vw,72px);font-weight:700;color:var(--teal);letter-spacing:-2px;line-height:1;margin-bottom:8px;transition:all .4s;}
+.s4-savings{font-family:'Playfair Display',serif;font-size:clamp(48px,10vw,72px);font-weight:700;color:var(--teal);letter-spacing:-2px;line-height:1;margin-bottom:8px;}
+.s4-savings.s4-more{color:var(--amber);}
 .s4-sub{font-size:15px;color:var(--ink-3);margin-bottom:8px;}
 .s4-4yr{font-size:14px;color:var(--ink-4);}
 .s4-4yr strong{color:var(--amber);font-weight:700;}
@@ -115,8 +121,9 @@ h1 em{font-style:italic;color:var(--teal);}
 .bk-neg{color:var(--amber);}
 .bk-pos{color:var(--teal);}
 .bk-save{color:var(--green);font-size:16px;}
+.bk-save.bk-save-neg{color:var(--amber);}
 .cta-row{display:flex;flex-direction:column;gap:12px;margin-top:8px;}
-.btn-cta-primary{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;background:var(--teal);color:var(--white);text-decoration:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.22);text-align:center;}
+.btn-cta-primary{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);text-align:center;}
 .btn-cta-primary:hover{background:#0a5858;transform:translateY(-1px);}
 .btn-cta-secondary{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;background:var(--white);color:var(--ink);text-decoration:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;border:1px solid var(--rule);box-shadow:var(--sh-sm);text-align:center;}
 .btn-cta-secondary:hover{border-color:var(--ink-3);}
@@ -124,11 +131,9 @@ h1 em{font-style:italic;color:var(--teal);}
 .btn-restart{display:flex;align-items:center;justify-content:center;gap:6px;background:none;border:none;color:var(--ink-4);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;margin:20px auto 0;padding:8px;}
 .btn-restart:hover{color:var(--ink-3);}
 
-/* MOBILE RESPONSIVE */
 @media(max-width:480px){
   .snap-wrap{padding:32px 16px 80px;}
   .s1-hero{padding:36px 0 32px;}
-  .s1-icon{font-size:52px;}
   h1{font-size:30px;}
 }
 </style>
@@ -155,7 +160,9 @@ h1 em{font-style:italic;color:var(--teal);}
     <!-- STATE 1: UPLOAD -->
     <div id="s1" class="state active">
       <div class="s1-hero">
-        <div class="s1-icon">📸</div>
+        <div class="s1-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
         <div class="s1-eyebrow">AI Bill Reader &nbsp;·&nbsp; <span class="beta-badge">Beta</span></div>
         <h1>Skip the typing.<br><em>Snap your bill.</em></h1>
         <p class="s1-sub">Upload your tuition bill or financial aid letter. AI reads it. See your savings in 10 seconds.</p>
@@ -163,10 +170,13 @@ h1 em{font-style:italic;color:var(--teal);}
 
       <div class="upload-zone" id="uploadZone">
         <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(this.files[0])"/>
-        <div class="upload-zone-icon">🧾</div>
+        <div class="upload-zone-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
         <div class="upload-zone-title">Take a photo or choose a file</div>
-        <div class="upload-zone-sub">JPG, PNG, WebP · Max 5MB</div>
+        <div class="upload-zone-sub">JPG, PNG, WebP &middot; Max 5MB</div>
       </div>
+
       <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         Take Photo or Upload File
@@ -177,34 +187,47 @@ h1 em{font-style:italic;color:var(--teal);}
         Processed securely. Never stored on our servers.
       </p>
 
-      <div id="errorMsg" class="error-msg">
-        Couldn't read your bill. Try a clearer photo or
-        <a href="/bu" style="color:var(--red);font-weight:600">use our manual calculator instead</a>.
-      </div>
+      <div id="errorMsg" class="error-msg"></div>
     </div>
 
     <!-- STATE 2: PROCESSING -->
     <div id="s2" class="state">
       <div class="s2-wrap">
         <div class="spinner"></div>
-        <div class="s2-text" id="processingText">🤖 Reading your bill<span class="s2-dots">...</span></div>
+        <div class="s2-text" id="processingText">Reading your bill<span class="s2-dots">...</span></div>
       </div>
     </div>
 
     <!-- STATE 3: CONFIRMATION -->
     <div id="s3" class="state">
       <div class="s3-head">
-        <div id="confBadge" class="conf-badge conf-high">✓ High confidence</div>
+        <div id="confBadge" class="conf-badge conf-high">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          High confidence
+        </div>
         <div class="s3-title">We found these numbers</div>
-        <div class="s3-sub">Tap any field to correct it if something looks off</div>
+        <div class="s3-sub">Select your school and correct any fields that look wrong</div>
       </div>
 
-      <div id="notesBox" class="notes-box" style="display:none"></div>
+      <div id="notesBox" class="notes-box" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="notesText"></span>
+      </div>
 
       <div class="form-card">
         <div class="fg">
-          <label>School Name</label>
-          <input type="text" id="fSchool" placeholder="e.g. Boston University"/>
+          <label>Your School</label>
+          <div class="select-wrap">
+            <select id="fSchool">
+              <option value="">— Select your school —</option>
+              <option value="bu">Boston University</option>
+              <option value="neu">Northeastern University</option>
+              <option value="merrimack">Merrimack College</option>
+              <option value="curry">Curry College</option>
+              <option value="other">Other school</option>
+            </select>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
         <div class="fg">
           <label>Annual Tuition ($)</label>
@@ -236,6 +259,11 @@ h1 em{font-style:italic;color:var(--teal);}
         </div>
       </div>
 
+      <div id="insufficientMsg" class="insufficient-msg">
+        We need at least your room or tuition amount to estimate savings. Please fill in the fields above or
+        <a href="/bu" style="color:var(--amber);font-weight:600;text-decoration:underline">use the manual calculator</a>.
+      </div>
+
       <button class="btn-calc" onclick="calculateSavings()">
         Calculate My Savings
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -245,10 +273,10 @@ h1 em{font-style:italic;color:var(--teal);}
     <!-- STATE 4: RESULTS -->
     <div id="s4" class="state">
       <div class="s4-hero">
-        <div class="s4-eyebrow">Your Estimated Annual Savings</div>
+        <div class="s4-eyebrow" id="s4Eyebrow">Your Estimated Annual Savings</div>
         <div class="s4-savings" id="savingsAmt">$0</div>
-        <div class="s4-sub">per year living off campus</div>
-        <div class="s4-4yr">Over 4 years: <strong id="savings4yr">$0</strong></div>
+        <div class="s4-sub" id="s4Sub">per year living off campus</div>
+        <div class="s4-4yr" id="s4FourYrWrap">Over 4 years: <strong id="savings4yr">$0</strong></div>
       </div>
 
       <div class="breakdown-card">
@@ -262,24 +290,27 @@ h1 em{font-style:italic;color:var(--teal);}
           <span class="bk-pos" id="bkOffCamp">—</span>
         </div>
         <div class="bk-row">
-          <span>Annual savings</span>
+          <span id="bkSaveLabel">Annual savings</span>
           <span class="bk-save" id="bkSave">—</span>
         </div>
       </div>
 
       <div class="cta-row">
         <a id="listingsBtn" href="/bu" class="btn-cta-primary">
-          🏠 See Verified Listings
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          See Verified Listings
         </a>
         <a id="roommateBtn" href="/bu#roommates" class="btn-cta-secondary">
-          🤝 Find a Roommate
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Find a Roommate
         </a>
       </div>
 
       <p class="disclaimer">AI-assisted estimate. Verify with your school's financial aid office for official numbers.</p>
 
       <button class="btn-restart" onclick="restart()">
-        ↩ Upload a different bill
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        Upload a different bill
       </button>
     </div>
 
@@ -290,7 +321,7 @@ h1 em{font-style:italic;color:var(--teal);}
 const FUNCTION_URL = 'https://extractbill-u2oeuihdna-uc.a.run.app';
 
 const PROCESSING_MSGS = [
-  '🤖 Reading your bill',
+  'Reading your bill',
   'Extracting tuition details',
   'Calculating your savings',
   'Almost done'
@@ -298,6 +329,16 @@ const PROCESSING_MSGS = [
 
 const OFF_CAMPUS_BY_SCHOOL = {
   bu: 12000, neu: 14000, curry: 10000, merrimack: 11000
+};
+
+const SCHOOL_SLUGS = {
+  'boston university': 'bu',
+  'northeastern': 'neu',
+  'northeastern university': 'neu',
+  'curry': 'curry',
+  'curry college': 'curry',
+  'merrimack': 'merrimack',
+  'merrimack college': 'merrimack'
 };
 
 function showState(id) {
@@ -308,11 +349,10 @@ function showState(id) {
 
 function detectSchoolSlug(name) {
   if (!name) return null;
-  const n = name.toLowerCase();
-  if (n.includes('boston university') || n.includes(' bu')) return 'bu';
-  if (n.includes('northeastern')) return 'neu';
-  if (n.includes('curry')) return 'curry';
-  if (n.includes('merrimack')) return 'merrimack';
+  const n = name.toLowerCase().trim();
+  for (const [key, slug] of Object.entries(SCHOOL_SLUGS)) {
+    if (n.includes(key)) return slug;
+  }
   return null;
 }
 
@@ -338,11 +378,10 @@ async function handleFile(file) {
 
   try {
     const b64 = await toBase64(file);
-    const payload = JSON.stringify({ image: b64 });
     const resp = await fetch(FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: payload
+      body: JSON.stringify({ image: b64 })
     });
 
     const json = await resp.json();
@@ -353,7 +392,7 @@ async function handleFile(file) {
   } catch (err) {
     console.error(err);
     showState('s1');
-    showError("Couldn't read your bill. Try a clearer photo or use our manual calculator instead.");
+    showError("We couldn't read your bill. Try a clearer photo or <a href='/bu'>use our manual calculator instead</a>.");
   }
 }
 
@@ -362,10 +401,8 @@ async function toBase64(file) {
     const reader = new FileReader();
     reader.onload = async () => {
       let dataUrl = reader.result;
-      const sizeBytes = (dataUrl.length * 3) / 4;
-
-      if (sizeBytes > 1024 * 1024) {
-        dataUrl = await compressImage(file, dataUrl);
+      if ((dataUrl.length * 3) / 4 > 1024 * 1024) {
+        dataUrl = await compressImage(dataUrl);
       }
       resolve(dataUrl);
     };
@@ -374,7 +411,7 @@ async function toBase64(file) {
   });
 }
 
-function compressImage(file, dataUrl) {
+function compressImage(dataUrl) {
   return new Promise(resolve => {
     const img = new Image();
     img.onload = () => {
@@ -405,81 +442,127 @@ function stopProcessingText() { clearInterval(_cycleTimer); }
 
 function populateConfirmation(data) {
   stopProcessingText();
-  document.getElementById('fSchool').value = data.school_name || '';
+
+  // Set school dropdown from detected school name
+  const slug = detectSchoolSlug(data.school_name || '');
+  const schoolSelect = document.getElementById('fSchool');
+  if (slug) {
+    schoolSelect.value = slug;
+  } else if (data.school_name) {
+    schoolSelect.value = 'other';
+  } else {
+    schoolSelect.value = '';
+  }
+
   document.getElementById('fTuition').value = data.tuition || '';
-  document.getElementById('fRoom').value = data.room || '';
-  document.getElementById('fBoard').value = data.board || '';
-  document.getElementById('fGrants').value = data.total_grants || '';
+  document.getElementById('fRoom').value    = data.room    || '';
+  document.getElementById('fBoard').value   = data.board   || '';
+  document.getElementById('fGrants').value  = data.total_grants || '';
 
   const badge = document.getElementById('confBadge');
   badge.className = 'conf-badge';
+  const checkSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  const warnSvg  = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
   if (data.confidence === 'high') {
     badge.classList.add('conf-high');
-    badge.textContent = '✓ High confidence';
+    badge.innerHTML = checkSvg + ' High confidence';
   } else if (data.confidence === 'medium') {
     badge.classList.add('conf-med');
-    badge.textContent = '⚠ Medium — please verify';
+    badge.innerHTML = warnSvg + ' Please verify';
   } else {
     badge.classList.add('conf-low');
-    badge.textContent = '⚠ Low — please double-check';
+    badge.innerHTML = warnSvg + ' Low confidence — double-check';
   }
 
-  const notesBox = document.getElementById('notesBox');
+  document.getElementById('insufficientMsg').classList.remove('show');
+
+  const notesBox  = document.getElementById('notesBox');
+  const notesText = document.getElementById('notesText');
   if (data.notes) {
-    notesBox.textContent = '💡 ' + data.notes;
-    notesBox.style.display = 'block';
+    notesText.textContent = data.notes;
+    notesBox.style.display = 'flex';
   } else {
     notesBox.style.display = 'none';
   }
 }
 
 function calculateSavings() {
-  const tuition  = parseFloat(document.getElementById('fTuition').value)  || 0;
-  const room     = parseFloat(document.getElementById('fRoom').value)      || 0;
-  const board    = parseFloat(document.getElementById('fBoard').value)     || 0;
-  const grants   = parseFloat(document.getElementById('fGrants').value)    || 0;
-  const school   = document.getElementById('fSchool').value.trim();
-  const slug     = detectSchoolSlug(school);
+  const tuition = parseFloat(document.getElementById('fTuition').value) || 0;
+  const room    = parseFloat(document.getElementById('fRoom').value)    || 0;
+  const board   = parseFloat(document.getElementById('fBoard').value)   || 0;
+  const grants  = parseFloat(document.getElementById('fGrants').value)  || 0;
+  const slug    = document.getElementById('fSchool').value;
+
+  // Guard: need at least tuition or room to calculate
+  if (tuition === 0 && room === 0) {
+    document.getElementById('insufficientMsg').classList.add('show');
+    return;
+  }
+  document.getElementById('insufficientMsg').classList.remove('show');
 
   const offCampusHousing = OFF_CAMPUS_BY_SCHOOL[slug] || 12000;
-  const onCampus   = Math.max(0, tuition + room + board - grants);
-  const offCampus  = Math.max(0, tuition + offCampusHousing - grants);
-  const annSave    = onCampus - offCampus;
-  const fourYr     = annSave * 4;
+  const onCampus  = Math.max(0, tuition + room + board - grants);
+  const offCampus = Math.max(0, tuition + offCampusHousing - grants);
+  const annSave   = onCampus - offCampus;
+  const fourYr    = annSave * 4;
 
-  const fmt = n => n < 0 ? `-$${Math.abs(n).toLocaleString()}` : `$${n.toLocaleString()}`;
+  const fmtPos = n => '$' + Math.abs(n).toLocaleString();
 
-  document.getElementById('savingsAmt').textContent = fmt(annSave);
-  document.getElementById('savings4yr').textContent = fmt(fourYr);
-  document.getElementById('bkOnCamp').textContent   = fmt(onCampus);
-  document.getElementById('bkOffCamp').textContent  = fmt(offCampus);
-  document.getElementById('bkSave').textContent     = fmt(annSave);
+  const savingsEl = document.getElementById('savingsAmt');
+  const eyebrow   = document.getElementById('s4Eyebrow');
+  const sub       = document.getElementById('s4Sub');
+  const fourYrWrap= document.getElementById('s4FourYrWrap');
+  const bkSaveEl  = document.getElementById('bkSave');
+  const bkLabel   = document.getElementById('bkSaveLabel');
 
-  const schoolPath = slug || 'bu';
-  document.getElementById('listingsBtn').href  = '/' + schoolPath;
-  document.getElementById('roommateBtn').href  = '/' + schoolPath + '#roommates';
+  if (annSave >= 0) {
+    eyebrow.textContent = 'Your Estimated Annual Savings';
+    savingsEl.className = 's4-savings';
+    sub.textContent = 'per year living off campus';
+    fourYrWrap.style.display = '';
+    document.getElementById('savings4yr').textContent = fmtPos(fourYr);
+    bkLabel.textContent = 'Annual savings';
+    bkSaveEl.className = 'bk-save';
+    bkSaveEl.textContent = fmtPos(annSave);
+    animateNumber(annSave, false);
+  } else {
+    eyebrow.textContent = 'Off-Campus Cost Comparison';
+    savingsEl.className = 's4-savings s4-more';
+    savingsEl.textContent = fmtPos(Math.abs(annSave));
+    sub.textContent = 'more per year off campus vs. on campus for this school';
+    fourYrWrap.style.display = 'none';
+    bkLabel.textContent = 'Additional off-campus cost';
+    bkSaveEl.className = 'bk-save bk-save-neg';
+    bkSaveEl.textContent = '+' + fmtPos(Math.abs(annSave)) + ' / yr';
+  }
+
+  document.getElementById('bkOnCamp').textContent  = fmtPos(onCampus);
+  document.getElementById('bkOffCamp').textContent = fmtPos(offCampus);
+
+  const schoolPath = (slug && slug !== 'other') ? '/' + slug : '/';
+  document.getElementById('listingsBtn').href = schoolPath;
+  document.getElementById('roommateBtn').href = (slug && slug !== 'other') ? '/' + slug + '#roommates' : '/#schools';
 
   showState('s4');
-  animateNumber(annSave);
+  if (annSave >= 0) animateNumber(annSave, false);
 }
 
-function animateNumber(target) {
+function animateNumber(target, isNeg) {
   const el = document.getElementById('savingsAmt');
-  const start = 0, dur = 800, step = 16;
+  const dur = 800, step = 16;
   let elapsed = 0;
   const timer = setInterval(() => {
     elapsed += step;
-    const progress = Math.min(elapsed / dur, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const val = Math.round(start + (target - start) * ease);
-    el.textContent = val < 0 ? `-$${Math.abs(val).toLocaleString()}` : `$${val.toLocaleString()}`;
+    const ease = 1 - Math.pow(1 - Math.min(elapsed / dur, 1), 3);
+    const val = Math.round(target * ease);
+    el.textContent = '$' + val.toLocaleString();
     if (elapsed >= dur) clearInterval(timer);
   }, step);
 }
 
 function showError(msg) {
   const el = document.getElementById('errorMsg');
-  el.innerHTML = msg + ' <a href="/bu" style="color:var(--red);font-weight:600">Use manual calculator →</a>';
+  el.innerHTML = msg;
   el.classList.add('show');
 }
 
