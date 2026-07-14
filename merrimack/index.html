@@ -4,14 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DormDrop Merrimack — Off-Campus Housing Cost Calculator for Merrimack College</title>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QJDY1PF349"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-QJDY1PF349');
-</script>
+<!-- Google Analytics 4 — central config & event helper in /analytics.js -->
+<script src="/analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -137,7 +131,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 .rh-sub { font-size:15px; opacity:.75; }
 .res-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .res-card { background:var(--white); border:1px solid var(--rule); border-radius:var(--r); padding:24px; box-shadow:var(--sh-sm); }
-.rc-ey { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--ink-4); margin-bottom:8px; }
+.rc-ey { font-size:10.5px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-4); margin-bottom:8px; min-height:40px; line-height:1.3; }
 .rc-amt { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; letter-spacing:-.5px; }
 .rc-amt.neg { color:var(--amber); }
 .rc-amt.pos { color:var(--teal); }
@@ -591,7 +585,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div style="font-size:13px;color:#6B7280;margin-top:2px">AI reads it. See your savings in 10 seconds.</div>
         </div>
       </div>
-      <a href="/snap" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);white-space:nowrap;flex-shrink:0">
+      <a href="/snap" onclick="ddTrack('snap_promo_clicked',{school:'merrimack'})" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);white-space:nowrap;flex-shrink:0">
         Try It Free
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
@@ -669,10 +663,10 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           </select>
         </div>
         <div class="fg">
-          <label>Lease Duration <span class="lv" id="leaseLbl">9-month (Academic Year)</span></label>
+          <label>Lease Duration <span class="lv" id="leaseLbl">12-month (Full Year)</span></label>
           <div style="display:flex;gap:8px;margin-top:4px">
-            <button id="lease9btn" onclick="setLease(9)" style="flex:1;padding:10px 0;background:var(--ink);color:var(--white);border:1px solid var(--ink);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Academic Year<br><span style="font-size:11px;font-weight:400;opacity:.75">9 months</span></button>
-            <button id="lease12btn" onclick="setLease(12)" style="flex:1;padding:10px 0;background:var(--linen);color:var(--ink-3);border:1px solid var(--rule);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Full Year<br><span style="font-size:11px;font-weight:400;opacity:.75">12 months</span></button>
+            <button id="lease9btn" onclick="setLease(9)" style="flex:1;padding:10px 0;background:var(--linen);color:var(--ink-3);border:1px solid var(--rule);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Academic Year<br><span style="font-size:11px;font-weight:400;opacity:.75">9 months</span></button>
+            <button id="lease12btn" onclick="setLease(12)" style="flex:1;padding:10px 0;background:var(--ink);color:var(--white);border:1px solid var(--ink);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Full Year<br><span style="font-size:11px;font-weight:400;opacity:.75">12 months</span></button>
           </div>
         </div>
         <div class="fg">
@@ -685,7 +679,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         </div>
         <div class="fg">
           <label>Monthly groceries &amp; food <span style="font-size:11px;font-weight:400;color:var(--ink-4)">(per person)</span><span class="lv" id="grocLbl">$300</span></label>
-          <input type="range" min="150" max="700" value="300" step="25" oninput="document.getElementById('grocLbl').textContent='$'+this.value;calc()"/>
+          <input type="range" min="150" max="2000" value="300" step="25" oninput="document.getElementById('grocLbl').textContent='$'+this.value;calc()"/>
         </div>
         <div class="fg">
           <label>Utilities <span style="font-size:11px;font-weight:400;color:var(--ink-4)">(per person / mo)</span></label>
@@ -709,7 +703,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
             <option value="20334">Aid fully covers room &amp; board</option>
           </select>
         </div>
-        <button class="calc-btn" onclick="calc()">Calculate My Savings</button>
+        <button class="calc-btn" onclick="calc();ddTrack('calculator_completed',{school:'merrimack'})">Calculate My Savings</button>
       </div>
       <div class="calc-results">
         <div class="res-hero">
@@ -718,8 +712,8 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div class="rh-sub">per year choosing off-campus over Merrimack dorms</div>
         </div>
         <div class="res-row">
-          <div class="res-card"><div class="rc-ey">On-Campus / yr</div><div class="rc-amt neg" id="onCamp">$20,740</div></div>
-          <div class="res-card"><div class="rc-ey">Off-Campus / yr</div><div class="rc-amt pos" id="offCamp">$9,600</div></div>
+          <div class="res-card"><div class="rc-ey" id="onCampLbl">On-campus total (12 mo, incl. summer)</div><div class="rc-amt neg" id="onCamp">$23,440</div></div>
+          <div class="res-card"><div class="rc-ey" id="offCampLbl">Off-campus estimate (12 mo)</div><div class="rc-amt pos" id="offCamp">$12,600</div></div>
         </div>
         <div class="bk-card">
           <div class="bk-ey">Monthly Off-Campus Breakdown</div>
@@ -1041,7 +1035,7 @@ function saveWaitlistEmail(){
   }
 }
 
-var leaseMo=9;
+var leaseMo=12;
 function setLease(n){
   leaseMo=n;
   var b9=document.getElementById('lease9btn'),b12=document.getElementById('lease12btn');
@@ -1063,8 +1057,9 @@ function calc(){
   const sl=document.querySelectorAll('input[type=range]');
   const rent=parseInt(sl[0].value),rm=parseInt(sl[1].value),groc=parseInt(sl[2].value);
   const utils=parseInt(document.getElementById('utils').value);
+  const MONTHLY_ROOM=900,SUMMER_ADD=leaseMo===12?MONTHLY_ROOM*3:0;
   const rs=Math.round(rent/rm),offMo=rs+groc+utils,offYr=offMo*leaseMo;
-  const onYr=Math.max(0,dorm+meal-aid),save=onYr-offYr,fy=save*4;
+  const onYr=Math.max(0,dorm+meal-aid)+SUMMER_ADD,save=onYr-offYr,fy=save*4;
   const f=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString();
   document.getElementById('annSave').textContent=f(save);
   document.getElementById('annSave').style.opacity=save>0?'1':'.65';
@@ -1072,6 +1067,8 @@ function calc(){
   document.querySelector('.rh-sub').textContent=leaseLabel+' savings: off-campus vs. Merrimack dorms';
   document.getElementById('onCamp').textContent='$'+onYr.toLocaleString();
   document.getElementById('offCamp').textContent='$'+offYr.toLocaleString();
+  document.getElementById('onCampLbl').textContent=leaseMo===12?'On-campus total (12 mo, incl. summer)':'On-campus total (9 mo, academic yr)';
+  document.getElementById('offCampLbl').textContent=leaseMo===12?'Off-campus estimate (12 mo)':'Off-campus estimate (9 mo)';
   document.getElementById('bkRent').textContent='$'+rs+' / mo';
   document.getElementById('bkFood').textContent='$'+groc+' / mo';
   document.getElementById('bkUtils').textContent='$'+utils+' / mo';

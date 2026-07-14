@@ -5,13 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DormDrop Snap — AI Tuition Bill Reader</title>
 <meta name="description" content="Upload your tuition bill or financial aid letter. AI reads it in seconds and shows you exactly how much you could save living off campus."/>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QJDY1PF349"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-QJDY1PF349');
-</script>
+<!-- Google Analytics 4 — central config & event helper in /analytics.js -->
+<script src="/analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -282,11 +277,11 @@ h1 em{font-style:italic;color:var(--teal);}
       <div class="breakdown-card">
         <div class="bk-title">Cost Breakdown</div>
         <div class="bk-row">
-          <span>On-campus total / yr</span>
+          <span id="bkOnCampLabel">On-campus total (12 mo, incl. summer)</span>
           <span class="bk-neg" id="bkOnCamp">—</span>
         </div>
         <div class="bk-row">
-          <span>Off-campus estimate / yr</span>
+          <span id="bkOffCampLabel">Off-campus estimate (12 mo)</span>
           <span class="bk-pos" id="bkOffCamp">—</span>
         </div>
         <div class="bk-row">
@@ -296,11 +291,11 @@ h1 em{font-style:italic;color:var(--teal);}
       </div>
 
       <div class="cta-row">
-        <a id="listingsBtn" href="/bu" class="btn-cta-primary">
+        <a id="listingsBtn" href="/bu" class="btn-cta-primary" onclick="ddTrack('listings_clicked')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           See Verified Listings
         </a>
-        <a id="roommateBtn" href="/bu#roommates" class="btn-cta-secondary">
+        <a id="roommateBtn" href="/bu#roommates" class="btn-cta-secondary" onclick="ddTrack('roommate_clicked')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Find a Roommate
         </a>
@@ -330,6 +325,14 @@ const PROCESSING_MSGS = [
 const OFF_CAMPUS_BY_SCHOOL = {
   bu: 12000, neu: 14000, curry: 10000, merrimack: 11000
 };
+
+// Dorm room covers ~9 months; a 12-month off-campus lease means you'd
+// also need ~3 months of summer housing. Add that to on-campus so both
+// sides are compared on a true 12-month basis. Estimated monthly room:
+const MONTHLY_ROOM_BY_SCHOOL = {
+  bu: 1300, neu: 1300, curry: 900, merrimack: 900
+};
+const SUMMER_MONTHS = 3;
 
 const SCHOOL_SLUGS = {
   'boston university': 'bu',
@@ -375,6 +378,7 @@ async function handleFile(file) {
   document.getElementById('errorMsg').classList.remove('show');
   showState('s2');
   startProcessingText();
+  ddTrack('scan_started');
 
   try {
     const b64 = await toBase64(file);
@@ -388,9 +392,11 @@ async function handleFile(file) {
     if (!resp.ok || !json.success) throw new Error(json.error || 'Unexpected response');
 
     populateConfirmation(json.data);
+    ddTrack('scan_succeeded', { confidence: (json.data && json.data.confidence) || 'unknown' });
     showState('s3');
   } catch (err) {
     console.error(err);
+    ddTrack('scan_failed');
     showState('s1');
     showError("We couldn't read your bill. Try a clearer photo or <a href='/bu'>use our manual calculator instead</a>.");
   }
@@ -501,10 +507,28 @@ function calculateSavings() {
   document.getElementById('insufficientMsg').classList.remove('show');
 
   const offCampusHousing = OFF_CAMPUS_BY_SCHOOL[slug] || 12000;
-  const onCampus  = Math.max(0, tuition + room + board - grants);
+
+  // Put on-campus on a true 12-month basis: the dorm room only covers the
+  // ~9-month academic year, so add ~3 months of summer housing.
+  const monthlyRoom = MONTHLY_ROOM_BY_SCHOOL[slug] || 1100;
+  const summerRoom  = room > 0 ? monthlyRoom * SUMMER_MONTHS : 0;
+
+  const onCampus  = Math.max(0, tuition + room + board + summerRoom - grants);
   const offCampus = Math.max(0, tuition + offCampusHousing - grants);
   const annSave   = onCampus - offCampus;
   const fourYr    = annSave * 4;
+
+  // If on-campus total is 0 (no usable data / grants wiped it out), don't
+  // show a misleading negative number — send them to the manual calculator.
+  if (onCampus === 0) {
+    document.getElementById('insufficientMsg').classList.add('show');
+    return;
+  }
+
+  // Label the time basis explicitly on both sides of the breakdown.
+  document.getElementById('bkOnCampLabel').textContent =
+    summerRoom > 0 ? 'On-campus total (12 mo, incl. summer)' : 'On-campus total (12 mo)';
+  document.getElementById('bkOffCampLabel').textContent = 'Off-campus estimate (12 mo)';
 
   const fmtPos = n => '$' + Math.abs(n).toLocaleString();
 
@@ -542,6 +566,8 @@ function calculateSavings() {
   const schoolPath = (slug && slug !== 'other') ? '/' + slug : '/';
   document.getElementById('listingsBtn').href = schoolPath;
   document.getElementById('roommateBtn').href = (slug && slug !== 'other') ? '/' + slug + '#roommates' : '/#schools';
+
+  ddTrack('savings_calculated', { school: slug || 'other' });
 
   showState('s4');
   if (annSave >= 0) animateNumber(annSave, false);

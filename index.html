@@ -5,14 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DormDrop — Find Off-Campus Housing. Save Thousands.</title>
 <meta name="description" content="Compare official college housing rates with off-campus apartments near BU, NEU, and Merrimack. Free for students."/>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QJDY1PF349"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-QJDY1PF349');
-</script>
+<!-- Google Analytics 4 — central config & event helper in /analytics.js -->
+<script src="/analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -213,7 +207,7 @@ footer{background:#0c1a2e;color:rgba(255,255,255,.5);padding:40px 24px;}
           <div style="font-size:13px;color:#6B7280;margin-top:2px">AI reads it. See your savings in 10 seconds.</div>
         </div>
       </div>
-      <a href="/snap" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);white-space:nowrap;flex-shrink:0">
+      <a href="/snap" onclick="ddTrack('snap_promo_clicked',{school:'homepage'})" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);white-space:nowrap;flex-shrink:0">
         Try It Free
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
@@ -229,7 +223,7 @@ footer{background:#0c1a2e;color:rgba(255,255,255,.5);padding:40px 24px;}
     <p class="section-body">We pull official on-campus housing rates directly from each school and compare them against real off-campus listings nearby.</p>
 
     <div class="schools-grid" style="grid-template-columns:repeat(2,1fr)">
-      <a href="/bu" class="school-card">
+      <a href="/bu" class="school-card" onclick="ddTrack('school_selected',{school:'Boston University'})">
         <div class="school-wordmark bu">Boston University</div>
         <div class="school-name">Boston University</div>
         <div class="school-location">Boston, MA — Allston, Fenway, Back Bay</div>
@@ -240,7 +234,7 @@ footer{background:#0c1a2e;color:rgba(255,255,255,.5);padding:40px 24px;}
         </div>
       </a>
 
-      <a href="/neu" class="school-card">
+      <a href="/neu" class="school-card" onclick="ddTrack('school_selected',{school:'Northeastern University'})">
         <div class="school-wordmark neu">Northeastern University</div>
         <div class="school-name">Northeastern University</div>
         <div class="school-location">Boston, MA — Mission Hill, Fenway, Roxbury</div>
@@ -251,7 +245,7 @@ footer{background:#0c1a2e;color:rgba(255,255,255,.5);padding:40px 24px;}
         </div>
       </a>
 
-      <a href="/merrimack" class="school-card">
+      <a href="/merrimack" class="school-card" onclick="ddTrack('school_selected',{school:'Merrimack College'})">
         <div class="school-wordmark mc">Merrimack College</div>
         <div class="school-name">Merrimack College</div>
         <div class="school-location">North Andover, MA — Andover, Lawrence</div>
@@ -262,7 +256,7 @@ footer{background:#0c1a2e;color:rgba(255,255,255,.5);padding:40px 24px;}
         </div>
       </a>
 
-      <a href="/curry" class="school-card">
+      <a href="/curry" class="school-card" onclick="ddTrack('school_selected',{school:'Curry College'})">
         <div class="school-wordmark" style="color:#6B21A8;">Curry College</div>
         <div class="school-name">Curry College</div>
         <div class="school-location">Milton, MA — Quincy, Hyde Park, Mattapan</div>
