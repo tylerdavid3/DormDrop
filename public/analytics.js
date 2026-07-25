@@ -9,7 +9,7 @@
    Fire custom events anywhere with:  ddTrack('event_name', { param: value })
 */
 (function () {
-  var GA_MEASUREMENT_ID = 'G-QJDY1PF349';
+  var GA_MEASUREMENT_ID = 'G-4GR6WHK1VG';
 
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
