@@ -117,6 +117,16 @@ h1 em{font-style:italic;color:var(--teal);}
 .bk-pos{color:var(--teal);}
 .bk-save{color:var(--green);font-size:16px;}
 .bk-save.bk-save-neg{color:var(--amber);}
+.bk-row.bk-sub{padding:6px 0 6px 14px;font-size:13px;color:var(--ink-4);border-bottom:1px dotted var(--rule-2);}
+.bk-row.bk-sub span:last-child{color:var(--ink-3);font-weight:500;}
+.summer-q{margin-top:24px;}
+.summer-q-label{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;}
+.summer-opts{display:flex;gap:10px;}
+.summer-opt{flex:1;display:flex;flex-direction:column;gap:3px;text-align:left;padding:12px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:12px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.summer-opt .so-t{font-size:14px;font-weight:600;color:var(--ink);}
+.summer-opt .so-s{font-size:12px;color:var(--ink-4);line-height:1.3;}
+.summer-opt.active{border-color:var(--teal);background:var(--teal-lt);}
+.summer-opt.active .so-t{color:var(--teal);}
 .cta-row{display:flex;flex-direction:column;gap:12px;margin-top:8px;}
 .btn-cta-primary{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;background:#0E6E6E;color:#FFFFFF;text-decoration:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;box-shadow:0 4px 14px rgba(14,110,110,.3);text-align:center;}
 .btn-cta-primary:hover{background:#0a5858;transform:translateY(-1px);}
@@ -225,14 +235,14 @@ h1 em{font-style:italic;color:var(--teal);}
           </div>
         </div>
         <div class="fg">
-          <label>Annual Tuition ($)</label>
+          <label>Annual Tuition <span style="font-weight:400;color:var(--ink-4);text-transform:none;letter-spacing:0">&mdash; context only, not used in the math</span></label>
           <div class="input-prefix">
             <span>$</span>
             <input type="number" id="fTuition" placeholder="0" min="0"/>
           </div>
         </div>
         <div class="fg">
-          <label>Annual Room / Housing ($)</label>
+          <label>Annual On-Campus Room / Housing ($)</label>
           <div class="input-prefix">
             <span>$</span>
             <input type="number" id="fRoom" placeholder="0" min="0"/>
@@ -246,16 +256,31 @@ h1 em{font-style:italic;color:var(--teal);}
           </div>
         </div>
         <div class="fg">
-          <label>Total Grants &amp; Scholarships ($)</label>
+          <label>Housing-only grant you'd lose off campus <span style="font-weight:400;color:var(--ink-4);text-transform:none;letter-spacing:0">&mdash; optional</span></label>
           <div class="input-prefix">
             <span>$</span>
             <input type="number" id="fGrants" placeholder="0" min="0"/>
           </div>
+          <p style="font-size:12px;color:var(--ink-3);line-height:1.5;margin-top:8px">Most financial aid follows you off campus. Only enter an amount here if your school gives you a grant that applies <strong>only</strong> to on-campus housing. Leave blank if none.</p>
+        </div>
+      </div>
+
+      <div class="summer-q">
+        <div class="summer-q-label">What happens over the summer?</div>
+        <div class="summer-opts">
+          <button type="button" id="sumAbtn" class="summer-opt active" onclick="setSummerSnap('home')">
+            <span class="so-t">I go home</span>
+            <span class="so-s">I don't pay for summer housing</span>
+          </button>
+          <button type="button" id="sumBbtn" class="summer-opt" onclick="setSummerSnap('stay')">
+            <span class="so-t">I stay for the summer</span>
+            <span class="so-s">12 months of housing</span>
+          </button>
         </div>
       </div>
 
       <div id="insufficientMsg" class="insufficient-msg">
-        We need at least your room or tuition amount to estimate savings. Please fill in the fields above or
+        We need your on-campus <strong>room / housing</strong> amount to estimate savings. Fill it in above, or
         <a href="/bu" style="color:var(--amber);font-weight:600;text-decoration:underline">use the manual calculator</a>.
       </div>
 
@@ -275,20 +300,29 @@ h1 em{font-style:italic;color:var(--teal);}
       </div>
 
       <div class="breakdown-card">
-        <div class="bk-title">Cost Breakdown</div>
+        <div class="bk-title" id="bkTitle">Cost Breakdown</div>
+        <div class="bk-row" id="bkTuitionRow" style="display:none">
+          <span>Your tuition <span style="color:var(--ink-4)">(same either way)</span></span>
+          <span id="bkTuition" style="color:var(--ink-4)">—</span>
+        </div>
         <div class="bk-row">
-          <span id="bkOnCampLabel">On-campus total (12 mo, incl. summer)</span>
+          <span id="bkOnCampLabel">On-campus housing + food</span>
           <span class="bk-neg" id="bkOnCamp">—</span>
         </div>
         <div class="bk-row">
-          <span id="bkOffCampLabel">Off-campus estimate (12 mo)</span>
+          <span id="bkOffCampLabel">Off-campus estimate</span>
           <span class="bk-pos" id="bkOffCamp">—</span>
         </div>
+        <div class="bk-row bk-sub"><span>Rent (est., per person)</span><span id="bkRent">—</span></div>
+        <div class="bk-row bk-sub"><span>Groceries &amp; food</span><span id="bkGroc">—</span></div>
+        <div class="bk-row bk-sub"><span>Utilities</span><span id="bkUtil">—</span></div>
+        <div class="bk-row" id="bkGrantRow" style="display:none"><span style="color:var(--amber);font-weight:600">Housing-only grant lost (on-campus)</span><span id="bkGrantVal" style="color:var(--amber);font-weight:700">—</span></div>
         <div class="bk-row">
           <span id="bkSaveLabel">Annual savings</span>
           <span class="bk-save" id="bkSave">—</span>
         </div>
       </div>
+      <p id="bkNote" style="font-size:12px;color:var(--ink-4);text-align:center;line-height:1.6;margin-top:14px"></p>
 
       <div class="cta-row">
         <a id="listingsBtn" href="/bu" class="btn-cta-primary" onclick="ddTrack('listings_clicked')">
@@ -315,6 +349,10 @@ h1 em{font-style:italic;color:var(--teal);}
 <script>
 const FUNCTION_URL = 'https://extractbill-u2oeuihdna-uc.a.run.app';
 
+// Safety net: analytics must never break the page. If /analytics.js failed to
+// load for any reason, keep ddTrack callable as a no-op.
+window.ddTrack = window.ddTrack || function () {};
+
 const PROCESSING_MSGS = [
   'Reading your bill',
   'Extracting tuition details',
@@ -322,17 +360,19 @@ const PROCESSING_MSGS = [
   'Almost done'
 ];
 
-const OFF_CAMPUS_BY_SCHOOL = {
-  bu: 12000, neu: 14000, curry: 10000, merrimack: 11000
-};
+// Off-campus estimate = rent + groceries + utilities, per person, per month.
+// Tuition is deliberately excluded from the comparison (it's identical either way).
+const RENT_EST_BY_SCHOOL = { bu: 1200, neu: 1200, curry: 900, merrimack: 900 };
+const GROC_EST = 300;   // groceries per person / month
+const UTIL_EST = 100;   // utilities per person / month
+const SUMMER_MONTHS = 3; // extra months added to on-campus only if student stays for summer
 
-// Dorm room covers ~9 months; a 12-month off-campus lease means you'd
-// also need ~3 months of summer housing. Add that to on-campus so both
-// sides are compared on a true 12-month basis. Estimated monthly room:
-const MONTHLY_ROOM_BY_SCHOOL = {
-  bu: 1300, neu: 1300, curry: 900, merrimack: 900
-};
-const SUMMER_MONTHS = 3;
+let summerMode = 'home'; // 'home' = 9-month compare, 'stay' = 12-month compare
+function setSummerSnap(m) {
+  summerMode = m;
+  document.getElementById('sumAbtn').classList.toggle('active', m === 'home');
+  document.getElementById('sumBbtn').classList.toggle('active', m === 'stay');
+}
 
 const SCHOOL_SLUGS = {
   'boston university': 'bu',
@@ -463,7 +503,9 @@ function populateConfirmation(data) {
   document.getElementById('fTuition').value = data.tuition || '';
   document.getElementById('fRoom').value    = data.room    || '';
   document.getElementById('fBoard').value   = data.board   || '';
-  document.getElementById('fGrants').value  = data.total_grants || '';
+  // Housing-only grant is NOT the same as total scholarships — leave it blank
+  // so the student only enters an amount that applies solely to on-campus housing.
+  document.getElementById('fGrants').value  = '';
 
   const badge = document.getElementById('confBadge');
   badge.className = 'conf-badge';
@@ -493,75 +535,100 @@ function populateConfirmation(data) {
 }
 
 function calculateSavings() {
-  const tuition = parseFloat(document.getElementById('fTuition').value) || 0;
   const room    = parseFloat(document.getElementById('fRoom').value)    || 0;
   const board   = parseFloat(document.getElementById('fBoard').value)   || 0;
-  const grants  = parseFloat(document.getElementById('fGrants').value)  || 0;
+  const grant   = parseFloat(document.getElementById('fGrants').value)  || 0; // housing-only grant
+  const tuition = parseFloat(document.getElementById('fTuition').value) || 0; // context only, never in the math
   const slug    = document.getElementById('fSchool').value;
 
-  // Guard: need at least tuition or room to calculate
-  if (tuition === 0 && room === 0) {
+  // The on-campus room cost is required. No room (or a failed scan) -> show the
+  // manual-entry message instead of any result.
+  if (room === 0) {
     document.getElementById('insufficientMsg').classList.add('show');
     return;
   }
   document.getElementById('insufficientMsg').classList.remove('show');
 
-  const offCampusHousing = OFF_CAMPUS_BY_SCHOOL[slug] || 12000;
+  const r10   = n => Math.round(n / 10) * 10;
+  const money = n => '$' + r10(n).toLocaleString();
 
-  // Put on-campus on a true 12-month basis: the dorm room only covers the
-  // ~9-month academic year, so add ~3 months of summer housing.
-  const monthlyRoom = MONTHLY_ROOM_BY_SCHOOL[slug] || 1100;
-  const summerRoom  = room > 0 ? monthlyRoom * SUMMER_MONTHS : 0;
+  const stay   = summerMode === 'stay';
+  const months = stay ? 12 : 9;
 
-  const onCampus  = Math.max(0, tuition + room + board + summerRoom - grants);
-  const offCampus = Math.max(0, tuition + offCampusHousing - grants);
-  const annSave   = onCampus - offCampus;
-  const fourYr    = annSave * 4;
+  // ON-CAMPUS = room + meal (9-month room & board; utilities already included).
+  // If the student stays for summer, add ~3 months of on-campus housing.
+  const summerHousing = stay ? Math.round(room / 9 * SUMMER_MONTHS) : 0;
+  const onCampus = Math.max(0, room + board + summerHousing - grant); // housing-only grant reduces on-campus only
 
-  // If on-campus total is 0 (no usable data / grants wiped it out), don't
-  // show a misleading negative number — send them to the manual calculator.
   if (onCampus === 0) {
     document.getElementById('insufficientMsg').classList.add('show');
     return;
   }
 
-  // Label the time basis explicitly on both sides of the breakdown.
-  document.getElementById('bkOnCampLabel').textContent =
-    summerRoom > 0 ? 'On-campus total (12 mo, incl. summer)' : 'On-campus total (12 mo)';
-  document.getElementById('bkOffCampLabel').textContent = 'Off-campus estimate (12 mo)';
+  // OFF-CAMPUS estimate = rent + groceries + utilities, per person, per month.
+  const rentEst   = RENT_EST_BY_SCHOOL[slug] || 1000;
+  const offMo     = rentEst + GROC_EST + UTIL_EST;
+  const offCampus = offMo * months;
 
-  const fmtPos = n => '$' + Math.abs(n).toLocaleString();
+  const diff  = onCampus - offCampus; // > 0 => off-campus is cheaper
+  const basis = stay ? '12-month full-year comparison' : '9-month academic-year comparison';
 
-  const savingsEl = document.getElementById('savingsAmt');
-  const eyebrow   = document.getElementById('s4Eyebrow');
-  const sub       = document.getElementById('s4Sub');
-  const fourYrWrap= document.getElementById('s4FourYrWrap');
-  const bkSaveEl  = document.getElementById('bkSave');
-  const bkLabel   = document.getElementById('bkSaveLabel');
+  const savingsEl  = document.getElementById('savingsAmt');
+  const eyebrow    = document.getElementById('s4Eyebrow');
+  const sub        = document.getElementById('s4Sub');
+  const fourYrWrap = document.getElementById('s4FourYrWrap');
+  const bkSaveEl   = document.getElementById('bkSave');
+  const bkLabel    = document.getElementById('bkSaveLabel');
 
-  if (annSave >= 0) {
+  if (diff >= 0) {
     eyebrow.textContent = 'Your Estimated Annual Savings';
     savingsEl.className = 's4-savings';
-    sub.textContent = 'per year living off campus';
+    sub.textContent = 'per year living off campus · ' + basis;
     fourYrWrap.style.display = '';
-    document.getElementById('savings4yr').textContent = fmtPos(fourYr);
+    document.getElementById('savings4yr').textContent = money(diff * 4);
     bkLabel.textContent = 'Annual savings';
     bkSaveEl.className = 'bk-save';
-    bkSaveEl.textContent = fmtPos(annSave);
-    animateNumber(annSave, false);
+    bkSaveEl.textContent = money(diff);
+    animateNumber(diff);
   } else {
-    eyebrow.textContent = 'Off-Campus Cost Comparison';
+    eyebrow.textContent = 'Off-Campus Would Cost More';
     savingsEl.className = 's4-savings s4-more';
-    savingsEl.textContent = fmtPos(Math.abs(annSave));
-    sub.textContent = 'more per year off campus vs. on campus for this school';
+    savingsEl.textContent = money(-diff);
+    sub.textContent = 'more per year off campus · ' + basis;
     fourYrWrap.style.display = 'none';
-    bkLabel.textContent = 'Additional off-campus cost';
+    bkLabel.textContent = 'Extra off-campus cost';
     bkSaveEl.className = 'bk-save bk-save-neg';
-    bkSaveEl.textContent = '+' + fmtPos(Math.abs(annSave)) + ' / yr';
+    bkSaveEl.textContent = money(-diff) + ' / yr';
   }
 
-  document.getElementById('bkOnCamp').textContent  = fmtPos(onCampus);
-  document.getElementById('bkOffCamp').textContent = fmtPos(offCampus);
+  document.getElementById('bkTitle').textContent = 'Cost breakdown · ' + basis;
+  document.getElementById('bkOnCampLabel').textContent = 'On-campus housing + food (' + months + ' mo)';
+  document.getElementById('bkOffCampLabel').textContent = 'Off-campus estimate (' + months + ' mo)';
+  document.getElementById('bkOnCamp').textContent  = money(onCampus);
+  document.getElementById('bkOffCamp').textContent = money(offCampus);
+  document.getElementById('bkRent').textContent = money(rentEst) + ' / mo';
+  document.getElementById('bkGroc').textContent = money(GROC_EST) + ' / mo';
+  document.getElementById('bkUtil').textContent = money(UTIL_EST) + ' / mo';
+
+  // Tuition shown as context only — never part of the comparison.
+  if (tuition > 0) {
+    document.getElementById('bkTuition').textContent = money(tuition) + ' / yr';
+    document.getElementById('bkTuitionRow').style.display = 'flex';
+  } else {
+    document.getElementById('bkTuitionRow').style.display = 'none';
+  }
+
+  if (grant > 0) {
+    document.getElementById('bkGrantVal').textContent = '−' + money(grant) + ' / yr';
+    document.getElementById('bkGrantRow').style.display = 'flex';
+  } else {
+    document.getElementById('bkGrantRow').style.display = 'none';
+  }
+
+  const estLine = ' Off-campus estimate uses ' + money(rentEst) + '/mo rent + ' + money(GROC_EST) + ' groceries + ' + money(UTIL_EST) + ' utilities.';
+  document.getElementById('bkNote').textContent = (stay
+    ? 'Includes ~3 months of summer housing added to the on-campus side (about ' + money(summerHousing) + ').'
+    : "Off-campus leases are often 12 months. If you can't sublet, budget ~3 extra months of rent (about " + money(rentEst * 3) + ").") + estLine;
 
   const schoolPath = (slug && slug !== 'other') ? '/' + slug : '/';
   document.getElementById('listingsBtn').href = schoolPath;
@@ -570,7 +637,6 @@ function calculateSavings() {
   ddTrack('savings_calculated', { school: slug || 'other' });
 
   showState('s4');
-  if (annSave >= 0) animateNumber(annSave, false);
 }
 
 function animateNumber(target, isNeg) {
@@ -580,7 +646,7 @@ function animateNumber(target, isNeg) {
   const timer = setInterval(() => {
     elapsed += step;
     const ease = 1 - Math.pow(1 - Math.min(elapsed / dur, 1), 3);
-    const val = Math.round(target * ease);
+    const val = Math.round(target * ease / 10) * 10;
     el.textContent = '$' + val.toLocaleString();
     if (elapsed >= dur) clearInterval(timer);
   }, step);

@@ -135,6 +135,13 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 .rc-amt { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; letter-spacing:-.5px; }
 .rc-amt.neg { color:var(--amber); }
 .rc-amt.pos { color:var(--teal); }
+.num-row{display:flex;align-items:center;gap:12px;margin-top:8px;}
+.num-row input[type=range]{flex:1;min-width:0;}
+.num-box{display:flex;align-items:center;gap:2px;background:var(--linen);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;min-width:92px;}
+.num-box span{color:var(--ink-3);font-size:14px;font-weight:500;}
+.num-box input{border:none;background:transparent;width:100%;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);outline:none;-moz-appearance:textfield;}
+.num-box input::-webkit-outer-spin-button,.num-box input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.num-box:focus-within{border-color:var(--teal);}
 .bk-card { background:var(--white); border:1px solid var(--rule); border-radius:var(--r); padding:28px; box-shadow:var(--sh-sm); }
 .bk-ey { font-size:11px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-4); margin-bottom:20px; }
 .bk-row { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--rule-2); font-size:14px; }
@@ -571,77 +578,61 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           </select>
         </div>
         <div class="fg">
-          <label>Lease Duration <span class="lv" id="leaseLbl">12-month (Full Year)</span></label>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button id="lease9btn" onclick="setLease(9)" style="flex:1;padding:10px 0;background:var(--linen);color:var(--ink-3);border:1px solid var(--rule);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Academic Year<br><span style="font-size:11px;font-weight:400;opacity:.75">9 months</span></button>
-            <button id="lease12btn" onclick="setLease(12)" style="flex:1;padding:10px 0;background:var(--ink);color:var(--white);border:1px solid var(--ink);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Full Year<br><span style="font-size:11px;font-weight:400;opacity:.75">12 months</span></button>
+          <label>What happens over the summer?</label>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" id="sumAbtn" onclick="setSummer('home')" style="flex:1;padding:10px 8px;background:var(--ink);color:var(--white);border:1px solid var(--ink);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;line-height:1.3">I go home<br><span style="font-size:11px;font-weight:400;opacity:.75">no summer housing</span></button>
+            <button type="button" id="sumBbtn" onclick="setSummer('stay')" style="flex:1;padding:10px 8px;background:var(--linen);color:var(--ink-3);border:1px solid var(--rule);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;line-height:1.3">I stay for summer<br><span style="font-size:11px;font-weight:400;opacity:.75">12-month housing</span></button>
           </div>
         </div>
         <div class="fg">
-          <label>Monthly rent (total unit)<span class="lv" id="rentLbl">$900</span></label>
-          <input type="range" min="600" max="4500" value="900" step="50" oninput="document.getElementById('rentLbl').textContent='$'+this.value;calc()"/>
+          <label>Rent &mdash; your share <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">per person / month</span></label>
+          <div class="num-row">
+            <input type="range" id="rentRange" min="600" max="3000" value="1200" step="25" oninput="syncNum('rent',this.value)"/>
+            <div class="num-box"><span>$</span><input type="number" id="rentNum" min="600" max="3000" value="1200" oninput="syncRange('rent',this.value)"/></div>
+          </div>
         </div>
         <div class="fg">
-          <label>People splitting rent<span class="lv" id="rmLbl">2</span></label>
-          <input type="range" min="1" max="5" value="2" step="1" oninput="document.getElementById('rmLbl').textContent=this.value;calc()"/>
+          <label>Groceries &amp; food <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">per person / month</span></label>
+          <div class="num-row">
+            <input type="range" id="grocRange" min="100" max="600" value="300" step="10" oninput="syncNum('groc',this.value)"/>
+            <div class="num-box"><span>$</span><input type="number" id="grocNum" min="100" max="600" value="300" oninput="syncRange('groc',this.value)"/></div>
+          </div>
         </div>
         <div class="fg">
-          <label>Monthly groceries &amp; food <span style="font-size:11px;font-weight:400;color:var(--ink-4)">(per person)</span><span class="lv" id="grocLbl">$300</span></label>
-          <input type="range" min="150" max="2000" value="300" step="25" oninput="document.getElementById('grocLbl').textContent='$'+this.value;calc()"/>
-        </div>
-        <div class="fg">
-          <label>Utilities <span style="font-size:11px;font-weight:400;color:var(--ink-4)">(per person / mo)</span></label>
-          <select id="utils" onchange="calc()">
-            <option value="100">~$100 / mo per person</option>
-            <option value="75">~$75 / mo per person</option>
-            <option value="150">~$150 / mo per person</option>
-            <option value="200">~$200 / mo per person</option>
-            <option value="0">Included in rent ($0)</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label style="color:var(--teal)">Financial Aid Applied to Housing <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">Reduces on-campus cost</span></label>
-          <select id="financialAid" onchange="calc()">
-            <option value="0">No aid applied to housing</option>
-            <option value="3000">~$3,000/yr housing aid</option>
-            <option value="5000">~$5,000/yr housing aid</option>
-            <option value="7000">~$7,000/yr housing aid</option>
-            <option value="10000">~$10,000/yr housing aid</option>
-            <option value="15000">~$15,000/yr housing aid</option>
-            <option value="20260">Aid fully covers room &amp; board</option>
-          </select>
+          <label>Utilities <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">heat &middot; electric &middot; internet, per person / month</span></label>
+          <div class="num-row">
+            <input type="range" id="utilRange" min="0" max="250" value="100" step="10" oninput="syncNum('util',this.value)"/>
+            <div class="num-box"><span>$</span><input type="number" id="utilNum" min="0" max="250" value="100" oninput="syncRange('util',this.value)"/></div>
+          </div>
         </div>
         <div class="fg" style="border-top:2px solid var(--rule);padding-top:20px;margin-top:4px">
-          <label style="font-weight:600;color:var(--amber)">! NEU Financial Aid Housing Component <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">You may LOSE this if you move off-campus</span></label>
-          <select id="housingGrant" onchange="calc()">
-            <option value="0">I don't receive a housing grant</option>
-            <option value="3000">I receive ~$3,000/year housing grant</option>
-            <option value="5000">I receive ~$5,000/year housing grant</option>
-            <option value="7000">I receive ~$7,000/year housing grant</option>
-          </select>
+          <label style="font-weight:600;color:var(--amber)">Housing-only grant you'd lose by moving off campus <span class="lv" style="font-size:11px;color:var(--ink-4);font-weight:500">optional</span></label>
+          <div class="num-box" style="max-width:170px;margin-top:6px"><span>$</span><input type="number" id="housingGrant" min="0" step="100" value="" placeholder="0" oninput="calc()"/></div>
+          <p style="font-size:12px;color:var(--ink-4);line-height:1.5;margin-top:8px">Most financial aid follows you off campus. Only enter an amount here if your school gives you a grant that applies <strong>only</strong> to on-campus housing. Check with your financial aid office if you're unsure. Leave blank if none.</p>
         </div>
         <button class="calc-btn" onclick="calc();ddTrack('calculator_completed',{school:'neu'})">Calculate My Savings</button>
       </div>
       <div class="calc-results">
         <div class="res-hero">
-          <div class="rh-ey">Annual Savings</div>
-          <div class="rh-amt" id="annSave">$10,660</div>
-          <div class="rh-sub">per year choosing off-campus over NEU dorms</div>
+          <div class="rh-ey" id="rhEy">Annual Savings</div>
+          <div class="rh-amt" id="annSave">$0</div>
+          <div class="rh-sub" id="rhSub">off-campus vs. NEU dorms</div>
         </div>
         <div class="res-row">
-          <div class="res-card"><div class="rc-ey" id="onCampLbl">On-campus total (12 mo, incl. summer)</div><div class="rc-amt neg" id="onCamp">$24,160</div></div>
-          <div class="res-card"><div class="rc-ey" id="offCampLbl">Off-campus estimate (12 mo)</div><div class="rc-amt pos" id="offCamp">$12,600</div></div>
+          <div class="res-card"><div class="rc-ey" id="onCampLbl">On-campus housing + food</div><div class="rc-amt neg" id="onCamp">$0</div></div>
+          <div class="res-card"><div class="rc-ey" id="offCampLbl">Off-campus housing + food</div><div class="rc-amt pos" id="offCamp">$0</div></div>
         </div>
         <div class="bk-card">
-          <div class="bk-ey">Monthly Off-Campus Breakdown</div>
-          <div class="bk-row"><span>Your share of rent</span><span id="bkRent">$450 / mo</span></div>
-          <div class="bk-row"><span>Groceries &amp; food (per person)</span><span id="bkFood">$300 / mo</span></div>
-          <div class="bk-row"><span>Utilities (per person)</span><span id="bkUtils">$100 / mo</span></div>
-          <div class="bk-row" id="grantRow" style="display:none;border-top:1px dashed var(--amber);margin-top:8px;padding-top:8px;background:var(--amber-lt)"><span style="font-weight:600;color:var(--amber)">! Lost Housing Grant</span><span style="font-weight:700;color:var(--amber)" id="bkGrant">$0 / yr</span></div>
-          <div class="bk-row" style="border-top:1px solid var(--rule);margin-top:4px"><span style="font-weight:600;color:var(--ink)">Total per month</span><span style="font-weight:700;color:var(--teal)" id="bkTotal">$850 / mo</span></div>
-          <div class="four-yr">
-            <div class="fy-lbl">Over 4 years of college</div>
-            <div class="fy-amt" id="fourYr">$44,560</div>
+          <div class="bk-ey" id="bkEy">Cost breakdown</div>
+          <div class="bk-row"><span>Rent (per person)</span><span id="bkRent">$0 / mo</span></div>
+          <div class="bk-row"><span>Groceries &amp; food</span><span id="bkFood">$0 / mo</span></div>
+          <div class="bk-row"><span>Utilities</span><span id="bkUtils">$0 / mo</span></div>
+          <div class="bk-row" style="border-top:1px solid var(--rule);margin-top:4px"><span style="font-weight:600;color:var(--ink)">Off-campus per month</span><span style="font-weight:700;color:var(--teal)" id="bkTotal">$0 / mo</span></div>
+          <div class="bk-row" id="grantRow" style="display:none;border-top:1px dashed var(--amber);margin-top:8px;padding-top:8px;background:var(--amber-lt)"><span style="font-weight:600;color:var(--amber)">Housing-only grant lost (on-campus)</span><span style="font-weight:700;color:var(--amber)" id="bkGrant">$0 / yr</span></div>
+          <div id="bkNote" style="font-size:12px;color:var(--ink-4);line-height:1.5;margin-top:14px"></div>
+          <div class="four-yr" id="fourYrCard">
+            <div class="fy-lbl" id="fyLbl">Over 4 years of college</div>
+            <div class="fy-amt" id="fourYr">$0</div>
             <div class="fy-sub" id="fyNote">in total estimated savings</div>
           </div>
         </div>
@@ -952,56 +943,95 @@ function saveWaitlistEmail(){
   }
 }
 
-var leaseMo=12;
-function setLease(n){
-  leaseMo=n;
-  var b9=document.getElementById('lease9btn'),b12=document.getElementById('lease12btn');
-  var lbl=document.getElementById('leaseLbl');
-  b9.style.background=n===9?'var(--ink)':'var(--linen)';
-  b9.style.color=n===9?'var(--white)':'var(--ink-3)';
-  b9.style.borderColor=n===9?'var(--ink)':'var(--rule)';
-  b12.style.background=n===12?'var(--ink)':'var(--linen)';
-  b12.style.color=n===12?'var(--white)':'var(--ink-3)';
-  b12.style.borderColor=n===12?'var(--ink)':'var(--rule)';
-  if(lbl)lbl.textContent=n===9?'9-month (Academic Year)':'12-month (Full Year)';
+var summerMode='home';
+function setSummer(m){
+  summerMode=m;
+  var a=document.getElementById('sumAbtn'),b=document.getElementById('sumBbtn');
+  a.style.background=m==='home'?'var(--ink)':'var(--linen)';
+  a.style.color=m==='home'?'var(--white)':'var(--ink-3)';
+  a.style.borderColor=m==='home'?'var(--ink)':'var(--rule)';
+  a.style.fontWeight=m==='home'?'600':'500';
+  b.style.background=m==='stay'?'var(--ink)':'var(--linen)';
+  b.style.color=m==='stay'?'var(--white)':'var(--ink-3)';
+  b.style.borderColor=m==='stay'?'var(--ink)':'var(--rule)';
+  b.style.fontWeight=m==='stay'?'600':'500';
   calc();
 }
-
+function syncNum(key,val){document.getElementById(key+'Num').value=val;calc();}
+function syncRange(key,val){
+  var r=document.getElementById(key+'Range');
+  var lo=parseInt(r.min,10),hi=parseInt(r.max,10),v=parseInt(val,10);
+  if(isNaN(v)){calc();return;}
+  if(v<lo)v=lo; if(v>hi)v=hi;
+  r.value=v; calc();
+}
+function r10(n){return Math.round(n/10)*10;}
+function money(n){return '$'+r10(n).toLocaleString();}
 function calc(){
-  const dorm=parseInt(document.getElementById('dormType').value);
-  const meal=parseInt(document.getElementById('mealPlan').value);
-  const grant=parseInt(document.getElementById('housingGrant').value);
-  const aid=parseInt(document.getElementById('financialAid').value)||0;
-  const sl=document.querySelectorAll('input[type=range]');
-  const rent=parseInt(sl[0].value),rm=parseInt(sl[1].value),groc=parseInt(sl[2].value);
-  const utils=parseInt(document.getElementById('utils').value);
-  const MONTHLY_ROOM=1300,SUMMER_ADD=leaseMo===12?MONTHLY_ROOM*3:0;
-  const rs=Math.round(rent/rm),offMo=rs+groc+utils,offYr=(offMo*leaseMo)+grant;
-  const onYr=Math.max(0,dorm+meal-aid)+SUMMER_ADD,save=onYr-offYr,fy=save*4;
-  const f=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString();
-  document.getElementById('annSave').textContent=f(save);
-  document.getElementById('annSave').style.opacity=save>0?'1':'.65';
-  const leaseLabel=leaseMo===9?'Academic-year (9-mo)':'Annual (12-mo)';
-  document.querySelector('.rh-sub').textContent=leaseLabel+' savings: off-campus vs. NEU dorms';
-  document.getElementById('onCamp').textContent='$'+onYr.toLocaleString();
-  document.getElementById('offCamp').textContent='$'+offYr.toLocaleString();
-  document.getElementById('onCampLbl').textContent=leaseMo===12?'On-campus total (12 mo, incl. summer)':'On-campus total (9 mo, academic yr)';
-  document.getElementById('offCampLbl').textContent=leaseMo===12?'Off-campus estimate (12 mo)':'Off-campus estimate (9 mo)';
-  document.getElementById('bkRent').textContent='$'+rs+' / mo';
-  document.getElementById('bkFood').textContent='$'+groc+' / mo';
-  document.getElementById('bkUtils').textContent='$'+utils+' / mo';
+  var dorm=parseInt(document.getElementById('dormType').value)||0;
+  var meal=parseInt(document.getElementById('mealPlan').value)||0;
+  var rent=parseInt(document.getElementById('rentNum').value)||0;
+  var groc=parseInt(document.getElementById('grocNum').value)||0;
+  var util=parseInt(document.getElementById('utilNum').value)||0;
+  var grant=parseInt(document.getElementById('housingGrant').value)||0;
+  var stay=summerMode==='stay';
+  var months=stay?12:9;
+
+  // Comparison is HOUSING + FOOD + UTILITIES only. Tuition is excluded (identical either way).
+  // dorm + meal are 9-month academic-year room & board (on-campus utilities are included).
+  var onAcademic=dorm+meal;
+  var summerHousing=stay?Math.round(dorm/9*3):0;
+  var onCampus=Math.max(0,onAcademic+summerHousing-grant); // housing-only grant reduces on-campus only
+
+  var offMo=rent+groc+util;
+  var offCampus=offMo*months;
+
+  var diff=onCampus-offCampus; // >0 => off-campus is cheaper
+  var basis=stay?'12-month full-year comparison':'9-month academic-year comparison';
+  var annEl=document.getElementById('annSave');
+
+  if(diff>=0){
+    document.getElementById('rhEy').textContent='Annual Savings';
+    annEl.textContent=money(diff);
+    annEl.style.opacity='1';
+    document.getElementById('rhSub').textContent=basis+' \u00b7 off-campus vs. NEU dorms';
+    document.getElementById('fourYrCard').style.display='';
+    document.getElementById('fyLbl').textContent='Over 4 years of college';
+    document.getElementById('fourYr').textContent=money(diff*4);
+    document.getElementById('fyNote').textContent=diff>0?"that's "+money(diff*4)+' back in your pocket':'about the same either way';
+  } else {
+    document.getElementById('rhEy').textContent='Off-Campus Costs More';
+    annEl.textContent=money(-diff);
+    annEl.style.opacity='1';
+    document.getElementById('rhSub').textContent='Off-campus would cost this much more per year \u00b7 '+basis;
+    document.getElementById('fourYrCard').style.display='none';
+  }
+
+  document.getElementById('onCampLbl').textContent='On-campus housing + food ('+months+' mo)';
+  document.getElementById('offCampLbl').textContent='Off-campus housing + food ('+months+' mo)';
+  document.getElementById('onCamp').textContent=money(onCampus);
+  document.getElementById('offCamp').textContent=money(offCampus);
+
+  document.getElementById('bkEy').textContent='Off-campus breakdown \u00b7 '+basis;
+  document.getElementById('bkRent').textContent=money(rent)+' / mo';
+  document.getElementById('bkFood').textContent=money(groc)+' / mo';
+  document.getElementById('bkUtils').textContent=money(util)+' / mo';
+  document.getElementById('bkTotal').textContent=money(offMo)+' / mo';
+
   if(grant>0){
-    document.getElementById('bkGrant').textContent='$'+grant.toLocaleString()+' / yr';
+    document.getElementById('bkGrant').textContent='\u2212'+money(grant)+' / yr';
     document.getElementById('grantRow').style.display='flex';
-  }else{
+  } else {
     document.getElementById('grantRow').style.display='none';
   }
-  document.getElementById('bkTotal').textContent='$'+offMo+' / mo';
-  document.getElementById('fourYr').textContent=f(fy);
-  const saveNote = save > 0
-    ? `over 4 years of college — that's ${f(fy)} back in your pocket`
-    : `on-campus is cheaper with these parameters`;
-  document.getElementById('fyNote').textContent=saveNote;
+
+  var note='';
+  if(stay){
+    note='Includes ~3 months of summer housing added to the on-campus side (about '+money(summerHousing)+').';
+  } else {
+    note="Off-campus leases are often 12 months. If you can't sublet, budget ~3 extra months of rent (about "+money(rent*3)+").";
+  }
+  document.getElementById('bkNote').textContent=note;
 }
 
 function openModal(t){ document.getElementById(t==='signup'?'signupModal':'listModal').classList.add('open'); }
