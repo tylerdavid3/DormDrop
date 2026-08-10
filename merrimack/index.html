@@ -6,6 +6,7 @@
 <title>DormDrop Merrimack — Off-Campus Housing Cost Calculator for Merrimack College</title>
 <!-- Google Analytics 4 — central config & event helper in /analytics.js -->
 <script src="/analytics.js"></script>
+<script src="/dd-savings.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -528,15 +529,15 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
   </div>
   <div class="hero-right">
     <div class="s-label">Estimated Annual Savings · 2025–26 Rates</div>
-    <div class="s-headline" id="heroSaveAmt">$12,334</div>
+    <div class="s-headline" id="heroSaveAmt" data-dd="savings:merrimack">$10,230</div>
     <div class="s-sub">standard double + dining vs. avg. off-campus near Merrimack</div>
     <div class="cmp-row c-dorm">
-      <div class="cmp-head"><span>Merrimack Double + Dining</span><span>$21,934 / yr</span></div>
+      <div class="cmp-head"><span>Merrimack Double + Dining</span><span data-dd="oncampus:merrimack">$21,934 / yr</span></div>
       <div class="cmp-bar"><div class="cmp-fill"></div></div>
     </div>
     <div class="cmp-row c-off">
-      <div class="cmp-head"><span>Off-Campus avg. (2 roommates)</span><span>$9,600 / yr</span></div>
-      <div class="cmp-bar"><div class="cmp-fill" style="width:44%"></div></div>
+      <div class="cmp-head"><span>Off-Campus est. (rent + food + utilities)</span><span data-dd="offcampus:merrimack">$11,700 / yr</span></div>
+      <div class="cmp-bar"><div class="cmp-fill" data-dd="offbar:merrimack" style="width:58%"></div></div>
     </div>
     <div class="divline"></div>
     <div class="ins-row">

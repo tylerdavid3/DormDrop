@@ -4,9 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DormDrop Curry — Off-Campus Housing Cost Calculator for Curry College (2026–27)</title>
-<meta name="description" content="Compare official 2026–27 Curry College housing rates ($11,180–$17,170) with off-campus apartments in Milton, Quincy, and Hyde Park. Save up to $8,690/yr. Free for students."/>
+<meta name="description" content="Compare official 2026–27 Curry College housing rates ($11,180–$17,170) with off-campus apartments in Milton, Quincy, and Hyde Park. Estimated savings around $8,990/yr. Free for students."/>
 <!-- Google Analytics 4 — central config & event helper in /analytics.js -->
 <script src="/analytics.js"></script>
+<script src="/dd-savings.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -435,15 +436,15 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
   </div>
   <div class="hero-right">
     <div class="s-label">Estimated Annual Savings · 2026–27 Rates</div>
-    <div class="s-headline" id="heroSaveAmt">$8,690</div>
+    <div class="s-headline" id="heroSaveAmt" data-dd="savings:curry">$8,990</div>
     <div class="s-sub">standard room + Unlimited Marketplace vs. avg. off-campus near Curry</div>
     <div class="cmp-row c-dorm">
-      <div class="cmp-head"><span>Curry Standard Room + Unlimited Marketplace</span><span>$20,690 / yr</span></div>
+      <div class="cmp-head"><span>Curry Standard Room + Unlimited Marketplace</span><span data-dd="oncampus:curry">$20,690 / yr</span></div>
       <div class="cmp-bar"><div class="cmp-fill"></div></div>
     </div>
     <div class="cmp-row c-off">
-      <div class="cmp-head"><span>Off-Campus avg. (3BR in Quincy/Milton)</span><span>$12,000 / yr</span></div>
-      <div class="cmp-bar"><div class="cmp-fill" style="width:58%"></div></div>
+      <div class="cmp-head"><span>Off-Campus est. (rent + food + utilities)</span><span data-dd="offcampus:curry">$11,700 / yr</span></div>
+      <div class="cmp-bar"><div class="cmp-fill" data-dd="offbar:curry" style="width:58%"></div></div>
     </div>
     <div class="divline"></div>
     <div class="ins-row">
