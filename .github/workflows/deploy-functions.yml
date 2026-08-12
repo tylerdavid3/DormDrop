@@ -39,3 +39,23 @@ jobs:
         run: npx firebase-tools deploy --only functions --project "$FIREBASE_PROJECT" --non-interactive
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
+
+      # v2 (Cloud Run-backed) HTTPS functions deployed by a service account are
+      # frequently left private (the SA can't set the IAM policy), which returns
+      # a 403 to unauthenticated callers BEFORE the container runs — the exact
+      # cause of extractBill showing 0 requests. Explicitly (re)grant public
+      # invoke here. Non-fatal: if the deploy SA lacks run.setIamPolicy this
+      # warns instead of failing, and it must be granted manually (see README).
+      - name: Grant public invoke on extractBill
+        run: |
+          gcloud auth activate-service-account --key-file=/tmp/service-account.json
+          gcloud run services add-iam-policy-binding extractbill \
+            --region=us-central1 \
+            --member=allUsers \
+            --role=roles/run.invoker \
+            --project="$FIREBASE_PROJECT" \
+            --quiet \
+          && echo "Public invoke granted (allUsers -> roles/run.invoker) on extractbill." \
+          || echo "::warning::Could not grant allUsers run.invoker automatically. Grant it manually: gcloud run services add-iam-policy-binding extractbill --region=us-central1 --member=allUsers --role=roles/run.invoker --project=$FIREBASE_PROJECT"
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json

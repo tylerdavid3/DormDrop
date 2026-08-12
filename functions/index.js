@@ -502,9 +502,17 @@ exports.extractBill = onRequest(
     memory: '512MiB',
   },
   async (req, res) => {
+    // CORS headers are set FIRST so they are present on every response path,
+    // including the 400/405/500 error branches below. Note: these headers only
+    // help once the request actually reaches this container. If the Cloud Run
+    // service is not publicly invocable, Google's edge returns a 403 with NO
+    // CORS header before this code runs — which the browser reports as a generic
+    // "Failed to fetch" (see /snap handleFile). Public invoke must be granted
+    // separately (allUsers -> roles/run.invoker).
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Max-Age', '3600');
 
     if (req.method === 'OPTIONS') {
       return res.status(204).send('');
