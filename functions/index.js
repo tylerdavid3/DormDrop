@@ -491,12 +491,11 @@ exports.scheduledListingsSync = functions
 // AI Bill Extraction — Claude vision parses tuition/housing bills
 // ─────────────────────────────────────────────────────────────────────────────
 
-// const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY'); // temporarily disabled for deploy
+const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY2');
 
-// exports.extractBill = onRequest( // temporarily disabled
-const _extractBillDisabled = onRequest(
+exports.extractBill = onRequest(
   {
-    // secrets: [ANTHROPIC_API_KEY], // disabled
+    secrets: [ANTHROPIC_API_KEY],
     cors: true,
     maxInstances: 10,
     timeoutSeconds: 60,
@@ -543,7 +542,7 @@ const _extractBillDisabled = onRequest(
       }
 
       const client = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY || '',
+        apiKey: ANTHROPIC_API_KEY.value(),
       });
 
       const response = await client.messages.create({
