@@ -1,10 +1,8 @@
-name: Deploy Firebase Hosting
+name: Deploy Firebase Hosting + Functions
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'functions/**'
   workflow_dispatch:
 
 jobs:
@@ -28,7 +26,9 @@ jobs:
       - name: Write service account credentials
         run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > /tmp/service-account.json
 
-      - name: Deploy Firebase Hosting
-        run: npx firebase-tools deploy --only hosting --project dormdrop-98dd3 --non-interactive
+      - name: Deploy Firebase Hosting and Functions
+        run: |
+          cd functions && npm ci && cd ..
+          npx firebase-tools deploy --only hosting,functions --project dormdrop-98dd3 --non-interactive
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
