@@ -224,12 +224,12 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 .msg-send:hover { background:#0a5858; }
 .pref-title { font-family:'Playfair Display',serif; font-size:36px; font-weight:700; color:var(--ink); letter-spacing:-.5px; line-height:1.2; margin-bottom:16px; }
 .pref-desc { font-size:16px; color:var(--ink-3); line-height:1.65; font-weight:300; margin-bottom:36px; }
-.pref-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:28px; }
-.pref-item { background:var(--white); border:1px solid var(--rule); border-radius:var(--r); padding:16px; cursor:pointer; text-align:center; }
+.pref-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px; }
+.pref-item { background:var(--white); border:1px solid var(--rule); border-radius:12px; padding:18px 12px; cursor:pointer; text-align:center; min-height:64px; display:flex; align-items:center; justify-content:center; transition:border-color .15s, background .15s; }
 .pref-item.active { border-color:var(--teal); background:var(--teal-lt); }
 .pref-item:hover:not(.active) { border-color:var(--ink-3); }
-.pi-e { font-size:22px; margin-bottom:7px; }
-.pi-l { font-size:13px; font-weight:500; color:var(--ink-3); }
+.pi-e { display:none !important; }
+.pi-l { font-size:14px; font-weight:500; color:var(--ink-2); line-height:1.3; }
 .pref-item.active .pi-l { color:var(--teal); font-weight:600; }
 
 /* CTA */
@@ -710,18 +710,13 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
       <div>
         <div class="pref-title">Your lifestyle,<br>your match.</div>
         <p class="pref-desc">We match on more than proximity. Sleep schedule, study habits, cleanliness, and social preferences all factor into your compatibility score.</p>
-        <div class="pref-grid" id="prefGrid">
-          <div class="pref-grid"><div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Night owl</div></div>
+                <div class="pref-grid" id="prefGrid">
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Night owl</div></div>
           <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Early riser</div></div>
           <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Studies at home</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Social</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Social / outgoing</div></div>
           <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Pet-friendly</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Keeps things tidy</div></div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">◐</div><div class="pi-l">Early Riser</div></div>
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">▣</div><div class="pi-l">Studies at Home</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">◈</div><div class="pi-l">Social / Outgoing</div></div>
-          <div class="pref-item" onclick="togglePref(this)"><div class="pi-e">◆</div><div class="pi-l">Pet-Friendly</div></div>
-          <div class="pref-item active" onclick="togglePref(this)"><div class="pi-e">◇</div><div class="pi-l">Keeps Things Tidy</div></div>
+          <div class="pref-item" onclick="togglePref(this)"><div class="pi-l">Keeps things tidy</div></div>
         </div>
         <button class="btn-primary" onclick="onFindMatches()" style="width:100%;text-align:center;display:block;padding:16px;font-size:15px;border:none;cursor:pointer;border-radius:var(--r);">Find My Matches</button>
       </div>
