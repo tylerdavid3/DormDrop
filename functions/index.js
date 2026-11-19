@@ -9,7 +9,8 @@ const { processSchool, SCHOOL_CONFIG, getApiKey } = require('./src/rentcast');
 
 admin.initializeApp();
 
-const SENDGRID_KEY = process.env.SENDGRID_API_KEY;
+const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');
+const SENDGRID_KEY = process.env.SENDGRID_API_KEY || (typeof SENDGRID_API_KEY !== 'undefined' ? null : null);
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'dormdrop.business@gmail.com';
 
 if (SENDGRID_KEY) {
@@ -633,7 +634,7 @@ Return ONLY the JSON. No code blocks, no extra text.`,
 // ─────────────────────────────────────────────────────────────────
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
 
-exports.sendVerificationCode = onCall(async (request) => {
+exports.sendVerificationCode = onCall({ secrets: [SENDGRID_API_KEY] }, async (request) => {
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Must be signed in');
   }
@@ -654,7 +655,9 @@ exports.sendVerificationCode = onCall(async (request) => {
     attempts: 0
   });
 
-  if (SENDGRID_KEY) {
+  const key = SENDGRID_API_KEY.value();
+  if (key) {
+    sgMail.setApiKey(key);
     await sgMail.send({
       to: email,
       from: FROM_EMAIL,
