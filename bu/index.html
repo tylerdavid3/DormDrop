@@ -424,12 +424,12 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="h-stat-txt">Max savings vs. BU standard double + dining</div>
       </div>
       <div class="h-stat">
-        <div class="h-stat-fig">47<sup>+</sup></div>
-        <div class="h-stat-txt">Active listings near campus</div>
+        <div class="h-stat-fig">Free</div>
+        <div class="h-stat-txt">For all BU students</div>
       </div>
       <div class="h-stat">
-        <div class="h-stat-fig" id="userCount">2,341</div>
-        <div class="h-stat-txt">Students connected</div>
+        <div class="h-stat-fig">@bu.edu</div>
+        <div class="h-stat-txt">Sign up with your school email</div>
       </div>
     </div>
   </div>
@@ -452,7 +452,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     </div>
     <div class="ins-row">
       <div class="ins-icon ii-t">🏘️</div>
-      <div><div class="ins-title">47 properties within 1.5 miles of BU</div><div class="ins-sub">Allston · Fenway · Back Bay · Brighton</div></div>
+      <div><div class="ins-title">Listings near campus</div><div class="ins-sub">Allston · Fenway · Back Bay · Brighton</div></div>
     </div>
     <div class="ins-row">
       <div class="ins-icon ii-a">💬</div>
@@ -625,6 +625,17 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div class="rh-amt" id="annSave">$0</div>
           <div class="rh-sub" id="rhSub">off-campus vs. BU dorms</div>
         </div>
+
+        <div class="res-card" id="shareCard" style="display:none; margin-top:0;">
+          <div class="rc-ey">Share your result</div>
+          <p style="font-size:14px; color:var(--ink-3); margin:8px 0 14px; line-height:1.5;">Show friends what you could save. One tap to copy or share.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-sm" style="background:var(--teal); border:none; padding:10px 16px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;" onclick="shareSavings('copy')">Copy Link</button>
+            <button class="btn-sm" style="background:var(--ink); border:none; padding:10px 16px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;" onclick="shareSavings('native')">Share</button>
+          </div>
+          <p id="shareStatus" style="font-size:13px; color:var(--teal); margin-top:10px; display:none;">Copied!</p>
+        </div>
+
         <div class="res-row">
           <div class="res-card"><div class="rc-ey" id="onCampLbl">On-campus housing + food</div><div class="rc-amt neg" id="onCamp">$0</div></div>
           <div class="res-card"><div class="rc-ey" id="offCampLbl">Off-campus housing + food</div><div class="rc-amt pos" id="offCamp">$0</div></div>
@@ -720,7 +731,7 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     <div class="cta-inner">
       <div class="eyebrow">Join DormDrop</div>
       <h2>Stop leaving money on the <em>table.</em></h2>
-      <p>Join thousands of BU students and families who used DormDrop to make a smarter housing decision.</p>
+      <p>See your real savings and find roommates who want the same thing. Free for BU students.</p>
       <div class="cta-row">
         <input class="cta-in" type="email" placeholder="Enter your BU email address…"/>
         <button onclick="openAuthModal('signup')" class="btn-primary" style="display:inline-block;">Get Started Free</button>
@@ -975,6 +986,23 @@ function syncRange(key,val){
 }
 function r10(n){return Math.round(n/10)*10;}
 function money(n){return '$'+r10(n).toLocaleString();}
+
+function shareSavings(mode) {
+  var amt = document.getElementById('annSave').textContent || '$0';
+  var text = 'I could save ' + amt + '/year at BU by moving off-campus. Check yours free: https://mydormdrop.com/bu#calculator';
+  var url = 'https://mydormdrop.com/bu#calculator';
+  if (mode === 'copy') {
+    navigator.clipboard.writeText(text).then(function() {
+      var s = document.getElementById('shareStatus');
+      if (s) { s.style.display = 'block'; setTimeout(function(){ s.style.display='none'; }, 2000); }
+    });
+  } else if (navigator.share) {
+    navigator.share({ title: 'My BU housing savings', text: text, url: url }).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(text);
+  }
+}
+
 function calc(){
   var dorm=parseInt(document.getElementById('dormType').value)||0;
   var meal=parseInt(document.getElementById('mealPlan').value)||0;
@@ -1003,6 +1031,7 @@ function calc(){
     annEl.textContent=money(diff);
     annEl.style.opacity='1';
     document.getElementById('rhSub').textContent=basis+' \u00b7 off-campus vs. BU dorms';
+    var sc=document.getElementById('shareCard'); if(sc) sc.style.display='block';
     document.getElementById('fourYrCard').style.display='';
     document.getElementById('fyLbl').textContent='Over 4 years of college';
     document.getElementById('fourYr').textContent=money(diff*4);
@@ -1012,6 +1041,7 @@ function calc(){
     annEl.textContent=money(-diff);
     annEl.style.opacity='1';
     document.getElementById('rhSub').textContent='Off-campus would cost this much more per year \u00b7 '+basis;
+    var sc=document.getElementById('shareCard'); if(sc) sc.style.display='none';
     document.getElementById('fourYrCard').style.display='none';
   }
 
@@ -1068,22 +1098,7 @@ function sendMsgBtn(){
   },900);
 }
 
-// Dynamic user counter
-(function(){
-  var seed=parseInt(localStorage.getItem('dd_ucnt'))||0;
-  if(!seed){seed=2100+Math.floor(Math.random()*400);localStorage.setItem('dd_ucnt',seed);}
-  var count=seed;
-  var el=document.getElementById('userCount');
-  function fmt(n){return n.toLocaleString()+'';}
-  if(el)el.textContent=fmt(count);
-  setInterval(function(){
-    if(Math.random()<0.4){
-      count+=Math.floor(Math.random()*3)+1;
-      localStorage.setItem('dd_ucnt',count);
-      if(el)el.textContent=fmt(count);
-    }
-  },30000);
-})();
+
 
 function checkEmailVerified(){
   if(typeof auth==='undefined'||!auth||!auth.currentUser)return;

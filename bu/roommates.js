@@ -359,7 +359,7 @@ function doLogin() {
         return;
       }
       var p = data.profile || {};
-      var complete = p.major && p.sleepSchedule && p.studyHabits;
+      var complete = !!(p.sleepSchedule || p.studyHabits || p.major);
       if (!complete) {
         window.location.href = '/profile-setup.html';
       } else {
@@ -538,7 +538,7 @@ function loadMatches() {
         if (data.emailVerified !== true) return;
         var p = Object.assign({ uid: doc.id }, data);
         var score = calcScoreFromProfiles(me, p);
-        if (score >= 70) matches.push(Object.assign({ score: score }, p));
+        if (score >= 40) matches.push(Object.assign({ score: score }, p));
       });
       matches.sort(function (a, b) {
         return b.score - a.score;
