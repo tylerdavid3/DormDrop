@@ -11,7 +11,7 @@ admin.initializeApp();
 
 const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');
 const SENDGRID_KEY = process.env.SENDGRID_API_KEY || (typeof SENDGRID_API_KEY !== 'undefined' ? null : null);
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'dormdrop.business@gmail.com';
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'noreply@mydormdrop.com';
 
 if (SENDGRID_KEY) {
   sgMail.setApiKey(SENDGRID_KEY);
@@ -658,15 +658,21 @@ exports.sendVerificationCode = onCall({ secrets: [SENDGRID_API_KEY] }, async (re
   const key = SENDGRID_API_KEY.value();
   if (key) {
     sgMail.setApiKey(key);
-    await sgMail.send({
-      to: email,
-      from: FROM_EMAIL,
-      subject: 'Your DormDrop verification code',
-      text: `Your DormDrop verification code is ${code}. It expires in 15 minutes.`,
-      html: `<p>Your DormDrop verification code is:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p><p>It expires in 15 minutes.</p>`
-    });
+    try {
+      await sgMail.send({
+        to: email,
+        from: FROM_EMAIL,
+        subject: 'Your DormDrop verification code',
+        text: `Your DormDrop verification code is ${code}. It expires in 15 minutes.`,
+        html: `<p>Your DormDrop verification code is:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p><p>It expires in 15 minutes.</p>`
+      });
+    } catch (err) {
+      console.error('SendGrid error:', err.response ? err.response.body : err.message);
+      throw new HttpsError('internal', 'Could not send email. Check sender verification in SendGrid.');
+    }
   } else {
     console.log('SENDGRID not configured. Code for', email, ':', code);
+    throw new HttpsError('failed-precondition', 'Email service not configured');
   }
 
   return { success: true };
