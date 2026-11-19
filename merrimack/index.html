@@ -522,8 +522,8 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
         <div class="h-stat-txt">Properties near campus</div>
       </div>
       <div class="h-stat">
-        <div class="h-stat-fig" id="userCount">547</div>
-        <div class="h-stat-txt">Students connected</div>
+        <div class="h-stat-fig">@merrimack.edu</div>
+        <div class="h-stat-txt">Sign up with your school email</div>
       </div>
     </div>
   </div>
@@ -711,6 +711,17 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div class="rh-amt" id="annSave">$0</div>
           <div class="rh-sub" id="rhSub">off-campus vs. Merrimack dorms</div>
         </div>
+
+        <div class="res-card" id="shareCard" style="display:none;">
+          <div class="rc-ey">Share your result</div>
+          <p style="font-size:14px; color:var(--ink-3); margin:8px 0 14px; line-height:1.5;">Show friends what you could save.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-sm" style="background:var(--teal); border:none; padding:10px 16px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;" onclick="shareSavings('copy')">Copy Link</button>
+            <button class="btn-sm" style="background:var(--ink); border:none; padding:10px 16px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;" onclick="shareSavings('native')">Share</button>
+          </div>
+          <p id="shareStatus" style="font-size:13px; color:var(--teal); margin-top:10px; display:none;">Copied!</p>
+        </div>
+
         <div class="res-row">
           <div class="res-card"><div class="rc-ey" id="onCampLbl">On-campus housing + food</div><div class="rc-amt neg" id="onCamp">$0</div></div>
           <div class="res-card"><div class="rc-ey" id="offCampLbl">Off-campus housing + food</div><div class="rc-amt pos" id="offCamp">$0</div></div>
@@ -906,13 +917,17 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
     </div>
 
     <!-- Email verification pending view -->
-    <div id="verifyFields" style="display:none">
+        <div id="verifyFields" style="display:none">
       <div style="text-align:center;padding:16px 0 8px">
-        <div style="font-size:48px;margin-bottom:16px">📧</div>
-        <p style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Check your inbox</p>
-        <p style="font-size:13px;color:var(--ink-4);line-height:1.6;margin-bottom:24px">We sent a verification link to your @merrimack.edu email. Click the link in that email, then come back here.</p>
-        <button class="btn-primary" onclick="checkEmailVerified()" style="width:100%;padding:15px;border:none;cursor:pointer;border-radius:10px;margin-bottom:10px">I've Verified My Email ✓</button>
-        <button class="btn-ghost" onclick="resendVerification()" style="width:100%;padding:12px;background:none;border:1px solid var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer">Resend Verification Email</button>
+        <p style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Enter your code</p>
+        <p style="font-size:13px;color:var(--ink-4);line-height:1.6;margin-bottom:20px">We sent a 6-digit code to your school email. Enter it below.</p>
+        <div class="fg" style="text-align:left">
+          <label>Verification code</label>
+          <input id="verifyCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" style="text-align:center;letter-spacing:4px;font-size:20px;font-weight:600"/>
+        </div>
+        <button class="btn-primary" onclick="submitVerificationCode()" style="width:100%;padding:15px;border:none;cursor:pointer;border-radius:10px;margin-bottom:10px">Verify Code</button>
+        <button class="btn-ghost" onclick="resendVerificationCode()" style="width:100%;padding:12px;background:none;border:1px solid var(--rule);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer">Resend Code</button>
+        <p id="verifyStatus" style="font-size:13px;margin-top:12px;display:none"></p>
       </div>
     </div>
 
@@ -1061,6 +1076,21 @@ function syncRange(key,val){
 }
 function r10(n){return Math.round(n/10)*10;}
 function money(n){return '$'+r10(n).toLocaleString();}
+
+function shareSavings(mode) {
+  var amt = document.getElementById('annSave').textContent || '$0';
+  var text = 'I could save ' + amt + '/year at Merrimack by moving off-campus. Check yours free: https://mydormdrop.com/merrimack#calculator';
+  var url = 'https://mydormdrop.com/merrimack#calculator';
+  if (mode === 'copy' || !navigator.share) {
+    navigator.clipboard.writeText(text).then(function() {
+      var s = document.getElementById('shareStatus');
+      if (s) { s.style.display = 'block'; setTimeout(function(){ s.style.display='none'; }, 2000); }
+    });
+  } else {
+    navigator.share({ title: 'My Merrimack housing savings', text: text, url: url }).catch(function(){});
+  }
+}
+
 function calc(){
   var dorm=parseInt(document.getElementById('dormType').value)||0;
   var meal=parseInt(document.getElementById('mealPlan').value)||0;
@@ -1088,6 +1118,7 @@ function calc(){
     document.getElementById('rhEy').textContent='Annual Savings';
     annEl.textContent=money(diff);
     annEl.style.opacity='1';
+    var sc=document.getElementById('shareCard'); if(sc) sc.style.display='block';
     document.getElementById('rhSub').textContent=basis+' \u00b7 off-campus vs. Merrimack dorms';
     document.getElementById('fourYrCard').style.display='';
     document.getElementById('fyLbl').textContent='Over 4 years of college';
@@ -1154,22 +1185,7 @@ function sendMsgBtn(){
   },900);
 }
 
-// Dynamic user counter
-(function(){
-  var seed=parseInt(localStorage.getItem('dd_ucnt_mc'))||0;
-  if(!seed){seed=450+Math.floor(Math.random()*150);localStorage.setItem('dd_ucnt_mc',seed);}
-  var count=seed;
-  var el=document.getElementById('userCount');
-  function fmt(n){return n.toLocaleString()+'';}
-  if(el)el.textContent=fmt(count);
-  setInterval(function(){
-    if(Math.random()<0.3){
-      count+=Math.floor(Math.random()*2)+1;
-      localStorage.setItem('dd_ucnt_mc',count);
-      if(el)el.textContent=fmt(count);
-    }
-  },30000);
-})();
+
 
 function checkEmailVerified(){
   if(typeof auth==='undefined'||!auth||!auth.currentUser)return;
@@ -1217,32 +1233,55 @@ renderListings('all');renderProfiles();calc();
         <textarea id="profBio" maxlength="500" style="width:100%;background:var(--linen);border:1px solid var(--rule);border-radius:9px;padding:12px 15px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:80px;color:var(--ink)" placeholder="Tell potential roommates a bit about yourself…"></textarea>
       </div>
     </div>
-    <div id="profStep2" style="display:none">
-      <p style="font-size:14px;color:var(--ink-3);margin-bottom:20px">Answer these 6 questions to find your most compatible matches.</p>
-      <div class="quiz-group"><div class="quiz-group-label">Sleep Schedule</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-e">🌙</div><div class="pi-l">Night Owl</div></div>
-        <div class="pref-item" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-e">☀️</div><div class="pi-l">Early Riser</div></div>
-      </div></div>
-      <div class="quiz-group"><div class="quiz-group-label">Study Habits</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-e" style="font-size:18px;line-height:1;color:var(--teal)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="pi-l">Study at Home</div></div>
-        <div class="pref-item" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-e" style="font-size:18px;line-height:1;color:var(--teal)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div class="pi-l">Study on Campus</div></div>
-      </div></div>
-      <div class="quiz-group"><div class="quiz-group-label">Social Style</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('socialPreferences','outgoing',this)"><div class="pi-e">🎉</div><div class="pi-l">Outgoing</div></div>
-        <div class="pref-item" onclick="selectQuiz('socialPreferences','quiet',this)"><div class="pi-e">🤫</div><div class="pi-l">Introverted</div></div>
-      </div></div>
-      <div class="quiz-group"><div class="quiz-group-label">Cleanliness</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('cleanliness','tidy',this)"><div class="pi-e">✨</div><div class="pi-l">Very Tidy</div></div>
-        <div class="pref-item" onclick="selectQuiz('cleanliness','organized-chaos',this)"><div class="pi-e">🗂️</div><div class="pi-l">Organized Chaos</div></div>
-      </div></div>
-      <div class="quiz-group"><div class="quiz-group-label">Pets</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('pets','pet-friendly',this)"><div class="pi-e">🐾</div><div class="pi-l">Pet-Friendly</div></div>
-        <div class="pref-item" onclick="selectQuiz('pets','no-pets',this)"><div class="pi-e">🚫</div><div class="pi-l">No Pets</div></div>
-      </div></div>
-      <div class="quiz-group"><div class="quiz-group-label">Guests &amp; Parties</div><div class="quiz-options">
-        <div class="pref-item" onclick="selectQuiz('guestsParties','fine-with-guests',this)"><div class="pi-e">🥳</div><div class="pi-l">Guests are Fine</div></div>
-        <div class="pref-item" onclick="selectQuiz('guestsParties','prefer-quiet',this)"><div class="pi-e">🔇</div><div class="pi-l">Prefer Quiet</div></div>
-      </div></div>
+        <div id="profStep2" style="display:none">
+      <div class="quiz-group">
+        <div class="quiz-group-label">Sleep schedule</div>
+        <div class="quiz-options" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('sleepSchedule','night-owl',this)"><div class="pi-l">Night owl</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('sleepSchedule','early-riser',this)"><div class="pi-l">Early riser</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('sleepSchedule','flexible',this)"><div class="pi-l">Flexible</div></div>
+        </div>
+      </div>
+      <div class="quiz-group">
+        <div class="quiz-group-label">Cleanliness</div>
+        <div class="quiz-options" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('cleanliness','very-clean',this)"><div class="pi-l">Very tidy</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('cleanliness','organized',this)"><div class="pi-l">Pretty clean</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('cleanliness','relaxed',this)"><div class="pi-l">Relaxed</div></div>
+        </div>
+      </div>
+      <div class="quiz-group">
+        <div class="quiz-group-label">Guests & parties</div>
+        <div class="quiz-options" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('guests','often',this)"><div class="pi-l">Guests often</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('guests','sometimes',this)"><div class="pi-l">Sometimes</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('guests','prefer-quiet',this)"><div class="pi-l">Prefer quiet</div></div>
+        </div>
+      </div>
+      <div class="quiz-group">
+        <div class="quiz-group-label">Smoking</div>
+        <div class="quiz-options" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('smoking','no',this)"><div class="pi-l">No smoking</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('smoking','outside-ok',this)"><div class="pi-l">Outside is fine</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('smoking','ok',this)"><div class="pi-l">Okay with it</div></div>
+        </div>
+      </div>
+      <div class="quiz-group">
+        <div class="quiz-group-label">Temperature preference</div>
+        <div class="quiz-options" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('temp','cold',this)"><div class="pi-l">Keep it cold</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('temp','normal',this)"><div class="pi-l">Normal</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('temp','warm',this)"><div class="pi-l">Keep it warm</div></div>
+        </div>
+      </div>
+      <div class="quiz-group">
+        <div class="quiz-group-label">Work / study from home</div>
+        <div class="quiz-options" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('studyHabits','at-home',this)"><div class="pi-l">Mostly at home</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('studyHabits','on-campus',this)"><div class="pi-l">Mostly on campus</div></div>
+          <div class="pref-item" style="flex:1;min-width:100px;padding:12px" onclick="selectQuiz('studyHabits','flexible',this)"><div class="pi-l">Mix of both</div></div>
+        </div>
+      </div>
     </div>
     <p id="profError" style="font-size:13px;color:#DC2626;margin-bottom:12px;display:none"></p>
     <div style="display:flex;gap:8px;margin-top:8px">
@@ -1280,6 +1319,7 @@ renderListings('all');renderProfiles();calc();
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="roommates.js"></script>

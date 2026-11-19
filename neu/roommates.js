@@ -273,7 +273,9 @@ function doSignup() {
     .createUserWithEmailAndPassword(email, pwd)
     .then(function (cred) {
       return cred.user.updateProfile({ displayName: name }).then(function () {
-        return cred.user.sendEmailVerification();
+        return cred.user.sendEmailVerification().catch(function(){}).then(function(){
+          try { return firebase.functions().httpsCallable('sendVerificationCode')({}); } catch(e){ return Promise.resolve(); }
+        });
       }).then(function () {
         var y = yearToSlug(year);
         return db.collection('users').doc(cred.user.uid).set({
@@ -359,7 +361,7 @@ function doLogin() {
         return;
       }
       var p = data.profile || {};
-      var complete = p.major && p.sleepSchedule && p.studyHabits;
+      var complete = !!(p.sleepSchedule || p.studyHabits || p.major);
       if (!complete) {
         window.location.href = '/profile-setup.html';
       } else {
@@ -538,7 +540,7 @@ function loadMatches() {
         if (data.emailVerified !== true) return;
         var p = Object.assign({ uid: doc.id }, data);
         var score = calcScoreFromProfiles(me, p);
-        if (score >= 70) matches.push(Object.assign({ score: score }, p));
+        if (score >= 40) matches.push(Object.assign({ score: score }, p));
       });
       matches.sort(function (a, b) {
         return b.score - a.score;
@@ -1555,3 +1557,41 @@ function submitInterest() {
       alert('Error: ' + err.message);
     });
 }
+
+
+function submitVerificationCode() {
+  var code = (document.getElementById('verifyCode') || {}).value || '';
+  code = String(code).trim();
+  if (code.length !== 6) {
+    showVerifyStatus('Enter the 6-digit code.', true);
+    return;
+  }
+  var btn = event && event.target;
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
+  var fn = firebase.functions().httpsCallable('verifyEmailCode');
+  fn({ code: code })
+    .then(function () {
+      showVerifyStatus('Verified! Taking you in…', false);
+      setTimeout(function () { window.location.reload(); }, 800);
+    })
+    .catch(function (e) {
+      showVerifyStatus((e && e.message) || 'Incorrect or expired code.', true);
+      if (btn) { btn.disabled = false; btn.textContent = 'Verify Code'; }
+    });
+}
+
+function resendVerificationCode() {
+  var fn = firebase.functions().httpsCallable('sendVerificationCode');
+  fn({})
+    .then(function () { showVerifyStatus('New code sent. Check your inbox.', false); })
+    .catch(function (e) { showVerifyStatus((e && e.message) || 'Could not send code.', true); });
+}
+
+function showVerifyStatus(msg, isError) {
+  var el = document.getElementById('verifyStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? '#DC2626' : 'var(--teal)';
+  el.style.display = 'block';
+}
+

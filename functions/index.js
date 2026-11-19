@@ -627,3 +627,78 @@ Return ONLY the JSON. No code blocks, no extra text.`,
     }
   }
 );
+
+// ─────────────────────────────────────────────────────────────────
+// Email verification code (6-digit)
+// ─────────────────────────────────────────────────────────────────
+const { onCall, HttpsError } = require('firebase-functions/v2/https');
+
+exports.sendVerificationCode = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'Must be signed in');
+  }
+  const uid = request.auth.uid;
+  const email = request.auth.token.email;
+  if (!email) {
+    throw new HttpsError('failed-precondition', 'No email on account');
+  }
+
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  const expiresAt = admin.firestore.Timestamp.fromDate(new Date(Date.now() + 15 * 60 * 1000));
+
+  await admin.firestore().collection('verificationCodes').doc(uid).set({
+    code,
+    email,
+    expiresAt,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    attempts: 0
+  });
+
+  if (SENDGRID_KEY) {
+    await sgMail.send({
+      to: email,
+      from: FROM_EMAIL,
+      subject: 'Your DormDrop verification code',
+      text: `Your DormDrop verification code is ${code}. It expires in 15 minutes.`,
+      html: `<p>Your DormDrop verification code is:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p><p>It expires in 15 minutes.</p>`
+    });
+  } else {
+    console.log('SENDGRID not configured. Code for', email, ':', code);
+  }
+
+  return { success: true };
+});
+
+exports.verifyEmailCode = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'Must be signed in');
+  }
+  const uid = request.auth.uid;
+  const entered = String((request.data && request.data.code) || '').trim();
+  if (!entered || entered.length !== 6) {
+    throw new HttpsError('invalid-argument', 'Enter the 6-digit code');
+  }
+
+  const ref = admin.firestore().collection('verificationCodes').doc(uid);
+  const snap = await ref.get();
+  if (!snap.exists) {
+    throw new HttpsError('not-found', 'No code found. Request a new one.');
+  }
+  const data = snap.data();
+  if (data.expiresAt.toDate() < new Date()) {
+    throw new HttpsError('deadline-exceeded', 'Code expired. Request a new one.');
+  }
+  if (data.attempts >= 5) {
+    throw new HttpsError('resource-exhausted', 'Too many attempts. Request a new code.');
+  }
+  if (data.code !== entered) {
+    await ref.update({ attempts: (data.attempts || 0) + 1 });
+    throw new HttpsError('invalid-argument', 'Incorrect code');
+  }
+
+  await admin.auth().updateUser(uid, { emailVerified: true });
+  await admin.firestore().collection('users').doc(uid).update({ emailVerified: true });
+  await ref.delete();
+
+  return { success: true };
+});
