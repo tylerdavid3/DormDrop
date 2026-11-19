@@ -29,6 +29,6 @@ jobs:
       - name: Deploy Firebase Hosting and Functions
         run: |
           cd functions && npm ci && cd ..
-          npx firebase-tools deploy --only hosting,functions --project dormdrop-98dd3 --non-interactive
+          npx firebase-tools deploy --only hosting,functions:sendVerificationCode,functions:verifyEmailCode --project dormdrop-98dd3 --non-interactive
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
