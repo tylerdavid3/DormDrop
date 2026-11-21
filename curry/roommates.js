@@ -348,9 +348,9 @@ function doLogin() {
     .signInWithEmailAndPassword(email, pwd)
     .then(function (cred) {
       if (!cred.user.emailVerified) {
-        return auth.signOut().then(function () {
-          throw new Error('verify');
-        });
+        showAuthView('verifyFields');
+        try { firebase.functions().httpsCallable('sendVerificationCode')({}); } catch(e) {}
+        throw new Error('verify-pending');
       }
       return db.collection('users').doc(cred.user.uid).get();
     })
@@ -373,7 +373,9 @@ function doLogin() {
       }
     })
     .catch(function (e) {
-      if (e && e.message === 'verify') {
+      if (e && e.message === 'verify-pending') {
+        showAuthError('Enter the 6-digit code we just sent.', true);
+      } else if (e && e.message === 'verify') {
         showAuthError('Please verify your email before logging in. Check your inbox.');
       } else {
         showAuthError(friendlyAuthError(e.code));
