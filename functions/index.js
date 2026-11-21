@@ -11,7 +11,7 @@ admin.initializeApp();
 
 const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');
 const SENDGRID_KEY = process.env.SENDGRID_API_KEY || (typeof SENDGRID_API_KEY !== 'undefined' ? null : null);
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'noreply@mydormdrop.com';
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'dormdrop.business@gmail.com';
 
 if (SENDGRID_KEY) {
   sgMail.setApiKey(SENDGRID_KEY);
