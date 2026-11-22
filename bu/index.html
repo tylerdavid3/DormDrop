@@ -626,14 +626,14 @@ footer { background:#0C1017; color:rgba(255,255,255,.4); padding:64px 0 40px; }
           <div class="rh-sub" id="rhSub">off-campus vs. BU dorms</div>
         </div>
 
-        <div class="res-card" id="shareCard" style="display:none; margin-top:0;">
-          <div class="rc-ey">Share your result</div>
-          <p style="font-size:14px; color:var(--ink-3); margin:8px 0 14px; line-height:1.5;">Show friends what you could save. One tap to copy or share.</p>
+        <div class="res-card" id="shareCard" style="display:none; margin-top:0; background:var(--teal-lt); border:1px solid var(--teal-md);">
+          <div style="font-size:15px; font-weight:600; color:var(--ink); margin-bottom:6px;">Share this with friends</div>
+          <p style="font-size:14px; color:var(--ink-3); margin:0 0 14px; line-height:1.5;">Most people don’t realize how much they could save. One tap to send yours.</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn-sm" style="background:var(--teal); border:none; padding:10px 16px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;" onclick="shareSavings('copy')">Copy Link</button>
-            <button class="btn-sm" style="background:var(--ink); border:none; padding:10px 16px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;" onclick="shareSavings('native')">Share</button>
+            <button class="btn-sm" style="background:var(--teal); border:none; padding:12px 18px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer; font-size:14px;" onclick="shareSavings('copy')">Copy Result</button>
+            <button class="btn-sm" style="background:var(--ink); border:none; padding:12px 18px; border-radius:8px; color:#fff; font-weight:600; cursor:pointer; font-size:14px;" onclick="shareSavings('native')">Share</button>
           </div>
-          <p id="shareStatus" style="font-size:13px; color:var(--teal); margin-top:10px; display:none;">Copied!</p>
+          <p id="shareStatus" style="font-size:13px; color:var(--teal); margin-top:10px; display:none; font-weight:600;">Copied — paste it anywhere.</p>
         </div>
 
         <div class="res-row">
